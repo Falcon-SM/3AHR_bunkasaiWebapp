@@ -35,7 +35,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-和田くんからの要望：
+## 和田くんからの要望：
 最初のページ　
 開くと導入動画が流れる。
 2枚目のページ
@@ -66,3 +66,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 エンディング動画
 13ページ目
 解説のQRコード
+
+すいません。訂正があります。全てのページにサイドバーをつけ、サイドバーに誰かの投稿風の画面をつける。問題が進むごとに新しい投稿が投稿される。
+8ページ目についてなのですが動画は難しそうなので投稿画面を大きく表示する形にしてください。
