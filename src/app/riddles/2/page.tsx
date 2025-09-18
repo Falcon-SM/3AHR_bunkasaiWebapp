@@ -16,10 +16,10 @@ export default function Home() {
 
     // データ
     const item: PageContent = {
-        quiz_one: "江戸幕府の初代将軍の名前はなんでしょうか？",
-        quiz_two: "室町幕府の将軍を追放した戦国武将は？",
-        quiz_three: "2019年からの新しい元号は？",
-        quiz_four: "東日本大震災の正式名称は？",
+        quiz_one: "こんにちは世界",
+        quiz_two: "Hey Siri, 明日の天気は？",
+        quiz_three: "お腹すいたね",
+        quiz_four: "Je suis étudiant",
     };
 
     const handleCheckAnswer = async () => {
@@ -28,7 +28,7 @@ export default function Home() {
         setIsCorrect(false);
 
         try {
-            const res = await fetch("/api/riddle/1", {
+            const res = await fetch("/api/riddle/2", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ answer: crosswordAnswer }),
@@ -169,7 +169,7 @@ export default function Home() {
             )}
             {isCorrect && (
                 <a
-                    href="/riddles/2"
+                    href="/riddles/3"
                     style={{
                         display: "block",
                         textAlign: "center",
