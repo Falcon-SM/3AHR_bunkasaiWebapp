@@ -34,3 +34,35 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+和田くんからの要望：
+最初のページ　
+開くと導入動画が流れる。
+2枚目のページ
+サイドバーにツイッター風の投稿、真ん中にスクロールする画面。真ん中の画面には小問１から4とクロスワードがあり、1番下にクロスワードの解答欄がある。
+三枚目のページ
+小問1
+4枚目のページ
+小問１に関連する小問2
+5枚目のページ
+小問1.2に関連する小問3
+6枚目のページ
+小問123を組み合わせる形の大門。
+7ページ目
+大問が解けたら来る。
+上の部分に教室内にある金庫のパスワード
+下の部分に次に進むためのパスワードの解答欄。
+8ページ目　
+短い動画。最初の小問のクロスワードの配置が違うことが判明。
+9ページ目
+クロスワード
+10ページ目
+金庫の中にある冊子を破いたら中に何かが書いてあると言うことの説明。
+下に解答欄
+11ページ目
+残り時間画面が大きく表示される。
+その10秒後に止まる。
+12ページ目
+エンディング動画
+13ページ目
+解説のQRコード
