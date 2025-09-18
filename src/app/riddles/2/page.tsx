@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 
 type PageContent = {
-    quiz_one: string;
+    quiz_one: string; /*unko*/
     quiz_two: string;
     quiz_three: string;
     quiz_four: string;
