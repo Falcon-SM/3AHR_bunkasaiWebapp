@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { microcms } from "@/lib/microcms";
 import { useRouter } from "next/navigation";
 
@@ -18,7 +18,9 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [videoEnded, setVideoEnded] = useState(false);
   const router = useRouter();
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const handleOnlineStatus = () => {
@@ -66,6 +68,10 @@ export default function Home() {
     router.push("/riddles/1");
   };
 
+  const handleVideoEnded = () => {
+    setVideoEnded(true);
+  };
+
   if (!isOnline) {
     return (
       <div className="container">
@@ -79,12 +85,36 @@ export default function Home() {
               borderRadius: "12px",
               boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
             }}
+            ref={videoRef}
+            onEnded={handleVideoEnded}
           >
             <source src="/BunkasaiVideo1.mov" type="video/mp4" />
             お使いのブラウザは動画再生に対応していません。
           </video>
         </div>
-        <a href="#" onClick={handleStartClick}>謎解きを始める</a>
+        {videoEnded && (
+          <button
+            onClick={handleStartClick}
+            style={{
+              display: "block",
+              margin: "32px auto 0 auto",
+              padding: "14px 40px",
+              background: "#0984e3",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              fontWeight: 700,
+              fontSize: "1.1rem",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
+              cursor: "pointer",
+              transition: "background 0.2s",
+            }}
+            onMouseOver={e => (e.currentTarget.style.background = "#74b9ff")}
+            onMouseOut={e => (e.currentTarget.style.background = "#0984e3")}
+          >
+            謎解きを始める
+          </button>
+        )}
         {showModal && (
           <div style={{
             position: "fixed",
@@ -106,7 +136,8 @@ export default function Home() {
               <h3 style={{ marginBottom: "16px" }}>注意事項</h3>
               <p style={{ marginBottom: "24px" }}>
                 謎解きの答えは他の人に教えないでください。<br />
-                制限時間やルールを守って楽しく挑戦しましょう！
+                ドメインを手動で変更するのはご遠慮ください。<br />
+                制限時間やルールを守って楽しく謎解きをしましょう！
               </p>
               <button
                 onClick={handleModalOk}
@@ -152,12 +183,36 @@ export default function Home() {
             borderRadius: "12px",
             boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
           }}
+          ref={videoRef}
+          onEnded={handleVideoEnded}
         >
           <source src="/BunkasaiVideo1.mov" type="video/mp4" />
           お使いのブラウザは動画再生に対応していません。
         </video>
       </div>
-      <a href="#" onClick={handleStartClick}>謎解きを始める</a>
+      {videoEnded && (
+        <button
+          onClick={handleStartClick}
+          style={{
+            display: "block",
+            margin: "32px auto 0 auto",
+            padding: "14px 40px",
+            background: "#0984e3",
+            color: "#fff",
+            border: "none",
+            borderRadius: "8px",
+            fontWeight: 700,
+            fontSize: "1.1rem",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
+            cursor: "pointer",
+            transition: "background 0.2s",
+          }}
+          onMouseOver={e => (e.currentTarget.style.background = "#74b9ff")}
+          onMouseOut={e => (e.currentTarget.style.background = "#0984e3")}
+        >
+          謎解きを始める
+        </button>
+      )}
       {showModal && (
         <div style={{
           position: "fixed",
