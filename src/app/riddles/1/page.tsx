@@ -13,6 +13,14 @@ export default function Home() {
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [quizTwoAnswer, setQuizTwoAnswer] = useState("");
+    const [posts, setPosts] = useState([
+        {
+            icon: "/sampleicon.png",
+            name: "Riddlemaster",
+            content: "謎を解いていくと、ここに新しい投稿が表示されます！",
+        },
+    ]);
 
     // データ
     const item: PageContent = {
@@ -46,6 +54,28 @@ export default function Home() {
         }
     };
 
+    // 謎2の答え入力時に新しい投稿を追加
+    const handleQuizTwoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setQuizTwoAnswer(value);
+
+        // すでに投稿済みでなければ追加
+        if (value.trim() !== "" && posts.length === 1) {
+            setPosts([
+                ...posts,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: `今年は令和7年だよ!`,
+                },
+            ]);
+        }
+        // 空欄になったら投稿を消す
+        if (value.trim() === "" && posts.length > 1) {
+            setPosts(posts.slice(0, 1));
+        }
+    };
+
     return (
         <div
             style={{
@@ -68,26 +98,41 @@ export default function Home() {
                     alignItems: "center",
                 }}
             >
-                <img
-                    src="/sampleicon.png"
-                    alt="アカウントアイコン"
-                    style={{
-                        width: 72,
-                        height: 72,
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                        marginBottom: "12px",
-                        border: "2px solid #0984e3",
-                    }}
-                />
-                <div style={{ fontWeight: 700, fontSize: "1.1rem", marginBottom: "8px" }}>
-                    @謎のヒントアカウント
-                </div>
-                <div style={{ color: "#636e72", fontSize: "0.95rem", marginBottom: "18px", textAlign: "center" }}>
-                    ここに謎のヒントや、ちょっとしたコメントを入れることができます。<br />
-                    例：「江戸時代の始まりを思い出してみよう！」<br />
-                    #謎解き #ヒント
-                </div>
+                {posts.map((post, idx) => (
+                    <div
+                        key={idx}
+                        style={{
+                            width: "100%",
+                            marginBottom: "24px",
+                            background: "#fff",
+                            borderRadius: "12px",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                            padding: "16px 12px",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                        }}
+                    >
+                        <img
+                            src={post.icon}
+                            alt="アカウントアイコン"
+                            style={{
+                                width: 48,
+                                height: 48,
+                                borderRadius: "50%",
+                                objectFit: "cover",
+                                marginBottom: "8px",
+                                border: "2px solid #0984e3",
+                            }}
+                        />
+                        <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>
+                            {post.name}
+                        </div>
+                        <div style={{ color: "#636e72", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line" }}>
+                            {post.content}
+                        </div>
+                    </div>
+                ))}
                 <button
                     style={{
                         background: "#0984e3",
@@ -120,34 +165,112 @@ export default function Home() {
                     謎解きチャレンジ
                 </h1>
 
-                {[item.quiz_one, item.quiz_two, item.quiz_three, item.quiz_four].map((quiz, idx) => (
-                    <div key={idx} style={{ marginBottom: 28 }}>
-                        <h2
-                            dangerouslySetInnerHTML={{ __html: quiz }}
-                            style={{
-                                fontSize: "1.2rem",
-                                color: "#34495e",
-                                marginBottom: 12,
-                                background: "#f5f7fa",
-                                padding: "8px 16px",
-                                borderRadius: "8px",
-                            }}
-                        ></h2>
-                        <input
-                            type="text"
-                            className="riddle-input"
-                            placeholder={`謎${idx + 1}の答えを入力`}
-                            style={{
-                                width: "100%",
-                                padding: "10px",
-                                fontSize: "1rem",
-                                borderRadius: "6px",
-                                border: "1px solid #d1d5db",
-                                marginBottom: "4px",
-                            }}
-                        />
-                    </div>
-                ))}
+                <div style={{ marginBottom: 28 }}>
+                    <h2
+                        dangerouslySetInnerHTML={{ __html: item.quiz_one }}
+                        style={{
+                            fontSize: "1.2rem",
+                            color: "#34495e",
+                            marginBottom: 12,
+                            background: "#f5f7fa",
+                            padding: "8px 16px",
+                            borderRadius: "8px",
+                        }}
+                    ></h2>
+                    <input
+                        type="text"
+                        className="riddle-input"
+                        placeholder="謎1の答えを入力"
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            fontSize: "1rem",
+                            borderRadius: "6px",
+                            border: "1px solid #d1d5db",
+                            marginBottom: "4px",
+                        }}
+                    />
+                </div>
+                <div style={{ marginBottom: 28 }}>
+                    <h2
+                        dangerouslySetInnerHTML={{ __html: item.quiz_two }}
+                        style={{
+                            fontSize: "1.2rem",
+                            color: "#34495e",
+                            marginBottom: 12,
+                            background: "#f5f7fa",
+                            padding: "8px 16px",
+                            borderRadius: "8px",
+                        }}
+                    ></h2>
+                    <input
+                        type="text"
+                        className="riddle-input"
+                        value={quizTwoAnswer}
+                        onChange={handleQuizTwoChange}
+                        placeholder="謎2の答えを入力"
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            fontSize: "1rem",
+                            borderRadius: "6px",
+                            border: "1px solid #d1d5db",
+                            marginBottom: "4px",
+                        }}
+                    />
+                </div>
+                <div style={{ marginBottom: 28 }}>
+                    <h2
+                        dangerouslySetInnerHTML={{ __html: item.quiz_three }}
+                        style={{
+                            fontSize: "1.2rem",
+                            color: "#34495e",
+                            marginBottom: 12,
+                            background: "#f5f7fa",
+                            padding: "8px 16px",
+                            borderRadius: "8px",
+                        }}
+                    ></h2>
+                    <input
+                        type="text"
+                        className="riddle-input"
+                        placeholder="謎3の答えを入力"
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            fontSize: "1rem",
+                            borderRadius: "6px",
+                            border: "1px solid #d1d5db",
+                            marginBottom: "4px",
+                        }}
+                    />
+                </div>
+                <div style={{ marginBottom: 28 }}>
+                    <h2
+                        dangerouslySetInnerHTML={{ __html: item.quiz_four }}
+                        style={{
+                            fontSize: "1.2rem",
+                            color: "#34495e",
+                            marginBottom: 12,
+                            background: "#f5f7fa",
+                            padding: "8px 16px",
+                            borderRadius: "8px",
+                        }}
+                    ></h2>
+                    <input
+                        type="text"
+                        className="riddle-input"
+                        placeholder="謎4の答えを入力"
+                        style={{
+                            width: "100%",
+                            padding: "10px",
+                            fontSize: "1rem",
+                            borderRadius: "6px",
+                            border: "1px solid #d1d5db",
+                            marginBottom: "4px",
+                        }}
+                    />
+                </div>
 
                 <div style={{ margin: "40px 0 24px 0" }}>
                     <h2 style={{ color: "#2c3e50", marginBottom: 12 }}>クロスワード</h2>
@@ -201,24 +324,26 @@ export default function Home() {
                             border: "1px solid #d1d5db",
                         }}
                     />
-                    <button
-                        onClick={handleCheckAnswer}
-                        disabled={isLoading}
-                        style={{
-                            padding: "10px 20px",
-                            background: "#0984e3",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "6px",
-                            fontWeight: 600,
-                            cursor: isLoading ? "not-allowed" : "pointer",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                            transition: "background 0.2s",
-                            opacity: isLoading ? 0.6 : 1,
-                        }}
-                    >
-                        {isLoading ? "判定中..." : "回答する"}
-                    </button>
+                    {crosswordAnswer.trim() !== "" && (
+                        <button
+                            onClick={handleCheckAnswer}
+                            disabled={isLoading}
+                            style={{
+                                padding: "10px 20px",
+                                background: "#0984e3",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "6px",
+                                fontWeight: 600,
+                                cursor: isLoading ? "not-allowed" : "pointer",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                transition: "background 0.2s",
+                                opacity: isLoading ? 0.6 : 1,
+                            }}
+                        >
+                            {isLoading ? "判定中..." : "回答する"}
+                        </button>
+                    )}
                 </div>
                 {showError && (
                     <div style={{ color: "#d63031", marginBottom: 12 }}>
