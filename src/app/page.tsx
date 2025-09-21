@@ -171,10 +171,11 @@ export default function Home() {
 
   //const item = data.contents[0];
 //<p>{item.content}
+/*dangerouslySetInnerHTML={{ __html: item.title }}*/
+//kokokesita
   return (
     <div className="container">
-      <h2 /*dangerouslySetInnerHTML={{ __html: item.title }}*/ />
-      //kokokesita
+      <h2/>
       <div style={{ margin: "32px 0" }}>
         <video
           controls

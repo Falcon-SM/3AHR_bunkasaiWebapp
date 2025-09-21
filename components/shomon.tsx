@@ -18,7 +18,7 @@ export default function Ques({cl,bun,n}:props){
         }
     }
     return(
-    <div style={{ marginBottom: 28 }}>
+    <div style={{ marginBottom: 28 }} key={n}>
         <h2
             //dangerouslySetInnerHTML={{ __html:{mondai[n]}}}
             style={{
