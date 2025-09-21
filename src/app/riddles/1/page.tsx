@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Ques from "../../../../components/shomon"
 
 type PageContent = {
     quiz_one: string;
@@ -7,6 +8,8 @@ type PageContent = {
     quiz_three: string;
     quiz_four: string;
 };
+const crossd=[[1,1,1,0,0],[1,1,1,0,0],[1,0,1,0,0],[1,1,1,0,0],[1,1,1,0,1]];
+const mondai=["江戸幕府の初代将軍の名前はなんでしょうか？","室町幕府の将軍を追放した戦国武将は？","2019年からの新しい元号は？","東日本大震災の正式名称は？"]
 
 export default function Home() {
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
@@ -57,7 +60,7 @@ export default function Home() {
     // 謎2の答え入力時に新しい投稿を追加
     const handleQuizTwoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        setQuizTwoAnswer(value);
+        //setQuizTwoAnswer(value);
 
         // すでに投稿済みでなければ追加
         if (value.trim() !== "" && posts.length === 1) {
@@ -75,6 +78,16 @@ export default function Home() {
             setPosts(posts.slice(0, 1));
         }
     };
+    function handlehint(m:number){
+        return(()=>setPosts([
+                ...posts,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: `第${m+1}問のヒント:今年は令和7年だよ!`,
+                },
+            ]))
+    }
 
     return (
         <div
@@ -164,33 +177,7 @@ export default function Home() {
                 <h1 style={{ textAlign: "center", marginBottom: 32, fontWeight: 700, color: "#2c3e50" }}>
                     謎解きチャレンジ
                 </h1>
-
-                <div style={{ marginBottom: 28 }}>
-                    <h2
-                        dangerouslySetInnerHTML={{ __html: item.quiz_one }}
-                        style={{
-                            fontSize: "1.2rem",
-                            color: "#34495e",
-                            marginBottom: 12,
-                            background: "#f5f7fa",
-                            padding: "8px 16px",
-                            borderRadius: "8px",
-                        }}
-                    ></h2>
-                    <input
-                        type="text"
-                        className="riddle-input"
-                        placeholder="謎1の答えを入力"
-                        style={{
-                            width: "100%",
-                            padding: "10px",
-                            fontSize: "1rem",
-                            borderRadius: "6px",
-                            border: "1px solid #d1d5db",
-                            marginBottom: "4px",
-                        }}
-                    />
-                </div>
+                {[...Array(4)].map((_,idx)=>(<Ques cl={handlehint(idx)} bun={mondai[idx]} n={idx}></Ques>))}
                 <div style={{ marginBottom: 28 }}>
                     <h2
                         dangerouslySetInnerHTML={{ __html: item.quiz_two }}
@@ -206,61 +193,9 @@ export default function Home() {
                     <input
                         type="text"
                         className="riddle-input"
-                        value={quizTwoAnswer}
+                        //value={quizTwoAnswer}
                         onChange={handleQuizTwoChange}
                         placeholder="謎2の答えを入力"
-                        style={{
-                            width: "100%",
-                            padding: "10px",
-                            fontSize: "1rem",
-                            borderRadius: "6px",
-                            border: "1px solid #d1d5db",
-                            marginBottom: "4px",
-                        }}
-                    />
-                </div>
-                <div style={{ marginBottom: 28 }}>
-                    <h2
-                        dangerouslySetInnerHTML={{ __html: item.quiz_three }}
-                        style={{
-                            fontSize: "1.2rem",
-                            color: "#34495e",
-                            marginBottom: 12,
-                            background: "#f5f7fa",
-                            padding: "8px 16px",
-                            borderRadius: "8px",
-                        }}
-                    ></h2>
-                    <input
-                        type="text"
-                        className="riddle-input"
-                        placeholder="謎3の答えを入力"
-                        style={{
-                            width: "100%",
-                            padding: "10px",
-                            fontSize: "1rem",
-                            borderRadius: "6px",
-                            border: "1px solid #d1d5db",
-                            marginBottom: "4px",
-                        }}
-                    />
-                </div>
-                <div style={{ marginBottom: 28 }}>
-                    <h2
-                        dangerouslySetInnerHTML={{ __html: item.quiz_four }}
-                        style={{
-                            fontSize: "1.2rem",
-                            color: "#34495e",
-                            marginBottom: 12,
-                            background: "#f5f7fa",
-                            padding: "8px 16px",
-                            borderRadius: "8px",
-                        }}
-                    ></h2>
-                    <input
-                        type="text"
-                        className="riddle-input"
-                        placeholder="謎4の答えを入力"
                         style={{
                             width: "100%",
                             padding: "10px",
@@ -278,31 +213,46 @@ export default function Home() {
                         <tbody>
                             {[...Array(5)].map((_, rowIdx) => (
                                 <tr key={rowIdx}>
-                                    {[...Array(5)].map((_, colIdx) => (
-                                        <td
-                                            key={colIdx}
-                                            style={{
-                                                border: "1px solid #b2bec3",
-                                                width: 40,
-                                                height: 40,
-                                                textAlign: "center",
-                                                background: "#f5f7fa",
-                                            }}
-                                        >
-                                            <input
-                                                type="text"
-                                                maxLength={1}
+                                    {[...Array(5)].map((_, colIdx) => {
+                                        if(crossd[rowIdx][colIdx]===1){
+                                            return(
+                                                <td
+                                                key={colIdx}
                                                 style={{
-                                                    width: "90%",
-                                                    height: "90%",
+                                                    border: "1px solid #b2bec3",
+                                                    width: 40,
+                                                    height: 40,
                                                     textAlign: "center",
-                                                    border: "none",
-                                                    background: "transparent",
-                                                    fontSize: "1.2rem",
+                                                    background: "#f5f7fa",
                                                 }}
-                                            />
-                                        </td>
-                                    ))}
+                                                >
+                                                    <input
+                                                        type="text"
+                                                        maxLength={1}
+                                                        style={{
+                                                            width: "90%",
+                                                            height: "90%",
+                                                            textAlign: "center",
+                                                            border: "none",
+                                                            background: "transparent",
+                                                            fontSize: "1.2rem",
+                                                        }}
+                                                    />
+                                                </td>
+                                            )
+                                        }else{
+                                             <td
+                                                key={colIdx}
+                                                style={{
+                                                    border: "none",
+                                                    width: 40,
+                                                    height: 40,
+                                                    textAlign: "center",
+                                                    background: "#f5f7fa",
+                                                }}
+                                            ></td>
+                                        }
+                                    })}
                                 </tr>
                             ))}
                         </tbody>

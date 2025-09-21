@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { microcms } from "@/lib/microcms";
+//import { microcms } from "@/lib/microcms";
 import { useRouter } from "next/navigation";
 
 type PageContent = {
@@ -9,12 +9,12 @@ type PageContent = {
   content: string;
 };
 
-type MicroCMSResponse = {
+/*type MicroCMSResponse = {
   contents: PageContent[];
-};
+};*/
 
 export default function Home() {
-  const [data, setData] = useState<MicroCMSResponse | null>(null);
+  //const [data, setData] = useState<MicroCMSResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -38,11 +38,11 @@ export default function Home() {
         if (!navigator.onLine) {
           throw new Error("Offline");
         }
-        const response: MicroCMSResponse = await microcms.get<MicroCMSResponse>({
+        /*const response: MicroCMSResponse = await microcms.get<MicroCMSResponse>({
           endpoint: "intro",
           queries: { limit: 1 },
-        });
-        setData(response);
+        });*/
+        //setData(response);
       } catch (error) {
         setIsOnline(false);
       } finally {
@@ -165,16 +165,16 @@ export default function Home() {
     return <p>Loading...</p>;
   }
 
-  if (!data || data.contents.length === 0) {
+  /*if (!data || data.contents.length === 0) {
     return <p>データが見つかりませんでした。</p>;
-  }
+  }*/
 
-  const item = data.contents[0];
-
+  //const item = data.contents[0];
+//<p>{item.content}
   return (
     <div className="container">
-      <h2 dangerouslySetInnerHTML={{ __html: item.title }} />
-      <p>{item.content}</p>
+      <h2 /*dangerouslySetInnerHTML={{ __html: item.title }}*/ />
+      //kokokesita
       <div style={{ margin: "32px 0" }}>
         <video
           controls
