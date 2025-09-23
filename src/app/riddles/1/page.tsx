@@ -8,8 +8,20 @@ type PageContent = {
     quiz_three: string;
     quiz_four: string;
 };
-const crossd=[[1,1,1,0,0],[1,1,1,0,0],[1,0,1,0,0],[1,1,1,0,0],[1,1,1,0,1]];
-const mondai=["江戸幕府の初代将軍の名前はなんでしょうか？","室町幕府の将軍を追放した戦国武将は？","2019年からの新しい元号は？","東日本大震災の正式名称は？"]
+const crossd = [
+    [1, 1, 1, 0, 0],
+    [1, 1, 1, 1, 1],
+    [1, 0, 1, 0, 0],
+    [1, 1, 1, 0, 0],
+    [1, 1, 1, 0, 1]
+
+];
+const mondai = [
+    "江戸幕府の初代将軍の名前はなんでしょうか？",
+    "室町幕府の将軍を追放した戦国武将は？",
+    "2019年からの新しい元号は？",
+    "東日本大震災の正式名称は？"
+]
 
 export default function Home() {
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
@@ -25,13 +37,11 @@ export default function Home() {
         },
     ]);
 
-    // データ
-    const item: PageContent = {
-        quiz_one: "江戸幕府の初代将軍の名前はなんでしょうか？",
-        quiz_two: "室町幕府の将軍を追放した戦国武将は？",
-        quiz_three: "2019年からの新しい元号は？",
-        quiz_four: "東日本大震災の正式名称は？",
-    };
+    const [oneIsAnswered, setOneIsAnswered] = useState(0);
+    const [twoIsAnswered, setTwoIsAnswered] = useState(0);
+    const [threeIsAnswered, setThreeIsAnswered] = useState(0);
+    const [fourIsAnswered, setFourIsAnswered] = useState(0);
+
 
     const handleCheckAnswer = async () => {
         setIsLoading(true);
@@ -73,20 +83,62 @@ export default function Home() {
                 },
             ]);
         }
+
+        if (oneIsAnswered == 1) {
+            setPosts(prevPosts => [
+                ...prevPosts,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: "徳川家の人だよ。下の名前は、なんだっけ。",
+                },
+            ]);
+        }
+        if (twoIsAnswered == 1) {
+            setPosts(prevPosts => [
+                ...prevPosts,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: "天下統一を目指したといわれている人だよ。ゲームにもよく出てくるよね。",
+                },
+            ]);
+        }
+        if (threeIsAnswered == 1) {
+            setPosts(prevPosts => [
+                ...prevPosts,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: "今年は令和7年だよ!",
+                },
+            ]);
+        }
+        if (fourIsAnswered == 1) {
+            setPosts(prevPosts => [
+                ...prevPosts,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: "東北地方の、太平洋沖が震源だよね。",
+                },
+            ]);
+        }
+
         // 空欄になったら投稿を消す
         if (value.trim() === "" && posts.length > 1) {
             setPosts(posts.slice(0, 1));
         }
     };
-    function handlehint(m:number){
-        return(()=>setPosts([
-                ...posts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: `第${m+1}問のヒント:今年は令和7年だよ!`,
-                },
-            ]))
+    function handlehint(m: number) {
+        return (() => setPosts([
+            ...posts,
+            {
+                icon: "/sampleicon.png",
+                name: "Riddlemaster",
+                content: `第${m + 1}問のヒント:今年は令和7年だよ!`,
+            },
+        ]))
     }
 
     return (
@@ -113,7 +165,7 @@ export default function Home() {
             >
                 {posts.map((post, idx) => (
                     <div
-                        key={idx}
+                        key={`post-${idx}`} // ← keyをユニークに
                         style={{
                             width: "100%",
                             marginBottom: "24px",
@@ -159,7 +211,7 @@ export default function Home() {
                         boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                     }}
                 >
-                    投稿する
+                    過去の投稿を見る
                 </button>
             </div>
 
@@ -177,35 +229,10 @@ export default function Home() {
                 <h1 style={{ textAlign: "center", marginBottom: 32, fontWeight: 700, color: "#2c3e50" }}>
                     謎解きチャレンジ
                 </h1>
-                {[...Array(4)].map((_,idx)=>(<Ques cl={handlehint(idx)} bun={mondai[idx]} n={idx}></Ques>))}
-                <div style={{ marginBottom: 28 }}>
-                    <h2
-                        dangerouslySetInnerHTML={{ __html: item.quiz_two }}
-                        style={{
-                            fontSize: "1.2rem",
-                            color: "#34495e",
-                            marginBottom: 12,
-                            background: "#f5f7fa",
-                            padding: "8px 16px",
-                            borderRadius: "8px",
-                        }}
-                    ></h2>
-                    <input
-                        type="text"
-                        className="riddle-input"
-                        //value={quizTwoAnswer}
-                        onChange={handleQuizTwoChange}
-                        placeholder="謎2の答えを入力"
-                        style={{
-                            width: "100%",
-                            padding: "10px",
-                            fontSize: "1rem",
-                            borderRadius: "6px",
-                            border: "1px solid #d1d5db",
-                            marginBottom: "4px",
-                        }}
-                    />
-                </div>
+                {[...Array(4)].map((_, idx) => (
+                    <Ques key={idx} cl={handlehint(idx)} bun={mondai[idx]} n={idx} />
+                ))}
+
 
                 <div style={{ margin: "40px 0 24px 0" }}>
                     <h2 style={{ color: "#2c3e50", marginBottom: 12 }}>クロスワード</h2>
@@ -214,17 +241,17 @@ export default function Home() {
                             {[...Array(5)].map((_, rowIdx) => (
                                 <tr key={rowIdx}>
                                     {[...Array(5)].map((_, colIdx) => {
-                                        if(crossd[rowIdx][colIdx]===1){
-                                            return(
+                                        if (crossd[rowIdx][colIdx] === 1) {
+                                            return (
                                                 <td
-                                                key={colIdx}
-                                                style={{
-                                                    border: "1px solid #b2bec3",
-                                                    width: 40,
-                                                    height: 40,
-                                                    textAlign: "center",
-                                                    background: "#f5f7fa",
-                                                }}
+                                                    key={colIdx}
+                                                    style={{
+                                                        border: "1px solid #b2bec3",
+                                                        width: 40,
+                                                        height: 40,
+                                                        textAlign: "center",
+                                                        background: "#f5f7fa",
+                                                    }}
                                                 >
                                                     <input
                                                         type="text"
@@ -240,8 +267,8 @@ export default function Home() {
                                                     />
                                                 </td>
                                             )
-                                        }else{
-                                             <td
+                                        } else {
+                                            <td
                                                 key={colIdx}
                                                 style={{
                                                     border: "none",

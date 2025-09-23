@@ -8,10 +8,9 @@ type props={
 };
 
 export default function Ques({cl,bun,n}:props){
-    const [isgive,setisgive]=useState(0)
     const hintcheck=()=>{
         if(isgive===0){
-            if(window.confirm("ヒント出しますよ？")){
+            if(window.confirm("ヒントを出しても大丈夫ですか？")){
                 setisgive(1);
                 cl();
             }
@@ -30,6 +29,7 @@ export default function Ques({cl,bun,n}:props){
                 borderRadius: "8px",
             }}
         >{bun}</h2>
+        
         <input
             type="text"
             className="riddle-input"
@@ -42,8 +42,24 @@ export default function Ques({cl,bun,n}:props){
                 border: "1px solid #d1d5db",
                 marginBottom: "4px",
             }}
+            onChange={(e) => {
+                if (n === 0 && e.target.value.length > 0) {
+                    
+                    oneIsAnswered(true);  // ← 謎1に文字が入ったら true
+                }
+                if (n === 1 && e.target.value.length > 0) {
+                    setTwoIsAnswered(true);  // ← 謎1に文字が入ったら true
+                }
+                if (n === 2 && e.target.value.length > 0) {
+                    setThreeIsAnswered(true);  // ← 謎1に文字が入ったら true
+                }  
+                if (n === 3 && e.target.value.length > 0) {
+                    setFourIsAnswered(true);  // ← 謎1に文字が入ったら true
+                }   
+            }}
         />
-        <button
+        
+        {/*<button
             onClick={hintcheck}
             style={{
                 padding: "10px 20px",
@@ -54,6 +70,6 @@ export default function Ques({cl,bun,n}:props){
                 fontWeight: 600,
                 boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                 transition: "background 0.2s",
-            }}>ヒントを投稿</button>
+            }}>ヒントを投稿</button>*/}
     </div>)
 };
