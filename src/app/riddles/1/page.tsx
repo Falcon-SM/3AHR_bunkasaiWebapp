@@ -9,6 +9,16 @@ type PageContent = {
     quiz_three: string;
     quiz_four: string;
 };
+
+type HintPost = {
+    icon: string;
+    name: string;
+    content: string; // 表示用のテキスト（暗号化された画面: ... も含む）
+    // 以下は暗号化投稿専用のメタ情報
+    riddleNumber?: number; // 1..4 のどの謎の投稿か
+    base64?: string; // 暗号化文字列
+    isDecrypted?: boolean; // 復号済みか
+};
 const crossd = [
     [1, 1, 1, 0, 0],
     [1, 1, 1, 1, 1],
@@ -31,19 +41,35 @@ export default function Home() {
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [quizTwoAnswer, setQuizTwoAnswer] = useState("");
-    const [posts, setPosts] = useState([
+    const [posts, setPosts] = useState<HintPost[]>([
         {
             icon: "/sampleicon.png",
             name: "Riddlemaster",
             content: "謎を解いていくと、ここに新しい投稿が表示されます！",
         },
     ]);
-    const [decodeComment, setDecodeComment] = useState("");
-    const [hasDecrypted, setHasDecrypted] = useState(false);
+    const [decodeInputs, setDecodeInputs] = useState<Record<number, string>>({}); // key: post index
 
     // Base64暗号テキスト（第1問用）
     const base64Hint = useMemo(() => {
         const hint = "第1問のヒント: 徳川家の初代将軍だよ。下の名前を思い出して。";
+        if (typeof window === "undefined") return "";
+        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
+    }, []);
+
+    // Base64暗号テキスト（第2〜4問用）
+    const base64Hint2 = useMemo(() => {
+        const hint = "第2問のヒント: 室町幕府の将軍を都から追放した戦国武将。";
+        if (typeof window === "undefined") return "";
+        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
+    }, []);
+    const base64Hint3 = useMemo(() => {
+        const hint = "第3問のヒント: 2019年から始まった新しい元号。";
+        if (typeof window === "undefined") return "";
+        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
+    }, []);
+    const base64Hint4 = useMemo(() => {
+        const hint = "第4問のヒント: 東北地方の太平洋沖が震源の大規模地震の正式名称。";
         if (typeof window === "undefined") return "";
         try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
     }, []);
@@ -136,56 +162,130 @@ export default function Home() {
             setPosts(posts.slice(0, 1));
         }
     };
-    
+
     // 謎1に文字が入ったら、暗号化された投稿を一度だけ表示
     useEffect(() => {
-        if (oneIsAnswered && posts.length === 1 && base64Hint) {
+        const alreadyPosted = posts.some(p => p.base64 === base64Hint && p.riddleNumber === 1);
+        if (oneIsAnswered && !alreadyPosted && base64Hint) {
             setPosts((prev) => ([
                 ...prev,
                 {
                     icon: "/sampleicon.png",
                     name: "Riddlemaster",
-                    content: `暗号化された画面: ${base64Hint}`,
+                    content: `第1問に関する暗号化された投稿： ${base64Hint}`,
+                    riddleNumber: 1,
+                    base64: base64Hint,
+                    isDecrypted: false,
                 },
             ]));
+        } else if (!oneIsAnswered) {
+            // 謎1の解答欄が空になったら、対応する投稿を削除
+            const alreadyPosted = posts.some(p => p.riddleNumber === 1);
+            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 1));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [oneIsAnswered, base64Hint]);
 
-    const handleDecodeSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const cmd = decodeComment.trim();
-        if (!cmd) return;
-        if (cmd === "復号する" && !hasDecrypted) {
-            try {
-                const decoded = decodeURIComponent(escape(window.atob(base64Hint)));
-                setPosts((prev) => {
-                    const next = [...prev];
-                    if (next[1]) {
-                        next[1] = { ...next[1], content: decoded };
-                    }
-                    return next;
-                });
-                setHasDecrypted(true);
-                incrementDecryptCount(1);
-                try {
-                    const stored = JSON.parse(localStorage.getItem("decryptCounts") || "{}");
-                    stored[1] = (stored[1] || 0) + 1;
-                    localStorage.setItem("decryptCounts", JSON.stringify(stored));
-                } catch {}
-            } catch {}
-        } else {
+    // 謎2に文字が入ったら暗号化投稿を一度だけ表示
+    useEffect(() => {
+        const alreadyPosted = posts.some(p => p.base64 === base64Hint2 && p.riddleNumber === 2);
+        if (twoIsAnswered && !alreadyPosted && base64Hint2) {
             setPosts((prev) => ([
                 ...prev,
                 {
                     icon: "/sampleicon.png",
                     name: "Riddlemaster",
-                    content: "コマンドが違うみたい。「復号する」と入力して送信してね。",
+                    content: `第2問に関する暗号化された投稿： ${base64Hint2}`,
+                    riddleNumber: 2,
+                    base64: base64Hint2,
+                    isDecrypted: false,
                 },
             ]));
+        } else if (!twoIsAnswered) {
+            // 謎2の解答欄が空になったら、対応する投稿を削除
+            const alreadyPosted = posts.some(p => p.riddleNumber === 2);
+            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 2));
         }
-        setDecodeComment("");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [twoIsAnswered, base64Hint2]);
+
+    // 謎3に文字が入ったら暗号化投稿を一度だけ表示
+    useEffect(() => {
+        const alreadyPosted = posts.some(p => p.base64 === base64Hint3 && p.riddleNumber === 3);
+        if (threeIsAnswered && !alreadyPosted && base64Hint3) {
+            setPosts((prev) => ([
+                ...prev,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: `第3問に関する暗号化された投稿： ${base64Hint3}`,
+                    riddleNumber: 3,
+                    base64: base64Hint3,
+                    isDecrypted: false,
+                },
+            ]));
+        } else if (!threeIsAnswered) {
+            // 謎3の解答欄が空になったら、対応する投稿を削除
+            const alreadyPosted = posts.some(p => p.riddleNumber === 3);
+            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 3));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [threeIsAnswered, base64Hint3]);
+
+    // 謎4に文字が入ったら暗号化投稿を一度だけ表示
+    useEffect(() => {
+        const alreadyPosted = posts.some(p => p.base64 === base64Hint4 && p.riddleNumber === 4);
+        if (fourIsAnswered && !alreadyPosted && base64Hint4) {
+            setPosts((prev) => ([
+                ...prev,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: `第4問に関する暗号化された投稿： ${base64Hint4}`,
+                    riddleNumber: 4,
+                    base64: base64Hint4,
+                    isDecrypted: false,
+                },
+            ]));
+        } else if (!fourIsAnswered) {
+            // 謎4の解答欄が空になったら、対応する投稿を削除
+            const alreadyPosted = posts.some(p => p.riddleNumber === 4);
+            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 4));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fourIsAnswered, base64Hint4]);
+
+    const handlePerPostDecodeSubmit = (postIndex: number) => (e: React.FormEvent) => {
+        e.preventDefault();
+        const input = (decodeInputs[postIndex] || "").trim();
+        const post = posts[postIndex];
+        if (!post || !post.base64 || post.isDecrypted) return;
+        if (input === "復号する") {
+            try {
+                const decoded = decodeURIComponent(escape(window.atob(post.base64)));
+                setPosts((prev) => {
+                    const next = [...prev];
+                    const target = next[postIndex];
+                    if (target) {
+                        target.content = decoded;
+                        target.isDecrypted = true;
+                    }
+                    return next;
+                });
+                if (post.riddleNumber) {
+                    incrementDecryptCount(post.riddleNumber);
+                    try {
+                        const stored = JSON.parse(localStorage.getItem("decryptCounts") || "{}");
+                        stored[post.riddleNumber] = (stored[post.riddleNumber] || 0) + 1;
+                        localStorage.setItem("decryptCounts", JSON.stringify(stored));
+                    } catch { }
+                }
+            } catch { }
+        }
+        setDecodeInputs((prev) => ({ ...prev, [postIndex]: "" }));
     };
+
+    // 旧・単一フォームの復号ハンドラは不要になったため削除
     function handlehint(m: number) {
         return (() => setPosts([
             ...posts,
@@ -249,47 +349,43 @@ export default function Home() {
                         <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>
                             {post.name}
                         </div>
-                        <div style={{ color: "#4b5563", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6 }}>
+                        <div style={{ color: "#4b5563", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6, wordBreak: "break-all", overflowWrap: "anywhere" }}>
                             {post.content}
                         </div>
+                        {post.base64 && !post.isDecrypted && (
+                            <form onSubmit={handlePerPostDecodeSubmit(idx)} style={{ width: "100%", display: "flex", gap: 8, marginTop: 8 }}>
+                                <input
+                                    type="text"
+                                    value={decodeInputs[idx] || ""}
+                                    onChange={(e) => setDecodeInputs((prev) => ({ ...prev, [idx]: e.target.value }))}
+                                    placeholder="コメントで「復号する」 と送信"
+                                    style={{
+                                        flex: 1,
+                                        padding: "10px",
+                                        fontSize: "0.95rem",
+                                        borderRadius: "6px",
+                                        border: "1px solid #d1d5db",
+                                        background: "#fff",
+                                    }}
+                                />
+                                <button
+                                    type="submit"
+                                    style={{
+                                        background: "#2563eb",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "6px",
+                                        padding: "8px 14px",
+                                        fontWeight: 600,
+                                        cursor: "pointer",
+                                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                    }}
+                                >送信</button>
+                            </form>
+                        )}
                     </div>
                 ))}
-                {oneIsAnswered && (
-                    <form onSubmit={handleDecodeSubmit} style={{ width: "100%", display: "flex", gap: 8 }}>
-                        <input
-                            type="text"
-                            value={decodeComment}
-                            onChange={(e) => setDecodeComment(e.target.value)}
-                            placeholder="コメントで「復号する」 と送信"
-                            style={{
-                                flex: 1,
-                                padding: "10px",
-                                fontSize: "0.95rem",
-                                borderRadius: "6px",
-                                border: "1px solid #d1d5db",
-                                background: "#fff",
-                            }}
-                        />
-                        <button
-                            type="submit"
-                            style={{
-                                background: "#2563eb",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "6px",
-                                padding: "8px 14px",
-                                fontWeight: 600,
-                                cursor: "pointer",
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                            }}
-                        >送信</button>
-                    </form>
-                )}
-                {hasDecrypted && (
-                    <div style={{ marginTop: 10, color: "#6b7280", fontSize: "0.85rem" }}>
-                        復号回数（第1問）: {decryptCounts[1] ?? 1}
-                    </div>
-                )}
+                {/* 復号回数表示は必要であれば各投稿の下に追加可能 */}
                 <button
                     style={{
                         background: "#0ea5e9",
@@ -358,18 +454,20 @@ export default function Home() {
                                                         }}
                                                     />
                                                 </td>
-                                            )
+                                            );
                                         } else {
-                                            <td
-                                                key={colIdx}
-                                                style={{
-                                                    border: "none",
-                                                    width: 40,
-                                                    height: 40,
-                                                    textAlign: "center",
-                                                    background: "#fff",
-                                                }}
-                                            ></td>
+                                            return (
+                                                <td
+                                                    key={colIdx}
+                                                    style={{
+                                                        border: "none",
+                                                        width: 40,
+                                                        height: 40,
+                                                        textAlign: "center",
+                                                        background: "#fff",
+                                                    }}
+                                                ></td>
+                                            );
                                         }
                                     })}
                                 </tr>
