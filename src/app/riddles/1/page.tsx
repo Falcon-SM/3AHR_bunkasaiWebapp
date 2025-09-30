@@ -48,6 +48,7 @@ export default function Home() {
             content: "謎を解いていくと、ここに新しい投稿が表示されます！",
         },
     ]);
+    const [nokori,setnokori]=useState(1200);
     const [decodeInputs, setDecodeInputs] = useState<Record<number, string>>({}); // key: post index
 
     // Base64暗号テキスト（第1問用）
@@ -273,7 +274,7 @@ export default function Home() {
                     return next;
                 });
                 if (post.riddleNumber) {
-                    incrementDecryptCount(post.riddleNumber);
+                    incrementDecryptCount(1);
                     try {
                         const stored = JSON.parse(localStorage.getItem("decryptCounts") || "{}");
                         stored[post.riddleNumber] = (stored[post.riddleNumber] || 0) + 1;
@@ -284,6 +285,12 @@ export default function Home() {
         }
         setDecodeInputs((prev) => ({ ...prev, [postIndex]: "" }));
     };
+    useEffect(() => {
+    const timerId = setInterval(() => {
+      setnokori((prev)=>(prev-1))}
+    , 1000)
+    return () => clearInterval(timerId)
+  }, [nokori]) 
 
     // 旧・単一フォームの復号ハンドラは不要になったため削除
     function handlehint(m: number) {
@@ -301,7 +308,7 @@ export default function Home() {
         <div
             style={{
                 display: "flex",
-                maxWidth: 900,
+                maxWidth: 1100,
                 margin: "40px auto",
                 gap: "32px",
             }}
@@ -408,10 +415,6 @@ export default function Home() {
                 className="container"
                 style={{
                     flex: 1,
-                    background: "#fff",
-                    borderRadius: "16px",
-                    boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
-                    padding: "32px",
                 }}
             >
                 <h1 style={{ textAlign: "center", marginBottom: 24, fontWeight: 800, color: "#1f2937", letterSpacing: 0.3 }}>
@@ -540,6 +543,15 @@ export default function Home() {
                     </a>
                 )}
             </div>
+            <div style={{padding:"0px"}}><p style={{
+                background:"#fff",
+                borderRadius: "8px",
+                border:"10px solid #0ea5e9",
+                fontSize:"50px",
+                padding:"5px",
+                margin:"0px auto"
+
+            }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p></div>
         </div>
     );
 }

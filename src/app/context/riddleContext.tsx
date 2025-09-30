@@ -23,13 +23,13 @@ export const RiddlesProvider = ({ children }: { children: React.ReactNode }) => 
   const [threeIsAnswered, setThreeIsAnswered] = useState(false);
   const [fourIsAnswered, setFourIsAnswered] = useState(false);
 
-  const [decryptCounts, setDecryptCounts] = useState<Record<number, number>>({});
+  const [decryptCounts, setDecryptCounts] = useState<Record<number, number>>({1:0,2:0,3:0,4:0});
 
   const incrementDecryptCount = (riddleNumber: number) => {
-    setDecryptCounts((prev) => ({
-      ...prev,
-      [riddleNumber]: (prev[riddleNumber] ?? 0) + 1,
-    }));
+    setDecryptCounts((prev) => {
+      prev[riddleNumber]+=1;
+      return prev;
+    });
   };
 
   return (

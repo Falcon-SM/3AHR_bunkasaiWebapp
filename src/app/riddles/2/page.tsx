@@ -30,7 +30,7 @@ export default function Home() {
         const hint = "第2問のヒント: 戦国武将の中で、将軍を都から追放した人物。";
         if (typeof window === "undefined") return "";
         try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
-    }, []);
+    }, [typeof window]); //必要では？
 
     // データ
     const item: PageContent = {
@@ -96,9 +96,9 @@ export default function Home() {
                 setHasDecrypted(true);
                 incrementDecryptCount(2);
                 try {
-                    const stored = JSON.parse(localStorage.getItem("decryptCounts") || "{}");
+                    /*const stored = JSON.parse(localStorage.getItem("decryptCounts") || "{}");
                     stored[2] = (stored[2] || 0) + 1;
-                    localStorage.setItem("decryptCounts", JSON.stringify(stored));
+                    localStorage.setItem("decryptCounts", JSON.stringify(stored));*/
                 } catch { }
             } catch { }
         } else {
@@ -116,7 +116,6 @@ export default function Home() {
 
     return (
         <div
-            className="container"
             style={{
                 maxWidth: 900,
                 margin: "40px auto",
@@ -157,137 +156,148 @@ export default function Home() {
                     </div>
                 )}
             </div>
-            <h1 style={{ textAlign: "center", marginBottom: 32, fontWeight: 700, color: "#2c3e50" }}>
-                謎解きチャレンジ
-            </h1>
+             <div
+                className="container"
+                style={{
+                    flex: 1,
+                    background: "#fff",
+                    borderRadius: "16px",
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+                    padding: "32px",
+                }}
+            >
+                <h1 style={{ textAlign: "center", marginBottom: 32, fontWeight: 700, color: "#2c3e50" }}>
+                    謎解きチャレンジ
+                </h1>
 
-            {[item.quiz_one, item.quiz_two, item.quiz_three, item.quiz_four].map((quiz, idx) => (
-                <div key={idx} style={{ marginBottom: 28 }}>
-                    <h2
-                        dangerouslySetInnerHTML={{ __html: quiz }}
-                        style={{
-                            fontSize: "1.2rem",
-                            color: "#34495e",
-                            marginBottom: 12,
-                            background: "#f5f7fa",
-                            padding: "8px 16px",
-                            borderRadius: "8px",
-                        }}
-                    ></h2>
+                {[item.quiz_one, item.quiz_two, item.quiz_three, item.quiz_four].map((quiz, idx) => (
+                    <div key={idx} style={{ marginBottom: 28 }}>
+                        <h2
+                            dangerouslySetInnerHTML={{ __html: quiz }}
+                            style={{
+                                fontSize: "1.2rem",
+                                color: "#34495e",
+                                marginBottom: 12,
+                                background: "#f5f7fa",
+                                padding: "8px 16px",
+                                borderRadius: "8px",
+                            }}
+                        ></h2>
+                        <input
+                            type="text"
+                            className="riddle-input"
+                            placeholder={`謎${idx + 1}の答えを入力`}
+                            style={{
+                                width: "100%",
+                                padding: "10px",
+                                fontSize: "1rem",
+                                borderRadius: "6px",
+                                border: "1px solid #d1d5db",
+                                marginBottom: "4px",
+                            }}
+                        />
+                    </div>
+                ))}
+
+                <div style={{ margin: "40px 0 24px 0" }}>
+                    <h2 style={{ color: "#2c3e50", marginBottom: 12 }}>クロスワード</h2>
+                    <table style={{ borderCollapse: "collapse", margin: "0 auto" }}>
+                        <tbody>
+                            {[...Array(5)].map((_, rowIdx) => (
+                                <tr key={rowIdx}>
+                                    {[...Array(5)].map((_, colIdx) => (
+                                        <td
+                                            key={colIdx}
+                                            style={{
+                                                border: "1px solid #b2bec3",
+                                                width: 40,
+                                                height: 40,
+                                                textAlign: "center",
+                                                background: "#f5f7fa",
+                                            }}
+                                        >
+                                            <input
+                                                type="text"
+                                                maxLength={1}
+                                                style={{
+                                                    width: "90%",
+                                                    height: "90%",
+                                                    textAlign: "center",
+                                                    border: "none",
+                                                    background: "transparent",
+                                                    fontSize: "1.2rem",
+                                                }}
+                                            />
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* クロスワード回答欄＋ボタン */}
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                     <input
                         type="text"
-                        className="riddle-input"
-                        placeholder={`謎${idx + 1}の答えを入力`}
+                        value={crosswordAnswer}
+                        onChange={e => setCrosswordAnswer(e.target.value)}
+                        placeholder="クロスワードの答えを入力"
                         style={{
-                            width: "100%",
+                            flex: 1,
                             padding: "10px",
                             fontSize: "1rem",
                             borderRadius: "6px",
                             border: "1px solid #d1d5db",
-                            marginBottom: "4px",
                         }}
                     />
+                    <button
+                        onClick={handleCheckAnswer}
+                        disabled={isLoading}
+                        style={{
+                            padding: "10px 20px",
+                            background: "#0984e3",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "6px",
+                            fontWeight: 600,
+                            cursor: isLoading ? "not-allowed" : "pointer",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                            transition: "background 0.2s",
+                            opacity: isLoading ? 0.6 : 1,
+                        }}
+                    >
+                        {isLoading ? "判定中..." : "回答する"}
+                    </button>
                 </div>
-            ))}
-
-            <div style={{ margin: "40px 0 24px 0" }}>
-                <h2 style={{ color: "#2c3e50", marginBottom: 12 }}>クロスワード</h2>
-                <table style={{ borderCollapse: "collapse", margin: "0 auto" }}>
-                    <tbody>
-                        {[...Array(5)].map((_, rowIdx) => (
-                            <tr key={rowIdx}>
-                                {[...Array(5)].map((_, colIdx) => (
-                                    <td
-                                        key={colIdx}
-                                        style={{
-                                            border: "1px solid #b2bec3",
-                                            width: 40,
-                                            height: 40,
-                                            textAlign: "center",
-                                            background: "#f5f7fa",
-                                        }}
-                                    >
-                                        <input
-                                            type="text"
-                                            maxLength={1}
-                                            style={{
-                                                width: "90%",
-                                                height: "90%",
-                                                textAlign: "center",
-                                                border: "none",
-                                                background: "transparent",
-                                                fontSize: "1.2rem",
-                                            }}
-                                        />
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                {showError && (
+                    <div style={{ color: "#d63031", marginBottom: 12 }}>
+                        答えが違います。もう一度挑戦してください。
+                    </div>
+                )}
+                {isCorrect && (
+                    <a
+                        href="/riddles/3"
+                        style={{
+                            display: "block",
+                            textAlign: "center",
+                            marginTop: "24px",
+                            padding: "12px 0",
+                            background: "#00b894",
+                            color: "#fff",
+                            borderRadius: "8px",
+                            fontWeight: 600,
+                            textDecoration: "none",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                            transition: "background 0.2s",
+                        }}
+                        onMouseOver={e => (e.currentTarget.style.background = "#55efc4")}
+                        onMouseOut={e => (e.currentTarget.style.background = "#00b894")}
+                    >
+                        次の謎へ進む
+                    </a>
+                )}
             </div>
-
-            {/* クロスワード回答欄＋ボタン */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                <input
-                    type="text"
-                    value={crosswordAnswer}
-                    onChange={e => setCrosswordAnswer(e.target.value)}
-                    placeholder="クロスワードの答えを入力"
-                    style={{
-                        flex: 1,
-                        padding: "10px",
-                        fontSize: "1rem",
-                        borderRadius: "6px",
-                        border: "1px solid #d1d5db",
-                    }}
-                />
-                <button
-                    onClick={handleCheckAnswer}
-                    disabled={isLoading}
-                    style={{
-                        padding: "10px 20px",
-                        background: "#0984e3",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "6px",
-                        fontWeight: 600,
-                        cursor: isLoading ? "not-allowed" : "pointer",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                        transition: "background 0.2s",
-                        opacity: isLoading ? 0.6 : 1,
-                    }}
-                >
-                    {isLoading ? "判定中..." : "回答する"}
-                </button>
-            </div>
-            {showError && (
-                <div style={{ color: "#d63031", marginBottom: 12 }}>
-                    答えが違います。もう一度挑戦してください。
-                </div>
-            )}
-            {isCorrect && (
-                <a
-                    href="/riddles/3"
-                    style={{
-                        display: "block",
-                        textAlign: "center",
-                        marginTop: "24px",
-                        padding: "12px 0",
-                        background: "#00b894",
-                        color: "#fff",
-                        borderRadius: "8px",
-                        fontWeight: 600,
-                        textDecoration: "none",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                        transition: "background 0.2s",
-                    }}
-                    onMouseOver={e => (e.currentTarget.style.background = "#55efc4")}
-                    onMouseOut={e => (e.currentTarget.style.background = "#00b894")}
-                >
-                    次の謎へ進む
-                </a>
-            )}
         </div>
     );
 }

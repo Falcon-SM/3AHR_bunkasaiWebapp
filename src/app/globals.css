@@ -13,7 +13,7 @@ h2 {
 
 .container {
   max-width: 640px;
-  margin: 48px auto;
+  margin: 0px auto;
   padding: 40px;
   background: linear-gradient(135deg, #fdfdfd, #f7f7f7);
   border-radius: 12px;
