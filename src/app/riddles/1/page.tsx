@@ -1,6 +1,7 @@
 "use client";
-import React, { useState } from "react";
-import Ques from "../../../../components/shomon"
+import React, { useEffect, useMemo, useState } from "react";
+import Ques from "../../../../components/shomon";
+import { useRiddles } from "@/app/context/riddleContext";
 
 type PageContent = {
     quiz_one: string;
@@ -8,30 +9,71 @@ type PageContent = {
     quiz_three: string;
     quiz_four: string;
 };
-const crossd=[[1,1,1,0,0],[1,1,1,0,0],[1,0,1,0,0],[1,1,1,0,0],[1,1,1,0,1]];
-const mondai=["江戸幕府の初代将軍の名前はなんでしょうか？","室町幕府の将軍を追放した戦国武将は？","2019年からの新しい元号は？","東日本大震災の正式名称は？"]
+
+type HintPost = {
+    icon: string;
+    name: string;
+    content: string; // 表示用のテキスト（暗号化された画面: ... も含む）
+    // 以下は暗号化投稿専用のメタ情報
+    riddleNumber?: number; // 1..4 のどの謎の投稿か
+    base64?: string; // 暗号化文字列
+    isDecrypted?: boolean; // 復号済みか
+};
+const crossd = [
+    [1, 1, 1, 0, 0],
+    [1, 1, 1, 1, 1],
+    [1, 0, 1, 0, 0],
+    [1, 1, 1, 0, 0],
+    [1, 1, 1, 0, 1]
+
+];
+const mondai = [
+    "江戸幕府の初代将軍の名前はなんでしょうか？",
+    "室町幕府の将軍を追放した戦国武将は？",
+    "2019年からの新しい元号は？",
+    "東日本大震災の正式名称は？"
+]
 
 export default function Home() {
+    const { oneIsAnswered, twoIsAnswered, threeIsAnswered, fourIsAnswered, incrementDecryptCount, decryptCounts } = useRiddles();
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [quizTwoAnswer, setQuizTwoAnswer] = useState("");
-    const [posts, setPosts] = useState([
+    const [posts, setPosts] = useState<HintPost[]>([
         {
             icon: "/sampleicon.png",
             name: "Riddlemaster",
             content: "謎を解いていくと、ここに新しい投稿が表示されます！",
         },
     ]);
+    const [decodeInputs, setDecodeInputs] = useState<Record<number, string>>({}); // key: post index
 
-    // データ
-    const item: PageContent = {
-        quiz_one: "江戸幕府の初代将軍の名前はなんでしょうか？",
-        quiz_two: "室町幕府の将軍を追放した戦国武将は？",
-        quiz_three: "2019年からの新しい元号は？",
-        quiz_four: "東日本大震災の正式名称は？",
-    };
+    // Base64暗号テキスト（第1問用）
+    const base64Hint = useMemo(() => {
+        const hint = "第1問のヒント: 徳川家の初代将軍だよ。下の名前を思い出して。";
+        if (typeof window === "undefined") return "";
+        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
+    }, []);
+
+    // Base64暗号テキスト（第2〜4問用）
+    const base64Hint2 = useMemo(() => {
+        const hint = "第2問のヒント: 室町幕府の将軍を都から追放した戦国武将。";
+        if (typeof window === "undefined") return "";
+        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
+    }, []);
+    const base64Hint3 = useMemo(() => {
+        const hint = "第3問のヒント: 2019年から始まった新しい元号。";
+        if (typeof window === "undefined") return "";
+        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
+    }, []);
+    const base64Hint4 = useMemo(() => {
+        const hint = "第4問のヒント: 東北地方の太平洋沖が震源の大規模地震の正式名称。";
+        if (typeof window === "undefined") return "";
+        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
+    }, []);
+
 
     const handleCheckAnswer = async () => {
         setIsLoading(true);
@@ -73,20 +115,186 @@ export default function Home() {
                 },
             ]);
         }
+
+        if (oneIsAnswered) {
+            setPosts(prevPosts => [
+                ...prevPosts,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: "徳川家の人だよ。下の名前は、なんだっけ。",
+                },
+            ]);
+        }
+        if (twoIsAnswered) {
+            setPosts(prevPosts => [
+                ...prevPosts,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: "天下統一を目指したといわれている人だよ。ゲームにもよく出てくるよね。",
+                },
+            ]);
+        }
+        if (threeIsAnswered) {
+            setPosts(prevPosts => [
+                ...prevPosts,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: "今年は令和7年だよ!",
+                },
+            ]);
+        }
+        if (fourIsAnswered) {
+            setPosts(prevPosts => [
+                ...prevPosts,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: "東北地方の、太平洋沖が震源だよね。",
+                },
+            ]);
+        }
+
         // 空欄になったら投稿を消す
         if (value.trim() === "" && posts.length > 1) {
             setPosts(posts.slice(0, 1));
         }
     };
-    function handlehint(m:number){
-        return(()=>setPosts([
-                ...posts,
+
+    // 謎1に文字が入ったら、暗号化された投稿を一度だけ表示
+    useEffect(() => {
+        const alreadyPosted = posts.some(p => p.base64 === base64Hint && p.riddleNumber === 1);
+        if (oneIsAnswered && !alreadyPosted && base64Hint) {
+            setPosts((prev) => ([
+                ...prev,
                 {
                     icon: "/sampleicon.png",
                     name: "Riddlemaster",
-                    content: `第${m+1}問のヒント:今年は令和7年だよ!`,
+                    content: `第1問に関する暗号化された投稿： ${base64Hint}`,
+                    riddleNumber: 1,
+                    base64: base64Hint,
+                    isDecrypted: false,
                 },
-            ]))
+            ]));
+        } else if (!oneIsAnswered) {
+            // 謎1の解答欄が空になったら、対応する投稿を削除
+            const alreadyPosted = posts.some(p => p.riddleNumber === 1);
+            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 1));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [oneIsAnswered, base64Hint]);
+
+    // 謎2に文字が入ったら暗号化投稿を一度だけ表示
+    useEffect(() => {
+        const alreadyPosted = posts.some(p => p.base64 === base64Hint2 && p.riddleNumber === 2);
+        if (twoIsAnswered && !alreadyPosted && base64Hint2) {
+            setPosts((prev) => ([
+                ...prev,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: `第2問に関する暗号化された投稿： ${base64Hint2}`,
+                    riddleNumber: 2,
+                    base64: base64Hint2,
+                    isDecrypted: false,
+                },
+            ]));
+        } else if (!twoIsAnswered) {
+            // 謎2の解答欄が空になったら、対応する投稿を削除
+            const alreadyPosted = posts.some(p => p.riddleNumber === 2);
+            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 2));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [twoIsAnswered, base64Hint2]);
+
+    // 謎3に文字が入ったら暗号化投稿を一度だけ表示
+    useEffect(() => {
+        const alreadyPosted = posts.some(p => p.base64 === base64Hint3 && p.riddleNumber === 3);
+        if (threeIsAnswered && !alreadyPosted && base64Hint3) {
+            setPosts((prev) => ([
+                ...prev,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: `第3問に関する暗号化された投稿： ${base64Hint3}`,
+                    riddleNumber: 3,
+                    base64: base64Hint3,
+                    isDecrypted: false,
+                },
+            ]));
+        } else if (!threeIsAnswered) {
+            // 謎3の解答欄が空になったら、対応する投稿を削除
+            const alreadyPosted = posts.some(p => p.riddleNumber === 3);
+            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 3));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [threeIsAnswered, base64Hint3]);
+
+    // 謎4に文字が入ったら暗号化投稿を一度だけ表示
+    useEffect(() => {
+        const alreadyPosted = posts.some(p => p.base64 === base64Hint4 && p.riddleNumber === 4);
+        if (fourIsAnswered && !alreadyPosted && base64Hint4) {
+            setPosts((prev) => ([
+                ...prev,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: `第4問に関する暗号化された投稿： ${base64Hint4}`,
+                    riddleNumber: 4,
+                    base64: base64Hint4,
+                    isDecrypted: false,
+                },
+            ]));
+        } else if (!fourIsAnswered) {
+            // 謎4の解答欄が空になったら、対応する投稿を削除
+            const alreadyPosted = posts.some(p => p.riddleNumber === 4);
+            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 4));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fourIsAnswered, base64Hint4]);
+
+    const handlePerPostDecodeSubmit = (postIndex: number) => (e: React.FormEvent) => {
+        e.preventDefault();
+        const input = (decodeInputs[postIndex] || "").trim();
+        const post = posts[postIndex];
+        if (!post || !post.base64 || post.isDecrypted) return;
+        if (input === "復号する") {
+            try {
+                const decoded = decodeURIComponent(escape(window.atob(post.base64)));
+                setPosts((prev) => {
+                    const next = [...prev];
+                    const target = next[postIndex];
+                    if (target) {
+                        target.content = decoded;
+                        target.isDecrypted = true;
+                    }
+                    return next;
+                });
+                if (post.riddleNumber) {
+                    incrementDecryptCount(post.riddleNumber);
+                    try {
+                        const stored = JSON.parse(localStorage.getItem("decryptCounts") || "{}");
+                        stored[post.riddleNumber] = (stored[post.riddleNumber] || 0) + 1;
+                        localStorage.setItem("decryptCounts", JSON.stringify(stored));
+                    } catch { }
+                }
+            } catch { }
+        }
+        setDecodeInputs((prev) => ({ ...prev, [postIndex]: "" }));
+    };
+
+    // 旧・単一フォームの復号ハンドラは不要になったため削除
+    function handlehint(m: number) {
+        return (() => setPosts([
+            ...posts,
+            {
+                icon: "/sampleicon.png",
+                name: "Riddlemaster",
+                content: `第${m + 1}問のヒント:今年は令和7年だよ!`,
+            },
+        ]))
     }
 
     return (
@@ -101,11 +309,11 @@ export default function Home() {
             {/* 左側：SNS風ヒントカード */}
             <div
                 style={{
-                    width: 280,
-                    background: "#f5f7fa",
+                    width: 320,
+                    background: "#f6f8fb",
                     borderRadius: "16px",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-                    padding: "24px 16px",
+                    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+                    padding: "20px 14px",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -113,7 +321,7 @@ export default function Home() {
             >
                 {posts.map((post, idx) => (
                     <div
-                        key={idx}
+                        key={`post-${idx}`} // ← keyをユニークに
                         style={{
                             width: "100%",
                             marginBottom: "24px",
@@ -141,25 +349,57 @@ export default function Home() {
                         <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>
                             {post.name}
                         </div>
-                        <div style={{ color: "#636e72", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line" }}>
+                        <div style={{ color: "#4b5563", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6, wordBreak: "break-all", overflowWrap: "anywhere" }}>
                             {post.content}
                         </div>
+                        {post.base64 && !post.isDecrypted && (
+                            <form onSubmit={handlePerPostDecodeSubmit(idx)} style={{ width: "100%", display: "flex", gap: 8, marginTop: 8 }}>
+                                <input
+                                    type="text"
+                                    value={decodeInputs[idx] || ""}
+                                    onChange={(e) => setDecodeInputs((prev) => ({ ...prev, [idx]: e.target.value }))}
+                                    placeholder="コメントで「復号する」 と送信"
+                                    style={{
+                                        flex: 1,
+                                        padding: "10px",
+                                        fontSize: "0.95rem",
+                                        borderRadius: "6px",
+                                        border: "1px solid #d1d5db",
+                                        background: "#fff",
+                                    }}
+                                />
+                                <button
+                                    type="submit"
+                                    style={{
+                                        background: "#2563eb",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "6px",
+                                        padding: "8px 14px",
+                                        fontWeight: 600,
+                                        cursor: "pointer",
+                                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                    }}
+                                >送信</button>
+                            </form>
+                        )}
                     </div>
                 ))}
+                {/* 復号回数表示は必要であれば各投稿の下に追加可能 */}
                 <button
                     style={{
-                        background: "#0984e3",
+                        background: "#0ea5e9",
                         color: "#fff",
                         border: "none",
                         borderRadius: "6px",
-                        padding: "8px 24px",
+                        padding: "8px 18px",
                         fontWeight: 600,
                         cursor: "pointer",
-                        marginTop: "8px",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        marginTop: "12px",
+                        boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
                     }}
                 >
-                    投稿する
+                    過去の投稿を見る
                 </button>
             </div>
 
@@ -174,83 +414,60 @@ export default function Home() {
                     padding: "32px",
                 }}
             >
-                <h1 style={{ textAlign: "center", marginBottom: 32, fontWeight: 700, color: "#2c3e50" }}>
+                <h1 style={{ textAlign: "center", marginBottom: 24, fontWeight: 800, color: "#1f2937", letterSpacing: 0.3 }}>
                     謎解きチャレンジ
                 </h1>
-                {[...Array(4)].map((_,idx)=>(<Ques cl={handlehint(idx)} bun={mondai[idx]} n={idx}></Ques>))}
-                <div style={{ marginBottom: 28 }}>
-                    <h2
-                        dangerouslySetInnerHTML={{ __html: item.quiz_two }}
-                        style={{
-                            fontSize: "1.2rem",
-                            color: "#34495e",
-                            marginBottom: 12,
-                            background: "#f5f7fa",
-                            padding: "8px 16px",
-                            borderRadius: "8px",
-                        }}
-                    ></h2>
-                    <input
-                        type="text"
-                        className="riddle-input"
-                        //value={quizTwoAnswer}
-                        onChange={handleQuizTwoChange}
-                        placeholder="謎2の答えを入力"
-                        style={{
-                            width: "100%",
-                            padding: "10px",
-                            fontSize: "1rem",
-                            borderRadius: "6px",
-                            border: "1px solid #d1d5db",
-                            marginBottom: "4px",
-                        }}
-                    />
-                </div>
+                {[...Array(4)].map((_, idx) => (
+                    <Ques key={idx} cl={handlehint(idx)} bun={mondai[idx]} n={idx} />
+                ))}
 
-                <div style={{ margin: "40px 0 24px 0" }}>
-                    <h2 style={{ color: "#2c3e50", marginBottom: 12 }}>クロスワード</h2>
+
+                <div style={{ margin: "28px 0 20px 0" }}>
+                    <h2 style={{ color: "#111827", marginBottom: 12, fontWeight: 700 }}>クロスワード</h2>
                     <table style={{ borderCollapse: "collapse", margin: "0 auto" }}>
                         <tbody>
                             {[...Array(5)].map((_, rowIdx) => (
                                 <tr key={rowIdx}>
                                     {[...Array(5)].map((_, colIdx) => {
-                                        if(crossd[rowIdx][colIdx]===1){
-                                            return(
+                                        if (crossd[rowIdx][colIdx] === 1) {
+                                            return (
                                                 <td
-                                                key={colIdx}
-                                                style={{
-                                                    border: "1px solid #b2bec3",
-                                                    width: 40,
-                                                    height: 40,
-                                                    textAlign: "center",
-                                                    background: "#f5f7fa",
-                                                }}
+                                                    key={colIdx}
+                                                    style={{
+                                                        border: "1px solid #e5e7eb",
+                                                        width: 40,
+                                                        height: 40,
+                                                        textAlign: "center",
+                                                        background: "#f9fafb",
+                                                    }}
                                                 >
                                                     <input
                                                         type="text"
                                                         maxLength={1}
                                                         style={{
-                                                            width: "90%",
-                                                            height: "90%",
+                                                            width: "92%",
+                                                            height: "92%",
                                                             textAlign: "center",
-                                                            border: "none",
+                                                            border: "1px solid #e5e7eb",
                                                             background: "transparent",
                                                             fontSize: "1.2rem",
                                                         }}
                                                     />
                                                 </td>
-                                            )
-                                        }else{
-                                             <td
-                                                key={colIdx}
-                                                style={{
-                                                    border: "none",
-                                                    width: 40,
-                                                    height: 40,
-                                                    textAlign: "center",
-                                                    background: "#f5f7fa",
-                                                }}
-                                            ></td>
+                                            );
+                                        } else {
+                                            return (
+                                                <td
+                                                    key={colIdx}
+                                                    style={{
+                                                        border: "none",
+                                                        width: 40,
+                                                        height: 40,
+                                                        textAlign: "center",
+                                                        background: "#fff",
+                                                    }}
+                                                ></td>
+                                            );
                                         }
                                     })}
                                 </tr>
@@ -280,7 +497,7 @@ export default function Home() {
                             disabled={isLoading}
                             style={{
                                 padding: "10px 20px",
-                                background: "#0984e3",
+                                background: "#2563eb",
                                 color: "#fff",
                                 border: "none",
                                 borderRadius: "6px",
@@ -308,7 +525,7 @@ export default function Home() {
                             textAlign: "center",
                             marginTop: "24px",
                             padding: "12px 0",
-                            background: "#00b894",
+                            background: "#059669",
                             color: "#fff",
                             borderRadius: "8px",
                             fontWeight: 600,
@@ -316,8 +533,8 @@ export default function Home() {
                             boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                             transition: "background 0.2s",
                         }}
-                        onMouseOver={e => (e.currentTarget.style.background = "#55efc4")}
-                        onMouseOut={e => (e.currentTarget.style.background = "#00b894")}
+                        onMouseOver={e => (e.currentTarget.style.background = "#10b981")}
+                        onMouseOut={e => (e.currentTarget.style.background = "#059669")}
                     >
                         次の謎へ進む
                     </a>

@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useRiddles } from "@/app/context/riddleContext";
 
 type PageContent = {
     quiz_one: string; /*unko*/
@@ -9,10 +10,27 @@ type PageContent = {
 };
 
 export default function Home() {
+    const { twoIsAnswered, incrementDecryptCount, decryptCounts } = useRiddles();
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [posts, setPosts] = useState([
+        {
+            icon: "/sampleicon.png",
+            name: "Riddlemaster",
+            content: "謎を解いていくと、ここに新しい投稿が表示されます！",
+        },
+    ]);
+    const [decodeComment, setDecodeComment] = useState("");
+    const [hasDecrypted, setHasDecrypted] = useState(false);
+
+    // Base64暗号テキスト（第2問用）
+    const base64Hint = useMemo(() => {
+        const hint = "第2問のヒント: 戦国武将の中で、将軍を都から追放した人物。";
+        if (typeof window === "undefined") return "";
+        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
+    }, []);
 
     // データ
     const item: PageContent = {
@@ -46,18 +64,99 @@ export default function Home() {
         }
     };
 
+    // 謎2に文字が入ったら、暗号化された投稿を一度だけ表示
+    useEffect(() => {
+        if (twoIsAnswered && posts.length === 1 && base64Hint) {
+            setPosts((prev) => ([
+                ...prev,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: `第2問に関する暗号化された投稿： ${base64Hint}`,
+                },
+            ]));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [twoIsAnswered, base64Hint]);
+
+    const handleDecodeSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const cmd = decodeComment.trim();
+        if (!cmd) return;
+        if (cmd === "復号する" && !hasDecrypted) {
+            try {
+                const decoded = decodeURIComponent(escape(window.atob(base64Hint)));
+                setPosts((prev) => {
+                    const next = [...prev];
+                    if (next[1]) {
+                        next[1] = { ...next[1], content: decoded };
+                    }
+                    return next;
+                });
+                setHasDecrypted(true);
+                incrementDecryptCount(2);
+                try {
+                    const stored = JSON.parse(localStorage.getItem("decryptCounts") || "{}");
+                    stored[2] = (stored[2] || 0) + 1;
+                    localStorage.setItem("decryptCounts", JSON.stringify(stored));
+                } catch { }
+            } catch { }
+        } else {
+            setPosts((prev) => ([
+                ...prev,
+                {
+                    icon: "/sampleicon.png",
+                    name: "Riddlemaster",
+                    content: "コマンドが違うみたい。「復号する」と入力して送信してね。",
+                },
+            ]));
+        }
+        setDecodeComment("");
+    };
+
     return (
         <div
             className="container"
             style={{
-                maxWidth: 600,
+                maxWidth: 900,
                 margin: "40px auto",
                 padding: "32px",
-                background: "#fff",
-                borderRadius: "16px",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+                display: "flex",
+                gap: "32px",
             }}
         >
+            {/* 左：SNS風ヒント */}
+            <div
+                style={{
+                    width: 320,
+                    background: "#f6f8fb",
+                    borderRadius: "16px",
+                    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+                    padding: "20px 14px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                }}
+            >
+                {posts.map((post, idx) => (
+                    <div key={`post-${idx}`} style={{ width: "100%", marginBottom: "24px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", padding: "16px 12px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <img src={post.icon} alt="アカウントアイコン" style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", marginBottom: "8px", border: "2px solid #0984e3" }} />
+                        <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>{post.name}</div>
+                        <div style={{ color: "#4b5563", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6 }}>{post.content}</div>
+                    </div>
+                ))}
+                {twoIsAnswered && (
+                    <form onSubmit={handleDecodeSubmit} style={{ width: "100%", display: "flex", gap: 8 }}>
+                        <input type="text" value={decodeComment} onChange={(e) => setDecodeComment(e.target.value)} placeholder="コメントで「復号する」 と送信" style={{ flex: 1, padding: "10px", fontSize: "0.95rem", borderRadius: "6px", border: "1px solid #d1d5db", background: "#fff" }} />
+                        <button type="submit" style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", padding: "8px 14px", fontWeight: 600, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>送信</button>
+                    </form>
+                )}
+                {hasDecrypted && (
+                    <div style={{ marginTop: 10, color: "#6b7280", fontSize: "0.85rem" }}>
+                        復号回数（第2問）: {decryptCounts[2] ?? 1}
+                    </div>
+                )}
+            </div>
             <h1 style={{ textAlign: "center", marginBottom: 32, fontWeight: 700, color: "#2c3e50" }}>
                 謎解きチャレンジ
             </h1>

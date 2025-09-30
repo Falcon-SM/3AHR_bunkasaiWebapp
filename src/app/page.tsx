@@ -22,6 +22,13 @@ export default function Home() {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const [isgive,setisgive]=useState(0)
+  
+  const [oneIsAnswered, setOneIsAnswered] = useState(false);
+  const [twoIsAnswered, setTwoIsAnswered] = useState(false);
+  const [threeIsAnswered, setThreeIsAnswered] = useState(false);
+  const [fourIsAnswered, setFourIsAnswered] = useState(false);
+
   useEffect(() => {
     const handleOnlineStatus = () => {
       setIsOnline(navigator.onLine);
@@ -236,6 +243,8 @@ export default function Home() {
             <p style={{ marginBottom: "24px" }}>
               謎解きの答えは他の人に教えないでください。<br />
               ドメインを手動で変更するのはご遠慮ください。<br />
+              また、途中でヒントを自分の意思で出すことができますか、総合得点から引かれるので注意しましょう。<br />
+              制限時間は20分です。次のページに遷移したら自動的にカウントダウンが始まります。<br />
               制限時間やルールを守って楽しく謎解きをしましょう！
             </p>
             <button
