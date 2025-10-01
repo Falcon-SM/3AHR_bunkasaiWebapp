@@ -35,7 +35,7 @@ const mondai = [
 ]
 
 export default function Home() {
-    const { oneIsAnswered, twoIsAnswered, threeIsAnswered, fourIsAnswered, incrementDecryptCount, decryptCounts } = useRiddles();
+    const { oneIsAnswered, twoIsAnswered, threeIsAnswered, fourIsAnswered, incrementDecryptCount, decryptCounts} = useRiddles();
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
@@ -56,7 +56,7 @@ export default function Home() {
         const hint = "第1問のヒント: 徳川家の初代将軍だよ。下の名前を思い出して。";
         if (typeof window === "undefined") return "";
         try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
-    }, []);
+    }, [typeof window]);
 
     // Base64暗号テキスト（第2〜4問用）
     const base64Hint2 = useMemo(() => {
@@ -100,69 +100,7 @@ export default function Home() {
         }
     };
 
-    // 謎2の答え入力時に新しい投稿を追加
-    const handleQuizTwoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        //setQuizTwoAnswer(value);
-
-        // すでに投稿済みでなければ追加
-        if (value.trim() !== "" && posts.length === 1) {
-            setPosts([
-                ...posts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: `今年は令和7年だよ!`,
-                },
-            ]);
-        }
-
-        if (oneIsAnswered) {
-            setPosts(prevPosts => [
-                ...prevPosts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: "徳川家の人だよ。下の名前は、なんだっけ。",
-                },
-            ]);
-        }
-        if (twoIsAnswered) {
-            setPosts(prevPosts => [
-                ...prevPosts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: "天下統一を目指したといわれている人だよ。ゲームにもよく出てくるよね。",
-                },
-            ]);
-        }
-        if (threeIsAnswered) {
-            setPosts(prevPosts => [
-                ...prevPosts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: "今年は令和7年だよ!",
-                },
-            ]);
-        }
-        if (fourIsAnswered) {
-            setPosts(prevPosts => [
-                ...prevPosts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: "東北地方の、太平洋沖が震源だよね。",
-                },
-            ]);
-        }
-
-        // 空欄になったら投稿を消す
-        if (value.trim() === "" && posts.length > 1) {
-            setPosts(posts.slice(0, 1));
-        }
-    };
+   
 
     // 謎1に文字が入ったら、暗号化された投稿を一度だけ表示
     useEffect(() => {
@@ -287,7 +225,8 @@ export default function Home() {
     };
     useEffect(() => {
     const timerId = setInterval(() => {
-      setnokori((prev)=>(prev-1))}
+      setnokori((prev)=>(prev-1));
+      sessionStorage.zikan=nokori}
     , 1000)
     return () => clearInterval(timerId)
   }, [nokori]) 

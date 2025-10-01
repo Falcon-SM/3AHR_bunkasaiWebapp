@@ -10,7 +10,7 @@ type PageContent = {
 };
 
 export default function Home() {
-    const { twoIsAnswered, incrementDecryptCount, decryptCounts } = useRiddles();
+    const { twoIsAnswered, incrementDecryptCount, decryptCounts} = useRiddles();
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
@@ -24,6 +24,8 @@ export default function Home() {
     ]);
     const [decodeComment, setDecodeComment] = useState("");
     const [hasDecrypted, setHasDecrypted] = useState(false);
+    const [nokori,setnokori]=useState(1200);
+    useEffect(()=>{setnokori(parseInt(sessionStorage.zikan))},[])
 
     // Base64暗号テキスト（第2問用）
     const base64Hint = useMemo(() => {
@@ -113,6 +115,13 @@ export default function Home() {
         }
         setDecodeComment("");
     };
+    useEffect(() => {
+    const timerId = setInterval(() => {
+        setnokori((prev)=>(prev-1));
+        sessionStorage.zikan=nokori}
+    , 1000)
+    return () => clearInterval(timerId)
+    }, [nokori]) 
 
     return (
         <div
@@ -298,6 +307,15 @@ export default function Home() {
                     </a>
                 )}
             </div>
+            <div style={{padding:"0px"}}><p style={{
+                background:"#fff",
+                borderRadius: "8px",
+                border:"10px solid #0ea5e9",
+                fontSize:"50px",
+                padding:"5px",
+                margin:"0px auto"
+
+            }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p></div>
         </div>
     );
 }
