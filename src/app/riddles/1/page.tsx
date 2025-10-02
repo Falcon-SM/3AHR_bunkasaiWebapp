@@ -50,6 +50,7 @@ export default function Home() {
     ]);
     const [nokori,setnokori]=useState(1200);
     const [decodeInputs, setDecodeInputs] = useState<Record<number, string>>({}); // key: post index
+    const hints=[["あああああああああああああああああ","b","c"],["a","b","c"],["a","b","c"],["a","b","d"]]
 
     // Base64暗号テキスト（第1問用）
     const base64Hint = useMemo(() => {
@@ -247,7 +248,7 @@ export default function Home() {
         <div
             style={{
                 display: "flex",
-                maxWidth: 1100,
+                width: 1100,
                 margin: "40px auto",
                 gap: "32px",
             }}
@@ -353,18 +354,18 @@ export default function Home() {
             <div
                 className="container"
                 style={{
-                    flex: 1,
+                    flex: 1
                 }}
             >
                 <h1 style={{ textAlign: "center", marginBottom: 24, fontWeight: 800, color: "#1f2937", letterSpacing: 0.3 }}>
                     謎解きチャレンジ
                 </h1>
                 {[...Array(4)].map((_, idx) => (
-                    <Ques key={idx} cl={handlehint(idx)} bun={mondai[idx]} n={idx} />
+                    <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} />
                 ))}
 
 
-                <div style={{ margin: "28px 0 20px 0" }}>
+                <div style={{ margin: "28px 0 20px 0", clear:"both"}}>
                     <h2 style={{ color: "#111827", marginBottom: 12, fontWeight: 700 }}>クロスワード</h2>
                     <table style={{ borderCollapse: "collapse", margin: "0 auto" }}>
                         <tbody>
@@ -482,15 +483,16 @@ export default function Home() {
                     </a>
                 )}
             </div>
-            <div style={{padding:"0px"}}><p style={{
+            <p style={{
                 background:"#fff",
                 borderRadius: "8px",
                 border:"10px solid #0ea5e9",
                 fontSize:"50px",
                 padding:"5px",
-                margin:"0px auto"
+                margin:"0px auto",
+                height:60
 
-            }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p></div>
+            }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p>
         </div>
     );
 }
