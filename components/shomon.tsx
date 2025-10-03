@@ -1,5 +1,5 @@
 "use client";
-import React, { useState,useEffect,useRef} from "react";
+import React, { useState,useEffect,useRef, RefObject} from "react";
 import { useRiddles } from "@/app/context/riddleContext";
 
 type props = {
@@ -16,16 +16,15 @@ export default function Ques({ hints, bun, n }: props) {
         setFourIsAnswered,
     } = useRiddles();
     const [numhint,setNumhint]=useState(0);
-    const canvasRef = [useRef<(HTMLCanvasElement)|null>(null),useRef<(HTMLCanvasElement)|null>(null)]
-
+    const canvasRef =[useRef<(HTMLCanvasElement)|null>(null),useRef<(HTMLCanvasElement)|null>(null),useRef<(HTMLCanvasElement)|null>(null),useRef<(HTMLCanvasElement)|null>(null)]
     useEffect(() => {
-        for(let i=0;i<2;i++){
+        for(let i=0;i<hints.length;i++){
             const canvas = canvasRef[i].current;
             if (!canvas) return;
 
             const ctx = canvas.getContext("2d");
             if (!ctx) return;
-            let [cx,cy,cw,ch,r]=[0,0,250,Math.ceil(hints[i].length/16)*20,0];
+            const [cx,cy,cw,ch,r]=[0,0,250,Math.ceil(hints[i].length/16)*20,0];
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(cx + r, cy);
@@ -106,7 +105,7 @@ export default function Ques({ hints, bun, n }: props) {
                         if (n === 3) setFourIsAnswered(hasText);
                     }}
                 />
-
+                {numhint<hints.length &&
                 <button
                 onClick={()=>{setNumhint((prev)=>(prev+1))}}
                 style={{
@@ -118,7 +117,7 @@ export default function Ques({ hints, bun, n }: props) {
                     fontWeight: 600,
                     boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                     transition: "background 0.2s",
-                }}>ヒントを表示</button>
+                }}>ヒントを表示</button>}
             </div>
             <div style={{width:300,flex:"0 0 auto"}}>
                 {[...Array(numhint)].map((_,idx)=>(

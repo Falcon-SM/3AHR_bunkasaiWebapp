@@ -51,7 +51,7 @@ export default function Home() {
     const [nokori,setnokori]=useState(1200);
     const [decodeInputs, setDecodeInputs] = useState<Record<number, string>>({}); // key: post index
     const hints=[["あああああああああああああああああ","b","c"],["a","b","c"],["a","b","c"],["a","b","d"]]
-
+    const [gazo,setGazo]=useState(0)
     // Base64暗号テキスト（第1問用）
     const base64Hint = useMemo(() => {
         const hint = "第1問のヒント: 徳川家の初代将軍だよ。下の名前を思い出して。";
@@ -245,6 +245,7 @@ export default function Home() {
     }
 
     return (
+        <div>
         <div
             style={{
                 display: "flex",
@@ -284,6 +285,7 @@ export default function Home() {
                         <img
                             src={post.icon}
                             alt="アカウントアイコン"
+                            onClick={()=>(setGazo(1))}
                             style={{
                                 width: 48,
                                 height: 48,
@@ -493,6 +495,9 @@ export default function Home() {
                 height:60
 
             }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p>
+        </div>
+        {[...Array(gazo)].map((_,idx)=>(  <div key={idx} style={{position:"fixed",backgroundColor:"black",opacity:0.5,left:"opx",top:"0px",width:window.innerWidth,height:window.innerHeight}}></div>))}
+        {[...Array(gazo)].map((_,idx)=>( <button key={idx} onClick={()=>{setGazo(0)}} className="batu">✖</button>))}
         </div>
     );
 }
