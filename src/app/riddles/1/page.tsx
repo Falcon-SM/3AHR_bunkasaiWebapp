@@ -3,13 +3,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import Ques from "../../../../components/shomon";
 import { useRiddles } from "@/app/context/riddleContext";
 
-type PageContent = {
-    quiz_one: string;
-    quiz_two: string;
-    quiz_three: string;
-    quiz_four: string;
-};
-
 type HintPost = {
     icon: string;
     name: string;
@@ -28,14 +21,17 @@ const crossd = [
 
 ];
 const mondai = [
-    "江戸幕府の初代将軍の名前はなんでしょうか？",
+    "左下の⬛️から右上の⬛️へ向かえ。\n壁にぶつかるまで曲がれない。\nまた、右にしか曲がることができない。\n通った文字を順に読め。",
     "室町幕府の将軍を追放した戦国武将は？",
-    "2019年からの新しい元号は？",
-    "東日本大震災の正式名称は？"
+    "嘘をついているB組生徒の名を出席番号順に読め。\n下の5人は全員同じB組である。",
+    "投稿者が文化祭で撮った写真に写っている謎を解け。",
+    "来年の筑駒の文化祭のテーマはなんでしょう？"
 ]
 
+const monim=['naan','naan', '/sampleicon.png','naan','naan']
+
 export default function Home() {
-    const { oneIsAnswered, twoIsAnswered, threeIsAnswered, fourIsAnswered, incrementDecryptCount, decryptCounts } = useRiddles();
+    const { oneIsAnswered, twoIsAnswered, threeIsAnswered, fourIsAnswered, incrementDecryptCount, decryptCounts} = useRiddles();
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
@@ -50,13 +46,14 @@ export default function Home() {
     ]);
     const [nokori,setnokori]=useState(1200);
     const [decodeInputs, setDecodeInputs] = useState<Record<number, string>>({}); // key: post index
-
+    const hints=[["徳川家の人だよ！","たい焼きを食べて死んだという噂があるよ！","家康だよ！"],["この人が登場する有名な戦国ゲームがあるよ！","〇〇の野望","織田信長っていう人だよ！"],["a","b","c"],["a","b","d"],["廻天","結","Reboot"]]
+    const [gazo,setGazo]=useState(0)
     // Base64暗号テキスト（第1問用）
     const base64Hint = useMemo(() => {
         const hint = "第1問のヒント: 徳川家の初代将軍だよ。下の名前を思い出して。";
         if (typeof window === "undefined") return "";
         try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
-    }, []);
+    }, [typeof window]);
 
     // Base64暗号テキスト（第2〜4問用）
     const base64Hint2 = useMemo(() => {
@@ -100,69 +97,7 @@ export default function Home() {
         }
     };
 
-    // 謎2の答え入力時に新しい投稿を追加
-    const handleQuizTwoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        //setQuizTwoAnswer(value);
-
-        // すでに投稿済みでなければ追加
-        if (value.trim() !== "" && posts.length === 1) {
-            setPosts([
-                ...posts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: `今年は令和7年だよ!`,
-                },
-            ]);
-        }
-
-        if (oneIsAnswered) {
-            setPosts(prevPosts => [
-                ...prevPosts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: "徳川家の人だよ。下の名前は、なんだっけ。",
-                },
-            ]);
-        }
-        if (twoIsAnswered) {
-            setPosts(prevPosts => [
-                ...prevPosts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: "天下統一を目指したといわれている人だよ。ゲームにもよく出てくるよね。",
-                },
-            ]);
-        }
-        if (threeIsAnswered) {
-            setPosts(prevPosts => [
-                ...prevPosts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: "今年は令和7年だよ!",
-                },
-            ]);
-        }
-        if (fourIsAnswered) {
-            setPosts(prevPosts => [
-                ...prevPosts,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: "東北地方の、太平洋沖が震源だよね。",
-                },
-            ]);
-        }
-
-        // 空欄になったら投稿を消す
-        if (value.trim() === "" && posts.length > 1) {
-            setPosts(posts.slice(0, 1));
-        }
-    };
+   
 
     // 謎1に文字が入ったら、暗号化された投稿を一度だけ表示
     useEffect(() => {
@@ -287,7 +222,8 @@ export default function Home() {
     };
     useEffect(() => {
     const timerId = setInterval(() => {
-      setnokori((prev)=>(prev-1))}
+      setnokori((prev)=>(prev-1));
+      sessionStorage.zikan=nokori}
     , 1000)
     return () => clearInterval(timerId)
   }, [nokori]) 
@@ -305,10 +241,11 @@ export default function Home() {
     }
 
     return (
+        <div>
         <div
             style={{
                 display: "flex",
-                maxWidth: 1100,
+                width: 1100,
                 margin: "40px auto",
                 gap: "32px",
             }}
@@ -344,6 +281,7 @@ export default function Home() {
                         <img
                             src={post.icon}
                             alt="アカウントアイコン"
+                            onClick={()=>(setGazo(1))}
                             style={{
                                 width: 48,
                                 height: 48,
@@ -414,18 +352,18 @@ export default function Home() {
             <div
                 className="container"
                 style={{
-                    flex: 1,
+                    flex: 1
                 }}
             >
                 <h1 style={{ textAlign: "center", marginBottom: 24, fontWeight: 800, color: "#1f2937", letterSpacing: 0.3 }}>
                     謎解きチャレンジ
                 </h1>
-                {[...Array(4)].map((_, idx) => (
-                    <Ques key={idx} cl={handlehint(idx)} bun={mondai[idx]} n={idx} />
+                {[...Array(5)].map((_, idx) => (
+                    <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} imgg={monim[idx]} />
                 ))}
 
 
-                <div style={{ margin: "28px 0 20px 0" }}>
+                <div style={{ margin: "28px 0 20px 0", clear:"both"}}>
                     <h2 style={{ color: "#111827", marginBottom: 12, fontWeight: 700 }}>クロスワード</h2>
                     <table style={{ borderCollapse: "collapse", margin: "0 auto" }}>
                         <tbody>
@@ -543,15 +481,19 @@ export default function Home() {
                     </a>
                 )}
             </div>
-            <div style={{padding:"0px"}}><p style={{
+            <p style={{
                 background:"#fff",
                 borderRadius: "8px",
                 border:"10px solid #0ea5e9",
                 fontSize:"50px",
                 padding:"5px",
-                margin:"0px auto"
+                margin:"0px auto",
+                height:60
 
-            }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p></div>
+            }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p>
+        </div>
+        {[...Array(gazo)].map((_,idx)=>(  <div key={idx} style={{position:"fixed",backgroundColor:"black",opacity:0.5,left:"opx",top:"0px",width:window.innerWidth,height:window.innerHeight}}></div>))}
+        {[...Array(gazo)].map((_,idx)=>( <button key={idx} onClick={()=>{setGazo(0)}} className="batu">✖</button>))}
         </div>
     );
 }

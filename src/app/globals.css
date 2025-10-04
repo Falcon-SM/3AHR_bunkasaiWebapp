@@ -12,7 +12,7 @@ h2 {
 }
 
 .container {
-  max-width: 640px;
+  max-width: 500px;
   margin: 0px auto;
   padding: 40px;
   background: linear-gradient(135deg, #fdfdfd, #f7f7f7);
@@ -118,4 +118,17 @@ h2 {
   height: 100%;
   z-index: 10;
   border-radius: 0;
+}
+.batu{
+  position:fixed;
+  right:0;
+  top: 0;
+  color:white;
+  z-index: 9999;
+  background: transparent;
+  border:none;
+  font-size: 25px;
+}
+.batu:hover{
+  background: rgba(255, 255, 255, 0.5);
 }

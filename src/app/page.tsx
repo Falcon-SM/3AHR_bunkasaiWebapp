@@ -14,56 +14,10 @@ type PageContent = {
 };*/
 
 export default function Home() {
-  //const [data, setData] = useState<MicroCMSResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isOnline, setIsOnline] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  const [isgive,setisgive]=useState(0)
-  
-  const [oneIsAnswered, setOneIsAnswered] = useState(false);
-  const [twoIsAnswered, setTwoIsAnswered] = useState(false);
-  const [threeIsAnswered, setThreeIsAnswered] = useState(false);
-  const [fourIsAnswered, setFourIsAnswered] = useState(false);
-
-  useEffect(() => {
-    const handleOnlineStatus = () => {
-      setIsOnline(navigator.onLine);
-    };
-
-    window.addEventListener("online", handleOnlineStatus);
-    window.addEventListener("offline", handleOnlineStatus);
-
-    setIsOnline(navigator.onLine);
-
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        if (!navigator.onLine) {
-          throw new Error("Offline");
-        }
-        /*const response: MicroCMSResponse = await microcms.get<MicroCMSResponse>({
-          endpoint: "intro",
-          queries: { limit: 1 },
-        });*/
-        //setData(response);
-      } catch (error) {
-        setIsOnline(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      window.removeEventListener("online", handleOnlineStatus);
-      window.removeEventListener("offline", handleOnlineStatus);
-    };
-  }, []);
 
   const handleStartClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -79,126 +33,16 @@ export default function Home() {
     setVideoEnded(true);
   };
 
-  if (!isOnline) {
-    return (
-      <div className="container">
-        <h2>こんにちは！3AHRへようこそ！</h2>
-        <p>オフラインモードで続行します</p>
-        <div style={{ margin: "32px 0" }}>
-          <video
-            controls
-            width="100%"
-            style={{
-              borderRadius: "12px",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-            }}
-            ref={videoRef}
-            onEnded={handleVideoEnded}
-          >
-            <source src="/BunkasaiVideo1.mov" type="video/mp4" />
-            お使いのブラウザは動画再生に対応していません。
-          </video>
-        </div>
-        {videoEnded && (
-          <button
-            onClick={handleStartClick}
-            style={{
-              display: "block",
-              margin: "32px auto 0 auto",
-              padding: "14px 40px",
-              background: "#0984e3",
-              color: "#fff",
-              border: "none",
-              borderRadius: "8px",
-              fontWeight: 700,
-              fontSize: "1.1rem",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
-              cursor: "pointer",
-              transition: "background 0.2s",
-            }}
-            onMouseOver={e => (e.currentTarget.style.background = "#74b9ff")}
-            onMouseOut={e => (e.currentTarget.style.background = "#0984e3")}
-          >
-            謎解きを始める
-          </button>
-        )}
-        {showModal && (
-          <div style={{
-            position: "fixed",
-            top: 0, left: 0, right: 0, bottom: 0,
-            background: "rgba(0,0,0,0.4)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000
-          }}>
-            <div style={{
-              background: "#fff",
-              padding: "32px",
-              borderRadius: "12px",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
-              maxWidth: "90vw",
-              textAlign: "center"
-            }}>
-              <h3 style={{ marginBottom: "16px" }}>注意事項</h3>
-              <p style={{ marginBottom: "24px" }}>
-                謎解きの答えは他の人に教えないでください。<br />
-                ドメインを手動で変更するのはご遠慮ください。<br />
-                制限時間やルールを守って楽しく謎解きをしましょう！
-              </p>
-              <button
-                onClick={handleModalOk}
-                style={{
-                  padding: "10px 32px",
-                  background: "#0984e3",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  fontSize: "1rem"
-                }}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  /*if (!data || data.contents.length === 0) {
-    return <p>データが見つかりませんでした。</p>;
-  }*/
-
-  //const item = data.contents[0];
-//<p>{item.content}
-/*dangerouslySetInnerHTML={{ __html: item.title }}*/
-//kokokesita
   return (
     <div className="container">
       <h2/>
-      <div style={{ margin: "32px 0" }}>
-        <video
-          controls
-          width="100%"
-          style={{
-            borderRadius: "12px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-          }}
-          ref={videoRef}
-          onEnded={handleVideoEnded}
-        >
-          <source src="/BunkasaiVideo1.mov" type="video/mp4" />
-          お使いのブラウザは動画再生に対応していません。
-        </video>
-      </div>
-      {videoEnded && (
+             <p style={{ marginBottom: "24px" }}>
+              謎解きの答えは他の人に教えないでください。<br />
+              ドメインを手動で変更するのはご遠慮ください。<br />
+              また、途中でヒントを自分の意思で出すことができますか、総合得点から引かれるので注意しましょう。<br />
+              制限時間は20分です。次のページに遷移したら自動的にカウントダウンが始まります。<br />
+              制限時間やルールを守って楽しく謎解きをしましょう！
+            </p>
         <button
           onClick={handleStartClick}
           style={{
@@ -220,7 +64,6 @@ export default function Home() {
         >
           謎解きを始める
         </button>
-      )}
       {showModal && (
         <div style={{
           position: "fixed",
@@ -239,14 +82,24 @@ export default function Home() {
             maxWidth: "90vw",
             textAlign: "center"
           }}>
-            <h3 style={{ marginBottom: "16px" }}>注意事項</h3>
-            <p style={{ marginBottom: "24px" }}>
-              謎解きの答えは他の人に教えないでください。<br />
-              ドメインを手動で変更するのはご遠慮ください。<br />
-              また、途中でヒントを自分の意思で出すことができますか、総合得点から引かれるので注意しましょう。<br />
-              制限時間は20分です。次のページに遷移したら自動的にカウントダウンが始まります。<br />
-              制限時間やルールを守って楽しく謎解きをしましょう！
-            </p>
+            <h3 style={{ marginBottom: "16px" }}>注意事項を読みましたか？</h3>
+            <button
+              onClick={() => setShowModal(false)}
+              style={{
+                padding: "10px 32px",
+                background: "#fff",
+                color: "#0984e3",
+                border: "2px solid #0984e3",
+                borderRadius: "6px",
+                fontWeight: 600,
+                cursor: "pointer",
+                fontSize: "1rem",
+                marginRight: "16px"
+              }}
+            >
+              いいえ
+            </button>
+
             <button
               onClick={handleModalOk}
               style={{
@@ -260,8 +113,9 @@ export default function Home() {
                 fontSize: "1rem"
               }}
             >
-              OK
+               はい 
             </button>
+            
           </div>
         </div>
       )}
