@@ -3,13 +3,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import Ques from "../../../../components/shomon";
 import { useRiddles } from "@/app/context/riddleContext";
 
-type PageContent = {
-    quiz_one: string;
-    quiz_two: string;
-    quiz_three: string;
-    quiz_four: string;
-};
-
 type HintPost = {
     icon: string;
     name: string;
@@ -28,11 +21,14 @@ const crossd = [
 
 ];
 const mondai = [
-    "江戸幕府の初代将軍の名前はなんでしょうか？",
+    "左下の⬛️から右上の⬛️へ向かえ。\n壁にぶつかるまで曲がれない。\nまた、右にしか曲がることができない。\n通った文字を順に読め。",
     "室町幕府の将軍を追放した戦国武将は？",
-    "2019年からの新しい元号は？",
-    "東日本大震災の正式名称は？"
+    "嘘をついているB組生徒の名を出席番号順に読め。\n下の5人は全員同じB組である。",
+    "投稿者が文化祭で撮った写真に写っている謎を解け。",
+    "来年の筑駒の文化祭のテーマはなんでしょう？"
 ]
+
+const monim=['naan','naan', '/sampleicon.png','naan','naan']
 
 export default function Home() {
     const { oneIsAnswered, twoIsAnswered, threeIsAnswered, fourIsAnswered, incrementDecryptCount, decryptCounts} = useRiddles();
@@ -50,7 +46,7 @@ export default function Home() {
     ]);
     const [nokori,setnokori]=useState(1200);
     const [decodeInputs, setDecodeInputs] = useState<Record<number, string>>({}); // key: post index
-    const hints=[["あああああああああああああああああ","b","c"],["a","b","c"],["a","b","c"],["a","b","d"]]
+    const hints=[["徳川家の人だよ！","たい焼きを食べて死んだという噂があるよ！","家康だよ！"],["この人が登場する有名な戦国ゲームがあるよ！","〇〇の野望","織田信長っていう人だよ！"],["a","b","c"],["a","b","d"],["廻天","結","Reboot"]]
     const [gazo,setGazo]=useState(0)
     // Base64暗号テキスト（第1問用）
     const base64Hint = useMemo(() => {
@@ -362,8 +358,8 @@ export default function Home() {
                 <h1 style={{ textAlign: "center", marginBottom: 24, fontWeight: 800, color: "#1f2937", letterSpacing: 0.3 }}>
                     謎解きチャレンジ
                 </h1>
-                {[...Array(4)].map((_, idx) => (
-                    <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} />
+                {[...Array(5)].map((_, idx) => (
+                    <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} imgg={monim[idx]} />
                 ))}
 
 

@@ -6,9 +6,10 @@ type props = {
     bun: string;
     n: number;
     hints:string[];
+    imgg?:string;
 };
 
-export default function Ques({ hints, bun, n }: props) {
+export default function Ques({ hints, bun, n , imgg='naan'}: props) {
     const {
         setOneIsAnswered,
         setTwoIsAnswered,
@@ -83,7 +84,13 @@ export default function Ques({ hints, bun, n }: props) {
                         padding: "8px 16px",
                         borderRadius: "8px",
                     }}
-                >{bun}</h2>
+                >{bun.split('\n').map((line, index) => (
+                    <span key={index}>
+                        {line}
+                        <br />
+                        </span>
+                ))}</h2>
+                {imgg != "naan" && (<img src={imgg}></img>)}
 
                 <input
                     type="text"
