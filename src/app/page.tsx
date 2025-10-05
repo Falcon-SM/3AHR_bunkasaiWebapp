@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 //import { microcms } from "@/lib/microcms";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
 
 type PageContent = {
   title: string;
@@ -35,14 +36,29 @@ export default function Home() {
 
   return (
     <div className="container">
-      <h2/>
-             <p style={{ marginBottom: "24px" }}>
-              謎解きの答えは他の人に教えないでください。<br />
-              ドメインを手動で変更するのはご遠慮ください。<br />
-              また、途中でヒントを自分の意思で出すことができますか、総合得点から引かれるので注意しましょう。<br />
-              制限時間は20分です。次のページに遷移したら自動的にカウントダウンが始まります。<br />
-              制限時間やルールを守って楽しく謎解きをしましょう！
-            </p>
+      <header className="relative overflow-hidden">
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
+        />
+        <h1 style={{ textAlign: "center", marginBottom: "24px" }}>注意事項</h1>
+        <h2 />
+        <ol type="1">
+        <p style={{ marginBottom: "24px" }}>
+          <li>謎解きの答えは他の人に教えないでください。</li>
+          <li>ドメインを手動で変更するのはご遠慮ください。</li>
+          <li>インスペクタを開かれてもヒントや答えは見えないようにしていますので、謎解きに集中しましょう。</li>
+          <li>また、途中でヒントを自分の意思で出すことができますか、総合得点から引かれるので注意しましょう。</li>
+          <li>制限時間は20分です。次のページに遷移したら自動的にカウントダウンが始まります。</li>
+          <li>制限時間やルールを守って楽しく謎解きをしましょう！</li>
+        </p>
+        </ol>
         <button
           onClick={handleStartClick}
           style={{
@@ -64,61 +80,63 @@ export default function Home() {
         >
           謎解きを始める
         </button>
-      {showModal && (
-        <div style={{
-          position: "fixed",
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: "rgba(0,0,0,0.4)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 1000
-        }}>
+        {showModal && (
           <div style={{
-            background: "#fff",
-            padding: "32px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
-            maxWidth: "90vw",
-            textAlign: "center"
+            position: "fixed",
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: "rgba(0,0,0,0.4)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
           }}>
-            <h3 style={{ marginBottom: "16px" }}>注意事項を読みましたか？</h3>
-            <button
-              onClick={() => setShowModal(false)}
-              style={{
-                padding: "10px 32px",
-                background: "#fff",
-                color: "#0984e3",
-                border: "2px solid #0984e3",
-                borderRadius: "6px",
-                fontWeight: 600,
-                cursor: "pointer",
-                fontSize: "1rem",
-                marginRight: "16px"
-              }}
-            >
-              いいえ
-            </button>
+            <div style={{
+              background: "#fff",
+              padding: "32px",
+              borderRadius: "12px",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
+              maxWidth: "90vw",
+              textAlign: "center"
+            }}>
+              <h3 style={{ marginBottom: "16px" }}>注意事項を読みましたか？</h3>
+              <button
+                onClick={() => setShowModal(false)}
+                style={{
+                  padding: "10px 32px",
+                  background: "#fff",
+                  color: "#0984e3",
+                  border: "2px solid #0984e3",
+                  borderRadius: "6px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontSize: "1rem",
+                  marginRight: "16px"
+                }}
+              >
+                いいえ
+              </button>
 
-            <button
-              onClick={handleModalOk}
-              style={{
-                padding: "10px 32px",
-                background: "#0984e3",
-                color: "#fff",
-                border: "none",
-                borderRadius: "6px",
-                fontWeight: 600,
-                cursor: "pointer",
-                fontSize: "1rem"
-              }}
-            >
-               はい 
-            </button>
-            
+              <button
+                onClick={handleModalOk}
+                style={{
+                  padding: "10px 32px",
+                  background: "#0984e3",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontSize: "1rem"
+                }}
+              >
+                はい
+              </button>
+
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </header>
     </div>
+
   );
 }

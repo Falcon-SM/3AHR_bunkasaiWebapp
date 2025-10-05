@@ -359,7 +359,7 @@ export default function Home() {
                     謎解きチャレンジ
                 </h1>
                 {[...Array(5)].map((_, idx) => (
-                    <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} imgg={monim[idx]} />
+                    <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} imgg={monim[idx]} imgWidth={400} imgHeight={250}/>
                 ))}
 
 
