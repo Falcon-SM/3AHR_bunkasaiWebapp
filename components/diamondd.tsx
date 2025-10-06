@@ -8,7 +8,7 @@ type diamhiki={
     y:number;
 }
 //const canvasRef = [[useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null),useRef<(HTMLCanvasElement) | null>(null) ], [useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null),useRef<(HTMLCanvasElement) | null>(null) ], [useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null),useRef<(HTMLCanvasElement) | null>(null) ]]
-export default function diamond({typp,mozi,x,y}:diamhiki){
+export default function Diamond({typp,mozi,x,y}:diamhiki){
     const canvasRef = useRef<(HTMLCanvasElement) | null>(null)
     const[cl,setCl]=useState(0)
     useEffect(()=>{
@@ -42,7 +42,13 @@ export default function diamond({typp,mozi,x,y}:diamhiki){
         ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
         ctx.fill();
-        ctx.stroke();},[cl])
+        ctx.stroke();
+        ctx.fillStyle = ["white","black"][1-cl];
+         ctx.font = '15px Roboto medium';
+        ctx.textBaseline="middle";
+        ctx.textAlign="center";
+        ctx.fillText(mozi,[10,35][typp],[10,35][1-typp])
+    },[cl])
 
     return(
         <canvas onClick={()=>(setCl((prev)=>(1-prev)))} ref={canvasRef} width={[20,80][typp]} height={[20,80][1-typp]} style={{width:[20,80][typp],height:[20,80][1-typp],position:"absolute",left:x,top:y}}></canvas>
