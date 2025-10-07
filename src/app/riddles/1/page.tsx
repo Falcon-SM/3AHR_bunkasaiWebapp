@@ -72,6 +72,14 @@ export default function Home() {
         try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
     }, []);
 
+    useEffect(()=>{
+            console.log(Number.isNaN(Number(sessionStorage.zikan)));
+            console.log(sessionStorage.zikan);
+            if(!Number.isNaN(Number(sessionStorage.zikan))){
+                setnokori(parseInt(sessionStorage.zikan));
+            }
+        },[])
+
 
     const handleCheckAnswer = async () => {
         setIsLoading(true);
@@ -223,7 +231,8 @@ export default function Home() {
     useEffect(() => {
     const timerId = setInterval(() => {
       setnokori((prev)=>(prev-1));
-      sessionStorage.zikan=nokori}
+      sessionStorage.zikan=nokori;
+    }
     , 1000)
     return () => clearInterval(timerId)
   }, [nokori]) 
