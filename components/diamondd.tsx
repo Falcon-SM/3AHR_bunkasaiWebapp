@@ -6,9 +6,10 @@ type diamhiki={
     mozi:string;
     x:number;
     y:number;
+    sub:()=>void;
 }
 //const canvasRef = [[useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null),useRef<(HTMLCanvasElement) | null>(null) ], [useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null),useRef<(HTMLCanvasElement) | null>(null) ], [useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null),useRef<(HTMLCanvasElement) | null>(null) ]]
-export default function Diamond({typp,mozi,x,y}:diamhiki){
+export default function Diamond({typp,mozi,x,y,sub}:diamhiki){
     const canvasRef = useRef<(HTMLCanvasElement) | null>(null)
     const[cl,setCl]=useState(0)
     useEffect(()=>{
@@ -51,6 +52,6 @@ export default function Diamond({typp,mozi,x,y}:diamhiki){
     },[cl])
 
     return(
-        <canvas onClick={()=>(setCl((prev)=>(1-prev)))} ref={canvasRef} width={[20,80][typp]} height={[20,80][1-typp]} style={{width:[20,80][typp],height:[20,80][1-typp],position:"absolute",left:x,top:y}}></canvas>
+        <canvas onClick={()=>{setCl((prev)=>(1-prev));sub()}} ref={canvasRef} width={[20,80][typp]} height={[20,80][1-typp]} style={{width:[20,80][typp],height:[20,80][1-typp],position:"absolute",left:x,top:y}}></canvas>
     )
 }

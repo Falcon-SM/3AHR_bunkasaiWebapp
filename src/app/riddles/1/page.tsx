@@ -4,22 +4,26 @@ import Ques from "../../../../components/shomon";
 import { useRiddles } from "@/app/context/riddleContext";
 
 type HintPost = {
-    icon: string;
-    name: string;
+    icon?: string;
+    name?: string;
     content: string; // 表示用のテキスト（暗号化された画面: ... も含む）
+    img?:string;
+    time?:string;
     // 以下は暗号化投稿専用のメタ情報
     riddleNumber?: number; // 1..4 のどの謎の投稿か
     base64?: string; // 暗号化文字列
     isDecrypted?: boolean; // 復号済みか
 };
 const crossd = [
-    [1, 1, 1, 0, 0],
-    [1, 1, 1, 1, 1],
-    [1, 0, 1, 0, 0],
-    [1, 1, 1, 0, 0],
-    [1, 1, 1, 0, 1]
+    [0,0,0,1,0,0,0],
+    [0,1,0,1,0,0,1],
+    [1,1,1,1,0,0,1],
+    [0,1,0,1,1,1,1],
+    [0,1,0,0,0,0,1]
 
 ];
+const crosshuto=[8,34,25,10,20,2]
+
 const mondai = [
     "左下の⬛️から右上の⬛️へ向かえ。\n壁にぶつかるまで曲がれない。\nまた、右にしか曲がることができない。\n通った文字を順に読め。",
     "室町幕府の将軍を追放した戦国武将は？",
@@ -28,26 +32,33 @@ const mondai = [
     "来年の筑駒の文化祭のテーマはなんでしょう？"
 ]
 
-const monim=['naan','naan', '/sampleicon.png','naan','naan']
+const monim=['naan','naan', '/論理クイズ.png','naan','naan']
 
 export default function Home() {
-    const { oneIsAnswered, twoIsAnswered, threeIsAnswered, fourIsAnswered, incrementDecryptCount, decryptCounts} = useRiddles();
+    const { oneIsAnswered, twoIsAnswered, threeIsAnswered, fourIsAnswered, incrementDecryptCount, decryptCounts,gazo,setGazo} = useRiddles();
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [quizTwoAnswer, setQuizTwoAnswer] = useState("");
-    const [posts, setPosts] = useState<HintPost[]>([
-        {
-            icon: "/sampleicon.png",
-            name: "Riddlemaster",
-            content: "謎を解いていくと、ここに新しい投稿が表示されます！",
+    const [posts, setPosts] = useState<HintPost[]>([]);
+    useEffect(()=>{
+        const h=new Date().getHours();
+        const m=new Date().getMinutes();
+        setPosts([{
+            content:"今日はこまば遺跡に行ってきた！これがあの有名な「かがやきの石板」か、、、",
+            time:(h+Math.floor((m-37)/60))+":"+("0"+(m+26)%60).slice(-2),
+            img:"/論理クイズ.png"
         },
-    ]);
+        {content:"💩",time:(h+Math.floor((m-20)/60))+":"+("0"+(m+40)%60).slice(-2)},
+        {content:"シタっていう男はひどいうそつきだ。あいつの言うことは信じない方がいい。",time:(h+Math.floor((m-10)/60))+":"+("0"+(m+50)%60).slice(-2)},
+        {content:"ケルネル高校の文化祭言ってきた!なぞに落書きして妨害してやったわw",time:h+":"+("0"+m).slice(-2)}
+
+        ])
+    },[])
     const [nokori,setnokori]=useState(1200);
     const [decodeInputs, setDecodeInputs] = useState<Record<number, string>>({}); // key: post index
     const hints=[["徳川家の人だよ！","たい焼きを食べて死んだという噂があるよ！","家康だよ！"],["この人が登場する有名な戦国ゲームがあるよ！","〇〇の野望","織田信長っていう人だよ！"],["a","b","c"],["a","b","d"],["廻天","結","Reboot"]]
-    const [gazo,setGazo]=useState(0)
     // Base64暗号テキスト（第1問用）
     const base64Hint = useMemo(() => {
         const hint = "第1問のヒント: 徳川家の初代将軍だよ。下の名前を思い出して。";
@@ -105,54 +116,6 @@ export default function Home() {
         }
     };
 
-   
-
-    // 謎1に文字が入ったら、暗号化された投稿を一度だけ表示
-    useEffect(() => {
-        const alreadyPosted = posts.some(p => p.base64 === base64Hint && p.riddleNumber === 1);
-        if (oneIsAnswered && !alreadyPosted && base64Hint) {
-            setPosts((prev) => ([
-                ...prev,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: `第1問に関する暗号化された投稿： ${base64Hint}`,
-                    riddleNumber: 1,
-                    base64: base64Hint,
-                    isDecrypted: false,
-                },
-            ]));
-        } else if (!oneIsAnswered) {
-            // 謎1の解答欄が空になったら、対応する投稿を削除
-            const alreadyPosted = posts.some(p => p.riddleNumber === 1);
-            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 1));
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [oneIsAnswered, base64Hint]);
-
-    // 謎2に文字が入ったら暗号化投稿を一度だけ表示
-    useEffect(() => {
-        const alreadyPosted = posts.some(p => p.base64 === base64Hint2 && p.riddleNumber === 2);
-        if (twoIsAnswered && !alreadyPosted && base64Hint2) {
-            setPosts((prev) => ([
-                ...prev,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: `第2問に関する暗号化された投稿： ${base64Hint2}`,
-                    riddleNumber: 2,
-                    base64: base64Hint2,
-                    isDecrypted: false,
-                },
-            ]));
-        } else if (!twoIsAnswered) {
-            // 謎2の解答欄が空になったら、対応する投稿を削除
-            const alreadyPosted = posts.some(p => p.riddleNumber === 2);
-            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 2));
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [twoIsAnswered, base64Hint2]);
-
     // 謎3に文字が入ったら暗号化投稿を一度だけ表示
     useEffect(() => {
         const alreadyPosted = posts.some(p => p.base64 === base64Hint3 && p.riddleNumber === 3);
@@ -160,44 +123,13 @@ export default function Home() {
             setPosts((prev) => ([
                 ...prev,
                 {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: `第3問に関する暗号化された投稿： ${base64Hint3}`,
-                    riddleNumber: 3,
-                    base64: base64Hint3,
-                    isDecrypted: false,
+                    time:new Date().getHours()+":"+new Date().getMinutes(),
+                    content: `俺のアカウント名、俺の本名から来てるんだよね。12個あるうちの10個目っていうことでさ。もし名前がトラだったら3/12なんだなw`,
                 },
             ]));
-        } else if (!threeIsAnswered) {
-            // 謎3の解答欄が空になったら、対応する投稿を削除
-            const alreadyPosted = posts.some(p => p.riddleNumber === 3);
-            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 3));
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [threeIsAnswered, base64Hint3]);
+    }, [threeIsAnswered]);
 
-    // 謎4に文字が入ったら暗号化投稿を一度だけ表示
-    useEffect(() => {
-        const alreadyPosted = posts.some(p => p.base64 === base64Hint4 && p.riddleNumber === 4);
-        if (fourIsAnswered && !alreadyPosted && base64Hint4) {
-            setPosts((prev) => ([
-                ...prev,
-                {
-                    icon: "/sampleicon.png",
-                    name: "Riddlemaster",
-                    content: `第4問に関する暗号化された投稿： ${base64Hint4}`,
-                    riddleNumber: 4,
-                    base64: base64Hint4,
-                    isDecrypted: false,
-                },
-            ]));
-        } else if (!fourIsAnswered) {
-            // 謎4の解答欄が空になったら、対応する投稿を削除
-            const alreadyPosted = posts.some(p => p.riddleNumber === 4);
-            if (alreadyPosted) setPosts(prev => prev.filter(p => p.riddleNumber !== 4));
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fourIsAnswered, base64Hint4]);
 
     const handlePerPostDecodeSubmit = (postIndex: number) => (e: React.FormEvent) => {
         e.preventDefault();
@@ -233,7 +165,7 @@ export default function Home() {
       setnokori((prev)=>(prev-1));
       sessionStorage.zikan=nokori;
     }
-    , 1000)
+    , 1000);
     return () => clearInterval(timerId)
   }, [nokori]) 
 
@@ -288,9 +220,8 @@ export default function Home() {
                         }}
                     >
                         <img
-                            src={post.icon}
+                            src={post.icon ?? "/sampleicon.png"}
                             alt="アカウントアイコン"
-                            onClick={()=>(setGazo(1))}
                             style={{
                                 width: 48,
                                 height: 48,
@@ -301,42 +232,22 @@ export default function Home() {
                             }}
                         />
                         <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>
-                            {post.name}
+                            {post.name ?? "とある筑駒生の独り言"}<span style={{fontSize:"0.9rem",fontWeight:200,color:"#868686ff"}}>　{post.time}</span>
                         </div>
                         <div style={{ color: "#4b5563", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6, wordBreak: "break-all", overflowWrap: "anywhere" }}>
                             {post.content}
                         </div>
-                        {post.base64 && !post.isDecrypted && (
-                            <form onSubmit={handlePerPostDecodeSubmit(idx)} style={{ width: "100%", display: "flex", gap: 8, marginTop: 8 }}>
-                                <input
-                                    type="text"
-                                    value={decodeInputs[idx] || ""}
-                                    onChange={(e) => setDecodeInputs((prev) => ({ ...prev, [idx]: e.target.value }))}
-                                    placeholder="コメントで「復号する」 と送信"
-                                    style={{
-                                        flex: 1,
-                                        padding: "10px",
-                                        fontSize: "0.95rem",
-                                        borderRadius: "6px",
-                                        border: "1px solid #d1d5db",
-                                        background: "#fff",
-                                    }}
-                                />
-                                <button
-                                    type="submit"
-                                    style={{
-                                        background: "#2563eb",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "6px",
-                                        padding: "8px 14px",
-                                        fontWeight: 600,
-                                        cursor: "pointer",
-                                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                                    }}
-                                >送信</button>
-                            </form>
-                        )}
+                        {post.img!==undefined &&
+                        <img
+                            src={post.img}
+                            onClick={()=>{setGazo(post.img)}}
+                            style={{
+                                width: 250,
+                                borderRadius: "5%",
+                                marginTop: "8px",
+                            }}
+                        />}
+                        
                     </div>
                 ))}
                 {/* 復号回数表示は必要であれば各投稿の下に追加可能 */}
@@ -374,23 +285,24 @@ export default function Home() {
 
                 <div style={{ margin: "28px 0 20px 0", clear:"both"}}>
                     <h2 style={{ color: "#111827", marginBottom: 12, fontWeight: 700 }}>クロスワード</h2>
-                    <table style={{ borderCollapse: "collapse", margin: "0 auto" }}>
+                    <table cellSpacing="0" style={{borderCollapse: "collapse", margin: "0 auto" }}>
                         <tbody>
                             {[...Array(5)].map((_, rowIdx) => (
-                                <tr key={rowIdx}>
-                                    {[...Array(5)].map((_, colIdx) => {
+                                <tr key={rowIdx} style={{margin:0}}>
+                                    {[...Array(7)].map((_, colIdx) => {
                                         if (crossd[rowIdx][colIdx] === 1) {
                                             return (
                                                 <td
                                                     key={colIdx}
                                                     style={{
-                                                        border: "1px solid #e5e7eb",
+                                                        border: `${["1px","3px"][+(crosshuto.indexOf(rowIdx*7+colIdx)!==-1)]} solid black`,
                                                         width: 40,
                                                         height: 40,
                                                         textAlign: "center",
                                                         background: "#f9fafb",
                                                     }}
                                                 >
+                                                    {crosshuto.indexOf(rowIdx*7+colIdx)!==-1 && <p style={{margin:0,fontSize:"10px",textAlign:"left"}}>{crosshuto.indexOf(rowIdx*7+colIdx)+1}</p>}
                                                     <input
                                                         type="text"
                                                         maxLength={1}
@@ -398,9 +310,9 @@ export default function Home() {
                                                             width: "92%",
                                                             height: "92%",
                                                             textAlign: "center",
-                                                            border: "1px solid #e5e7eb",
                                                             background: "transparent",
                                                             fontSize: "1.2rem",
+                                                            border:"none"
                                                         }}
                                                     />
                                                 </td>
@@ -414,7 +326,7 @@ export default function Home() {
                                                         width: 40,
                                                         height: 40,
                                                         textAlign: "center",
-                                                        background: "#fff",
+                                                        background: "#f9fafb",
                                                     }}
                                                 ></td>
                                             );
@@ -427,6 +339,7 @@ export default function Home() {
                 </div>
 
                 {/* クロスワード回答欄＋ボタン */}
+                <p>答えは　1 2 3 4 5 6 3</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                     <input
                         type="text"
@@ -501,8 +414,9 @@ export default function Home() {
 
             }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p>
         </div>
-        {[...Array(gazo)].map((_,idx)=>(  <div key={idx} style={{position:"fixed",backgroundColor:"black",opacity:0.5,left:"opx",top:"0px",width:window.innerWidth,height:window.innerHeight}}></div>))}
-        {[...Array(gazo)].map((_,idx)=>( <button key={idx} onClick={()=>{setGazo(0)}} className="batu">✖</button>))}
+        {!(gazo==="n") && <div style={{position:"fixed",backgroundColor:"black",opacity:0.5,left:"0px",top:"0px",width:window.innerWidth,height:window.innerHeight}}></div>}
+        {!(gazo==="n") && <button onClick={()=>{setGazo("n")}} className="batu">✖</button>}
+        {!(gazo==="n") && <img src={gazo} style={{position:"fixed",width:(window.innerWidth-100),height:(window.innerHeight-100),top:"50px",left:"50px",objectFit: "contain"}}></img>}
         </div>
     );
 }

@@ -5,6 +5,9 @@ import { RiddlesProvider } from './context/riddleContext';
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
+      <head>
+        <title>3AHR</title>
+      </head>
       <body>
         <RiddlesProvider>
           <header>

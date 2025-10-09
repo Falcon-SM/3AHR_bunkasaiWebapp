@@ -12,12 +12,14 @@ type props = {
 };
 
 export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, imgHeight = 200 }: props) {
+    const {setGazo}=useRiddles()
     const {
         setOneIsAnswered,
         setTwoIsAnswered,
         setThreeIsAnswered,
         setFourIsAnswered,
     } = useRiddles();
+    const [hintti,setHintti]=useState(false)
     const [numhint, setNumhint] = useState(0);
     const canvasRef = [useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null)]
     useEffect(() => {
@@ -73,6 +75,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
 
         }
     }, [numhint]);
+    useEffect(()=>{setTimeout(()=>{setHintti(true)},30000*(n+1))},[])
     return (
         <div style={{ marginBottom: 28, width: 500, display: "flex", overflow: "visible" }} key={n}>
             <div style={{ width: 500, flex: "0 0 auto" }}>
@@ -99,6 +102,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                         width={imgWidth}
                         height={imgHeight}
                         style={{ objectFit: "contain" }}
+                        onClick={()=>{setGazo(imgg)}}
                     />
                 )}
 
@@ -115,14 +119,15 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                         marginBottom: "4px",
                     }}
                     onChange={(e) => {
-                        const hasText = e.target.value.length > 0;
-                        if (n === 0) setOneIsAnswered(hasText);
-                        if (n === 1) setTwoIsAnswered(hasText);
-                        if (n === 2) setThreeIsAnswered(hasText);
-                        if (n === 3) setFourIsAnswered(hasText);
+                        if(e.target.value.length > 0){
+                            if (n === 0) setOneIsAnswered(true);
+                            if (n === 1) setTwoIsAnswered(true);
+                            if (n === 2) setThreeIsAnswered(true);
+                            if (n === 3) setFourIsAnswered(true);
+                        }
                     }}
                 />
-                {numhint < hints.length &&
+                {(hintti && numhint < hints.length) &&
                     <button
                         onClick={() => { setNumhint((prev) => (prev + 1)) }}
                         style={{
