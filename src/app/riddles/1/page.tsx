@@ -240,7 +240,7 @@ export default function Home() {
                         {post.img!==undefined &&
                         <img
                             src={post.img}
-                            onClick={()=>{setGazo(post.img)}}
+                            onClick={()=>{setGazo((post.img ?? "a"))}}
                             style={{
                                 width: 250,
                                 borderRadius: "5%",
