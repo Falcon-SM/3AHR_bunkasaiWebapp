@@ -108,7 +108,7 @@ export default function Home() {
     // 謎3に文字が入ったら暗号化投稿を一度だけ表示
     useEffect(() => {
         const alreadyPosted = posts.some(p => p.base64 === base64Hint3 && p.riddleNumber === 3);
-        if (threeIsAnswered && !alread/yPosted && base64Hint3) {
+        if (threeIsAnswered && !alreadyPosted && base64Hint3) {
             setPosts((prev) => ([
                 ...prev,
                 {
