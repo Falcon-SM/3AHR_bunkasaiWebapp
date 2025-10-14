@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 //import { microcms } from "@/lib/microcms";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
 
 type PageContent = {
   title: string;
@@ -35,6 +36,15 @@ export default function Home() {
 
   return (
     <div className="container">
+      <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
+        />
       <h2/>
       <div style={{ margin: "32px 0" }}>
         <video

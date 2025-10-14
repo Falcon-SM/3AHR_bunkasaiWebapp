@@ -5,21 +5,51 @@ import { write } from "fs";
 import Diamond from "../../../../components/diamondd";
 import Script from "next/script";
 
+type HintPost = {
+    icon?: string;
+    name?: string;
+    content: string; // 表示用のテキスト（暗号化された画面: ... も含む）
+    img?:string;
+    time?:string;
+    // 以下は暗号化投稿専用のメタ情報
+    riddleNumber?: number; // 1..4 のどの謎の投稿か
+    base64?: string; // 暗号化文字列
+    isDecrypted?: boolean; // 復号済みか
+};
+
 export default function Home() {
     const { threeIsAnswered, incrementDecryptCount, decryptCounts } = useRiddles();
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [posts, setPosts] = useState([
-        { icon: "/sampleicon.png", name: "Riddlemaster", content: "謎を解いていくと、ここに新しい投稿が表示されます！" },
-    ]);
     const [anses,setAnses]=useState([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     const kazumozi=["A","S","T","M","C","I","B","U","P","O","G","R","M","R","K","F","V","E","W","A","I"]
     
     const getAns=(bango:number)=>(
         ()=>{setAnses((prev)=>{prev[bango]=1-prev[bango];return prev})}
     )
+
+    const [posts, setPosts] = useState<HintPost[]>([]);
+            useEffect(()=>{
+                const h=parseInt(sessionStorage.h);
+                const m=parseInt(sessionStorage.m);
+                setPosts([{
+                    content:"今日はこまば遺跡に行ってきた！これがあの有名な「かがやきの石板」か、、、",
+                    time:(h+Math.floor((m-37)/60))+":"+("0"+(m+26)%60).slice(-2),
+                    img:"/論理クイズ.png"
+                },
+                {content:"💩",time:(h+Math.floor((m-20)/60))+":"+("0"+(m+40)%60).slice(-2)},
+                {content:"シタっていう男はひどいうそつきだ。あいつの言うことは信じない方がいい。",time:(h+Math.floor((m-10)/60))+":"+("0"+(m+50)%60).slice(-2)},
+                {content:"ケルネル高校の文化祭言ってきた!なぞに落書きして妨害してやったわw",time:h+":"+("0"+m).slice(-2)},
+                {
+                    time:sessionStorage.timm,
+                    content: `俺のアカウント名、俺の本名から来てるんだよね。12個あるうちの10個目っていうことでさ。もし名前がトラだったら3/12なんだなw`,
+                },
+        
+                ])
+            },[])
+    
 
     const handleCheckAnswer = async () => {
         setIsLoading(true);
@@ -54,12 +84,62 @@ export default function Home() {
           dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
         />
             {/* 左：SNS風ヒント */}
-            <div style={{ width: 320, background: "#f6f8fb", borderRadius: "16px", boxShadow: "0 6px 18px rgba(0,0,0,0.08)", padding: "20px 14px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div
+                style={{
+                    width: 320,
+                    background: "#f6f8fb",
+                    borderRadius: "16px",
+                    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+                    padding: "20px 14px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                }}
+            >
                 {posts.map((post, idx) => (
-                    <div key={`post-${idx}`} style={{ width: "100%", marginBottom: "24px", background: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", padding: "16px 12px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <img src={post.icon} alt="アカウントアイコン" style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", marginBottom: "8px", border: "2px solid #0984e3" }} />
-                        <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>{post.name}</div>
-                        <div style={{ color: "#4b5563", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6 }}>{post.content}</div>
+                    <div
+                        key={`post-${idx}`} // ← keyをユニークに
+                        style={{
+                            width: "100%",
+                            marginBottom: "24px",
+                            background: "#fff",
+                            borderRadius: "12px",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                            padding: "16px 12px",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                        }}
+                    >
+                        <img
+                            src={post.icon ?? "/sampleicon.png"}
+                            alt="アカウントアイコン"
+                            style={{
+                                width: 48,
+                                height: 48,
+                                borderRadius: "50%",
+                                objectFit: "cover",
+                                marginBottom: "8px",
+                                border: "2px solid #0984e3",
+                            }}
+                        />
+                        <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>
+                            {post.name ?? "Bird41"}<span style={{fontSize:"0.9rem",fontWeight:200,color:"#868686ff"}}>　{post.time}</span>
+                        </div>
+                        <div style={{ color: "#4b5563", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6, wordBreak: "break-all", overflowWrap: "anywhere" }}>
+                            {post.content}
+                        </div>
+                        {post.img!==undefined &&
+                        <img
+                            src={post.img}
+                            onClick={()=>{window.open(post.img)}}
+                            style={{
+                                width: 250,
+                                borderRadius: "5%",
+                                marginTop: "8px",
+                            }}
+                        />}
+                        
                     </div>
                 ))}
             </div>

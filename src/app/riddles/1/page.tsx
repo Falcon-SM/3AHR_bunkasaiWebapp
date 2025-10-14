@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Ques from "../../../../components/shomon";
 import { useRiddles } from "@/app/context/riddleContext";
+import Script from "next/script";
 
 type HintPost = {
     icon?: string;
@@ -45,6 +46,8 @@ export default function Home() {
     useEffect(()=>{
         const h=new Date().getHours();
         const m=new Date().getMinutes();
+        sessionStorage.h=h;
+        sessionStorage.m=m;
         setPosts([{
             content:"今日はこまば遺跡に行ってきた！これがあの有名な「かがやきの石板」か、、、",
             time:(h+Math.floor((m-37)/60))+":"+("0"+(m+26)%60).slice(-2),
@@ -123,10 +126,11 @@ export default function Home() {
             setPosts((prev) => ([
                 ...prev,
                 {
-                    time:new Date().getHours()+":"+new Date().getMinutes(),
+                    time:new Date().getHours()+":"+("0"+new Date().getMinutes()).slice(-2),
                     content: `俺のアカウント名、俺の本名から来てるんだよね。12個あるうちの10個目っていうことでさ。もし名前がトラだったら3/12なんだなw`,
                 },
             ]));
+            sessionStorage.timm=new Date().getHours()+":"+("0"+new Date().getMinutes()).slice(-2);
         }
     }, [threeIsAnswered]);
 
@@ -183,6 +187,15 @@ export default function Home() {
 
     return (
         <div>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
+        />
         <div
             style={{
                 display: "flex",
@@ -232,7 +245,7 @@ export default function Home() {
                             }}
                         />
                         <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>
-                            {post.name ?? "とある筑駒生の独り言"}<span style={{fontSize:"0.9rem",fontWeight:200,color:"#868686ff"}}>　{post.time}</span>
+                            {post.name ?? "Bird41"}<span style={{fontSize:"0.9rem",fontWeight:200,color:"#868686ff"}}>　{post.time}</span>
                         </div>
                         <div style={{ color: "#4b5563", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6, wordBreak: "break-all", overflowWrap: "anywhere" }}>
                             {post.content}
