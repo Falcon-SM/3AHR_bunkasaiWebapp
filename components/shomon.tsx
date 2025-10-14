@@ -129,7 +129,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                 />
                 {(hintti && numhint < hints.length) &&
                     <button
-                        onClick={() => { setNumhint((prev) => (prev + 1)) }}
+                        onClick={() => { sessionStorage.sawhint=parseInt( sessionStorage.sawhint)+1;alert(sessionStorage.sawhint);setNumhint((prev) => (prev + 1)) }}
                         style={{
                             padding: "10px 20px",
                             background: "#0984e3",

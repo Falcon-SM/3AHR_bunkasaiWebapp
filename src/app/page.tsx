@@ -35,6 +35,7 @@ export default function Home() {
   };
 
   return (
+    <div>
     <div className="container">
       <header className="relative overflow-hidden">
         {/* Google tag (gtag.js) */}
@@ -47,6 +48,7 @@ export default function Home() {
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
         />
+      </header>
         <h1 style={{ textAlign: "center", marginBottom: "24px" }}>注意事項</h1>
         <h2 />
         <ol type="1">
@@ -80,10 +82,13 @@ export default function Home() {
         >
           謎解きを始める
         </button>
+      </div>
         {showModal && (
           <div style={{
             position: "fixed",
             top: 0, left: 0, right: 0, bottom: 0,
+            width:window.innerWidth,
+            height:window.innerHeight,
             background: "rgba(0,0,0,0.4)",
             display: "flex",
             alignItems: "center",
@@ -135,7 +140,6 @@ export default function Home() {
             </div>
           </div>
         )}
-      </header>
     </div>
 
   );

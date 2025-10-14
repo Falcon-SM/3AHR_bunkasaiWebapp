@@ -52,6 +52,6 @@ export default function Diamond({typp,mozi,x,y,sub}:diamhiki){
     },[cl])
 
     return(
-        <canvas onClick={()=>{setCl((prev)=>(1-prev));sub()}} ref={canvasRef} width={[20,80][typp]} height={[20,80][1-typp]} style={{width:[20,80][typp],height:[20,80][1-typp],position:"absolute",left:x,top:y}}></canvas>
+        <canvas onClick={()=>{sub();setCl((prev)=>(1-prev));}} ref={canvasRef} width={[20,80][typp]} height={[20,80][1-typp]} style={{width:[20,80][typp],height:[20,80][1-typp],position:"absolute",left:x,top:y}}></canvas>
     )
 }

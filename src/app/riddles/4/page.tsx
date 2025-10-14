@@ -23,14 +23,14 @@ const crossd = [
     [0,1,0,0,0,0,1]
 
 ];
-const crosshuto=[8,34,25,10,20,2]
+const crosshuto=[8,34,25,10,20,14]
 
 const mondai = [
     "左下の⬛️から右上の⬛️へ向かえ。\n壁にぶつかるまで曲がれない。\nまた、右にしか曲がることができない。\n通った文字を順に読め。",
     "室町幕府の将軍を追放した戦国武将は？",
     "嘘をついているB組生徒の名を出席番号順に読め。\n下の5人は全員同じB組である。",
     "投稿者が文化祭で撮った写真に写っている謎を解け。",
-    "来年の筑駒の文化祭のテーマはなんでしょう？"
+    "トイレの紙の赤い矢印が通る文字を順に読め。"
 ]
 
 const monim=['naan','naan', '/論理クイズ.png','naan','naan']
@@ -44,20 +44,19 @@ export default function Home() {
     const [quizTwoAnswer, setQuizTwoAnswer] = useState("");
     const [posts, setPosts] = useState<HintPost[]>([]);
     useEffect(()=>{
-        const h=parseInt(sessionStorage.h);
-        const m=parseInt(sessionStorage.m);
+        const h=new Date().getHours();
+        const m=new Date().getMinutes();
+        sessionStorage.h=h;
+        sessionStorage.m=m;
         setPosts([{
             content:"今日はこまば遺跡に行ってきた！これがあの有名な「かがやきの石板」か、、、",
-            time:(h+Math.floor((m-37)/60))+":"+("0"+(m+26)%60).slice(-2),
+            time:(h+Math.floor((m-53)/60))+":"+("0"+(m+7)%60).slice(-2),
             img:"/論理クイズ.png"
         },
-        {content:"💩",time:(h+Math.floor((m-20)/60))+":"+("0"+(m+40)%60).slice(-2)},
-        {content:"シタっていう男はひどいうそつきだ。あいつの言うことは信じない方がいい。",time:(h+Math.floor((m-10)/60))+":"+("0"+(m+50)%60).slice(-2)},
-        {content:"ケルネル高校の文化祭言ってきた!なぞに落書きして妨害してやったわw",time:h+":"+("0"+m).slice(-2)},
-        {
-            time:sessionStorage.timm,
-            content: `俺のアカウント名、俺の本名から来てるんだよね。12個あるうちの10個目っていうことでさ。もし名前がトラだったら3/12なんだなw`,
-        },
+        {content:"💩",time:(h+Math.floor((m-37)/60))+":"+("0"+(m+23)%60).slice(-2)},
+        {content:"シタっていう男はひどいうそつきだ。あいつの言うことは信じない方がいい。",time:(h+Math.floor((m-20)/60))+":"+("0"+(m+40)%60).slice(-2)},
+        {content:"ケルネル高校の文化祭言ってきた!なぞに落書きして妨害してやったわw",time:(h+Math.floor((m-10)/60))+":"+("0"+(m+50)%60).slice(-2)},
+        {content:"おこめ公園のトイレの入り口からこんな紙見えてビビったwこれは何？謎解き...？",time:h+":"+("0"+m).slice(-2)}
 
         ])
     },[])
@@ -65,29 +64,11 @@ export default function Home() {
     const [decodeInputs, setDecodeInputs] = useState<Record<number, string>>({}); // key: post index
     const hints=[["徳川家の人だよ！","たい焼きを食べて死んだという噂があるよ！","家康だよ！"],["この人が登場する有名な戦国ゲームがあるよ！","〇〇の野望","織田信長っていう人だよ！"],["a","b","c"],["a","b","d"],["廻天","結","Reboot"]]
     // Base64暗号テキスト（第1問用）
-    const base64Hint = useMemo(() => {
-        const hint = "第1問のヒント: 徳川家の初代将軍だよ。下の名前を思い出して。";
-        if (typeof window === "undefined") return "";
-        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
-    }, [typeof window]);
-
-    // Base64暗号テキスト（第2〜4問用）
-    const base64Hint2 = useMemo(() => {
-        const hint = "第2問のヒント: 室町幕府の将軍を都から追放した戦国武将。";
-        if (typeof window === "undefined") return "";
-        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
-    }, []);
     const base64Hint3 = useMemo(() => {
         const hint = "第3問のヒント: 2019年から始まった新しい元号。";
         if (typeof window === "undefined") return "";
         try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
     }, []);
-    const base64Hint4 = useMemo(() => {
-        const hint = "第4問のヒント: 東北地方の太平洋沖が震源の大規模地震の正式名称。";
-        if (typeof window === "undefined") return "";
-        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
-    }, []);
-
     useEffect(()=>{
             console.log(Number.isNaN(Number(sessionStorage.zikan)));
             console.log(sessionStorage.zikan);
@@ -128,43 +109,14 @@ export default function Home() {
             setPosts((prev) => ([
                 ...prev,
                 {
-                    time:new Date().getHours()+":"+new Date().getMinutes(),
+                    time:new Date().getHours()+":"+("0"+new Date().getMinutes()).slice(-2),
                     content: `俺のアカウント名、俺の本名から来てるんだよね。12個あるうちの10個目っていうことでさ。もし名前がトラだったら3/12なんだなw`,
                 },
             ]));
+            sessionStorage.timm=new Date().getHours()+":"+("0"+new Date().getMinutes()).slice(-2);
         }
     }, [threeIsAnswered]);
 
-
-    const handlePerPostDecodeSubmit = (postIndex: number) => (e: React.FormEvent) => {
-        e.preventDefault();
-        const input = (decodeInputs[postIndex] || "").trim();
-        const post = posts[postIndex];
-        if (!post || !post.base64 || post.isDecrypted) return;
-        if (input === "復号する") {
-            try {
-                const decoded = decodeURIComponent(escape(window.atob(post.base64)));
-                setPosts((prev) => {
-                    const next = [...prev];
-                    const target = next[postIndex];
-                    if (target) {
-                        target.content = decoded;
-                        target.isDecrypted = true;
-                    }
-                    return next;
-                });
-                if (post.riddleNumber) {
-                    incrementDecryptCount(1);
-                    try {
-                        const stored = JSON.parse(localStorage.getItem("decryptCounts") || "{}");
-                        stored[post.riddleNumber] = (stored[post.riddleNumber] || 0) + 1;
-                        localStorage.setItem("decryptCounts", JSON.stringify(stored));
-                    } catch { }
-                }
-            } catch { }
-        }
-        setDecodeInputs((prev) => ({ ...prev, [postIndex]: "" }));
-    };
     useEffect(() => {
     const timerId = setInterval(() => {
       setnokori((prev)=>(prev-1));
@@ -174,17 +126,7 @@ export default function Home() {
     return () => clearInterval(timerId)
   }, [nokori]) 
 
-    // 旧・単一フォームの復号ハンドラは不要になったため削除
-    function handlehint(m: number) {
-        return (() => setPosts([
-            ...posts,
-            {
-                icon: "/sampleicon.png",
-                name: "Riddlemaster",
-                content: `第${m + 1}問のヒント:今年は令和7年だよ!`,
-            },
-        ]))
-    }
+
 
     return (
         <div>
@@ -292,6 +234,7 @@ export default function Home() {
                 <h1 style={{ textAlign: "center", marginBottom: 24, fontWeight: 800, color: "#1f2937", letterSpacing: 0.3 }}>
                     謎解きチャレンジ
                 </h1>
+                <p>箱に入っていた資料の内容を踏まえて以下の問いにもう一度答えよ</p>
                 {[...Array(5)].map((_, idx) => (
                     <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} imgg={monim[idx]} imgWidth={400} imgHeight={250}/>
                 ))}
@@ -353,14 +296,34 @@ export default function Home() {
                 </div>
 
                 {/* クロスワード回答欄＋ボタン */}
-                <p>答えは　1 2 3 4 5 6 3</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                <p style={{marginTop:40,marginBottom:10}}>クロスワードの太線の中の文字を以下の対応する四角に入力せよ</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 ,height:50,background: "#ffffffff",borderRadius: "4px",border:"1px solid black",padding:8}}>
+                    
+                    {[...Array(7)].map((_,idx)=>(
                     <input
+                        key={idx}
+                        maxLength={1}
                         type="text"
-                        value={crosswordAnswer}
-                        onChange={e => setCrosswordAnswer(e.target.value)}
-                        placeholder="クロスワードの答えを入力"
+                        placeholder={String(idx+1)}
                         style={{
+                            
+                            width:20,
+                            flex: 1,
+                            padding: "10px",
+                            fontSize: "1rem",
+                            borderRadius: "6px",
+                            border: "1px solid #d1d5db",
+                        }}
+                    />
+                    ))}
+                    <p style={{flexGrow:1}}>星の間を読め</p>
+                </div>
+                <div style={{display:"flex",marginTop:40}}>
+                    <input 
+                        onChange={e => setCrosswordAnswer(e.target.value)}
+                        placeholder={"答えを入力"}
+                        style={{
+                            marginRight:10,
                             flex: 1,
                             padding: "10px",
                             fontSize: "1rem",
@@ -396,7 +359,7 @@ export default function Home() {
                 )}
                 {isCorrect && (
                     <a
-                        href="/riddles/2"
+                        href="/final"
                         style={{
                             display: "block",
                             textAlign: "center",
@@ -413,7 +376,7 @@ export default function Home() {
                         onMouseOver={e => (e.currentTarget.style.background = "#10b981")}
                         onMouseOut={e => (e.currentTarget.style.background = "#059669")}
                     >
-                        次の謎へ進む
+                        次へ
                     </a>
                 )}
             </div>

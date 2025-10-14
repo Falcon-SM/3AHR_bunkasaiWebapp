@@ -18,16 +18,26 @@ type HintPost = {
 };
 
 export default function Home() {
-    const { threeIsAnswered, incrementDecryptCount, decryptCounts } = useRiddles();
-    const [crosswordAnswer, setCrosswordAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [anses,setAnses]=useState([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     const kazumozi=["A","S","T","M","C","I","B","U","P","O","G","R","M","R","K","F","V","E","W","A","I"]
-    
+    const [nokori,setnokori]=useState(1200);
+    useEffect(()=>{
+        setnokori(parseInt(sessionStorage.zikan))
+    },[])
+    useEffect(() => {
+    const timerId = setInterval(() => {
+        setnokori((prev)=>(prev-1));
+        sessionStorage.zikan=nokori;
+    }
+    , 1000);
+    return () => clearInterval(timerId)
+    }, [nokori])
+
     const getAns=(bango:number)=>(
-        ()=>{setAnses((prev)=>{prev[bango]=1-prev[bango];return prev})}
+        ()=>{setAnses((prev)=>(prev.slice(0,bango).concat([1-prev[bango]]).concat(prev.slice(bango+1))))}
     )
 
     const [posts, setPosts] = useState<HintPost[]>([]);
@@ -35,13 +45,14 @@ export default function Home() {
                 const h=parseInt(sessionStorage.h);
                 const m=parseInt(sessionStorage.m);
                 setPosts([{
-                    content:"今日はこまば遺跡に行ってきた！これがあの有名な「かがやきの石板」か、、、",
-                    time:(h+Math.floor((m-37)/60))+":"+("0"+(m+26)%60).slice(-2),
-                    img:"/論理クイズ.png"
+                content:"今日はこまば遺跡に行ってきた！これがあの有名な「かがやきの石板」か、、、",
+                time:(h+Math.floor((m-53)/60))+":"+("0"+(m+7)%60).slice(-2),
+                img:"/論理クイズ.png"
                 },
-                {content:"💩",time:(h+Math.floor((m-20)/60))+":"+("0"+(m+40)%60).slice(-2)},
-                {content:"シタっていう男はひどいうそつきだ。あいつの言うことは信じない方がいい。",time:(h+Math.floor((m-10)/60))+":"+("0"+(m+50)%60).slice(-2)},
-                {content:"ケルネル高校の文化祭言ってきた!なぞに落書きして妨害してやったわw",time:h+":"+("0"+m).slice(-2)},
+                {content:"💩",time:(h+Math.floor((m-37)/60))+":"+("0"+(m+23)%60).slice(-2)},
+                {content:"シタっていう男はひどいうそつきだ。あいつの言うことは信じない方がいい。",time:(h+Math.floor((m-20)/60))+":"+("0"+(m+40)%60).slice(-2)},
+                {content:"ケルネル高校の文化祭言ってきた!なぞに落書きして妨害してやったわw",time:(h+Math.floor((m-10)/60))+":"+("0"+(m+50)%60).slice(-2)},
+                {content:"おこめ公園のトイレの入り口からこんな紙見えてビビったwこれは何？謎解き...？",time:h+":"+("0"+m).slice(-2)},
                 {
                     time:sessionStorage.timm,
                     content: `俺のアカウント名、俺の本名から来てるんだよね。12個あるうちの10個目っていうことでさ。もし名前がトラだったら3/12なんだなw`,
@@ -72,7 +83,7 @@ export default function Home() {
     };
 
     return (
-        <div style={{ maxWidth: 900, margin: "40px auto", padding: "32px", display: "flex", gap: "32px" }}>
+        <div style={{width: 1100, margin: "40px auto", padding: "32px", display: "flex", gap: "32px" }}>
             {/* Google tag (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
@@ -143,7 +154,7 @@ export default function Home() {
                     </div>
                 ))}
             </div>
-            <div className="container" style={{width : 700, textAlign: 'right'}} onClick={()=>console.log(anses)}>
+            <div className="container" style={{width : 1100, textAlign: 'right'}}>
                 <h2
                     style={{
                         fontSize: "1.2rem",
@@ -200,6 +211,16 @@ export default function Home() {
                     </a>
                 )}
             </div>
+            <p style={{
+                background:"#fff",
+                borderRadius: "8px",
+                border:"10px solid #0ea5e9",
+                fontSize:"50px",
+                padding:"5px",
+                margin:"0px auto",
+                height:60
+
+            }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p>
         </div>
     );
 }
