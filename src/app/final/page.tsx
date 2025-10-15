@@ -38,6 +38,8 @@ export default function Home() {
   useEffect(()=>{
     setts(1200-sessionStorage.zikan);
     seths(sessionStorage.sawhint);
+    sessionStorage.zikan=1200;
+    sessionStorage.sawhint=0;
   },[])
 
   const handleStartClick = (e: React.MouseEvent) => {
@@ -70,7 +72,7 @@ export default function Home() {
     }
     , 1000);
     if(kirikae===0){
-      //router.push("/")
+      router.push("/")
     }
     return () => clearInterval(timerId)
     }, [kirikae,showModal]) 
