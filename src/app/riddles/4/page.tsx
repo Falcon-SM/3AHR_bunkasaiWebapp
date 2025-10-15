@@ -84,7 +84,7 @@ export default function Home() {
         setIsCorrect(false);
 
         try {
-            const res = await fetch("/api/riddle/1", {
+            const res = await fetch("/api/riddle/2", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ answer: crosswordAnswer }),

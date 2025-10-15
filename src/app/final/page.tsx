@@ -1,11 +1,18 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-//import { microcms } from "@/lib/microcms";
+import { supabase } from "../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { text } from "stream/consumers";
 
+
+type Score = {
+  id: string;
+  user_name: string;
+  score: number;
+  created_at: string;
+};
 
 
 /*type MicroCMSResponse = {
@@ -18,6 +25,15 @@ export default function Home() {
   const [tscore,setts]=useState(0);
   const [hscore,seths]=useState(0);
   const router = useRouter();
+
+  //以下はデータベース用です
+  const [scores, setScores] = useState<Score[]>([]);
+  const [nickname, setNickname] = useState("");
+  const [playerScore, setPlayerScore] = useState<number | null>(null);
+  const [rank, setRank] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(()=>{
     setts(1200-sessionStorage.zikan);
@@ -48,6 +64,54 @@ export default function Home() {
     return () => clearInterval(timerId)
     }, [kirikae,showModal]) 
 
+    //以下はデータベース用
+
+    useEffect(() => {
+    //得点
+    setPlayerScore(87); //計算めんどくさい
+  }, []);
+
+    useEffect(() => {
+    const fetchScores = async () => {
+      const { data, error } = await supabase
+        .from("scores")
+        .select("*")
+        .order("score", { ascending: false })
+        .limit(20);
+
+      if (error) console.error(error);
+      else setScores(data || []);
+    };
+    fetchScores();
+  }, [submitted]);
+
+  useEffect(() => {
+    if (playerScore != null && scores.length > 0) {
+      const higherScores = scores.filter((s) => s.score > playerScore).length;
+      setRank(higherScores + 1);
+    }
+  }, [playerScore, scores]);
+
+  const handleSubmit = async () => {
+    if (!nickname || playerScore == null) return;
+    setIsSubmitting(true);
+
+    const { error } = await supabase.from("scores").insert([
+      {
+        user_name: nickname,
+        score: playerScore,
+      },
+    ]);
+
+    setIsSubmitting(false);
+    if (error) {
+      console.error(error);
+    } else {
+      setSubmitted(true);
+    }
+  };
+
+  if (playerScore == null) return <p>スコアを読み込み中...</p>;
 
   return (
     <div>
@@ -132,6 +196,66 @@ export default function Home() {
             </div>
           </div>
         )}
+        {/*以下はデータベース用*/}
+      <h1 className="text-3xl font-bold">🎯 あなたのスコア: {playerScore}</h1>
+
+      {rank && rank <= 20 ? (
+        <div className="text-center space-y-4">
+          <p className="text-xl">おめでとう！第 {rank} 位です 🎉</p>
+          {!submitted ? (
+            <>
+              <input
+                type="text"
+                placeholder="ニックネームを入力"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                className="border p-2 rounded-lg text-center"
+              />
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+              >
+                {isSubmitting ? "送信中..." : "スコアを登録"}
+              </button>
+            </>
+          ) : (
+            <p className="text-green-600 font-semibold">登録が完了しました ✅</p>
+          )}
+        </div>
+      ) : (
+        <div className="text-center space-y-4">
+          <p className="text-xl">残念！{rank} 位でした 😢</p>
+          <p>上位20位以内のみスコアが記録されます。</p>
+          <button
+            onClick={() => setSubmitted(true)}
+            className="text-gray-600 underline"
+          >
+            記録をスキップ
+          </button>
+        </div>
+      )}
+
+      <div className="w-full max-w-md">
+        <h2 className="text-2xl font-semibold text-center mt-6 mb-2">
+          🏆 スコアボード
+        </h2>
+        <ul className="divide-y">
+          {scores.map((s, index) => (
+            <li
+              key={s.id}
+              className={`flex justify-between p-2 ${
+                s.user_name === nickname ? "bg-yellow-100" : ""
+              }`}
+            >
+              <span>
+                {index + 1}. {s.user_name || "匿名"}
+              </span>
+              <span>{s.score}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
 
   );
