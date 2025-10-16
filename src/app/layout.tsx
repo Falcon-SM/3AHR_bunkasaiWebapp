@@ -11,7 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <RiddlesProvider>
           <header>
-            <h1>3AHRの謎解きへようこそ！</h1>
+            <h1 style={{fontWeight:450}}>3AHRの謎解きへようこそ！</h1>
           </header>
           <main>{children}</main>
           <footer>

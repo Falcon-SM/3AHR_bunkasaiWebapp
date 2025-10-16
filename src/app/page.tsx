@@ -34,6 +34,13 @@ export default function Home() {
     setVideoEnded(true);
   };
 
+  useEffect(()=>{
+    if (!Number.isNaN(Number(localStorage.pagen)) && localStorage.pagen!==0)
+      sessionStorage.zikan=localStorage.zikan;
+      sessionStorage.sawhint=localStorage.sawhint;
+      router.push(`/riddles/${localStorage.pagen}`)
+  })
+
   return (
     <div>
     <div className="container">

@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Ques from "../../../../components/shomon";
 import { useRiddles } from "@/app/context/riddleContext";
 import Script from "next/script";
+import { useRouter } from "next/navigation";
 
 type HintPost = {
     icon?: string;
@@ -42,6 +43,27 @@ export default function Home() {
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [posts, setPosts] = useState<HintPost[]>([]);
+    const router=useRouter();
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+        console.log(isCorrect)
+        if(!isCorrect){
+            localStorage.pagen=1;
+            localStorage.zikan=sessionStorage.zikan;
+            localStorage.sawhint=sessionStorage.sawhint;
+            event.preventDefault();
+            // Chromeなどでは returnValue の設定が必要
+            event.returnValue = "";
+        }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
     useEffect(()=>{
         const h=new Date().getHours();
         const m=new Date().getMinutes();
@@ -152,12 +174,14 @@ export default function Home() {
         >
             {/* 左側：SNS風ヒントカード */}
             <div
+                className="container"
                 style={{
+                    padding:"0 0 0 0",
                     width: 320,
-                    background: "#f6f8fb",
                     borderRadius: "16px",
                     boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-                    padding: "20px 14px",
+                    border:"none",
+                    
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -169,13 +193,15 @@ export default function Home() {
                         style={{
                             width: "100%",
                             marginBottom: "24px",
-                            background: "#fff",
-                            borderRadius: "12px",
+                            background: "#000000ff",
+                            border:"1px solid #747474ff",
+                            borderBottom:"none",
                             boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
                             padding: "16px 12px",
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
+                            margin:0
                         }}
                     >
                         <img
@@ -191,9 +217,9 @@ export default function Home() {
                             }}
                         />
                         <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>
-                            {post.name ?? "Bird41"}<span style={{fontSize:"0.9rem",fontWeight:200,color:"#868686ff"}}>　{post.time}</span>
+                            {post.name ?? "Bird41"}<span style={{fontSize:"0.9rem",fontWeight:200,color:"gray"}}>　{post.time}</span>
                         </div>
-                        <div style={{ color: "#4b5563", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6, wordBreak: "break-all", overflowWrap: "anywhere" }}>
+                        <div style={{fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6, wordBreak: "break-all", overflowWrap: "anywhere" }}>
                             {post.content}
                         </div>
                         {post.img!==undefined &&
@@ -209,22 +235,7 @@ export default function Home() {
                         
                     </div>
                 ))}
-                {/* 復号回数表示は必要であれば各投稿の下に追加可能 */}
-                <button
-                    style={{
-                        background: "#0ea5e9",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "6px",
-                        padding: "8px 18px",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                        marginTop: "12px",
-                        boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-                    }}
-                >
-                    過去の投稿を見る
-                </button>
+                <div style={{borderTop:"1px solid #747474ff",width:"100%"}}></div>
             </div>
 
             {/* 右側：謎解き本体 */}
@@ -234,7 +245,7 @@ export default function Home() {
                     flex: 1
                 }}
             >
-                <h1 style={{ textAlign: "center", marginBottom: 24, fontWeight: 800, color: "#1f2937", letterSpacing: 0.3 }}>
+                <h1 style={{ textAlign: "center", marginBottom: 24, fontWeight: 400,color:"white", letterSpacing: 0.3 }}>
                     謎解きチャレンジ
                 </h1>
                 {[...Array(5)].map((_, idx) => (
@@ -243,7 +254,7 @@ export default function Home() {
 
 
                 <div style={{ margin: "28px 0 20px 0", clear:"both"}}>
-                    <h2 style={{ color: "#111827", marginBottom: 12, fontWeight: 700 }}>クロスワード</h2>
+                    <h2 style={{marginBottom: 12, fontWeight: 400 }}>クロスワード</h2>
                     <table cellSpacing="0" style={{borderCollapse: "collapse", margin: "0 auto" }}>
                         <tbody>
                             {[...Array(5)].map((_, rowIdx) => (
@@ -360,9 +371,10 @@ export default function Home() {
                     </div>
                 )}
                 {isCorrect && (
-                    <a
-                        href="/riddles/2"
+                    <button
+                        onClick={()=>{router.push("/riddles/2")}}
                         style={{
+                            width:"95%",
                             display: "block",
                             textAlign: "center",
                             marginTop: "24px",
@@ -379,13 +391,13 @@ export default function Home() {
                         onMouseOut={e => (e.currentTarget.style.background = "#059669")}
                     >
                         次の謎へ進む
-                    </a>
+                    </button>
                 )}
             </div>
             <p style={{
-                background:"#fff",
+                background:"#000000ff",
                 borderRadius: "8px",
-                border:"10px solid #0ea5e9",
+                border:"2px solid #00eeffff",
                 fontSize:"50px",
                 padding:"5px",
                 margin:"0px auto",

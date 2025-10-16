@@ -1,11 +1,11 @@
 "use client";
-
+/*
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
 
-
+/*
 type Score = {
   id: string;
   user_name: string;
@@ -14,9 +14,7 @@ type Score = {
 };
 
 
-/*type MicroCMSResponse = {
-  contents: PageContent[];
-};*/
+
 
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
@@ -49,6 +47,9 @@ export default function Home() {
 
   const handleModalOk = () => {
     setShowModal(false);
+    sessionStorage.zikan=1200;
+    sessionStorage.sawhint=0;
+    localStorage.clear();
     router.push("/");
   };
 
@@ -150,7 +151,6 @@ export default function Home() {
     <div>
     <div className="container">
       <header className="relative overflow-hidden">
-        {/* Google tag (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
           strategy="afterInteractive"
@@ -163,7 +163,6 @@ export default function Home() {
       </header>
         <h1 style={{ textAlign: "center", marginBottom: "24px" }}>脱出成功!</h1>
       
-        {/* --- スコア登録モーダル --- */}
       
         <p style={{textAlign:"center"}}>クリアおめでとうございます！
         <br/>あなたがクリアにかかった時間:{`${Math.floor(tscore/60)}分${tscore%60}秒`}
@@ -175,11 +174,10 @@ export default function Home() {
           <h2 className="text-2xl font-semibold text-center mb-4">
             スコアボード
           </h2>
-          <div style={{textAlign:"center",marginBottom:10}}>
+          <div style={{margin:"0 auto 0 auto",marginBottom:10}}>
             {scores.map((s, index) => (
               <p key={s.id}>
-                <span className="text-gray-800">{index + 1}. {s.user_name || "匿名"}</span>
-                <span className="text-gray-900">{s.score}</span>
+                <span className="text-gray-800">{index + 1}位 {s.user_name || "匿名"}　{s.score}点</span>
               </p>
             ))}
             </div>
@@ -312,9 +310,9 @@ export default function Home() {
         </div>
       )}
 
-      {/* --- スコアボード (登録後またはスキップ後に表示) --- */}
       </div>
     
 
   );
 }
+*/

@@ -29,7 +29,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
 
             const ctx = canvas.getContext("2d");
             if (!ctx) return;
-            const [cx, cy, cw, ch, r] = [0, 0, 250, Math.ceil(hints[i].length / 16) * 20, 0];
+            const [cx, cy, cw, ch, r] = [0, 0, 250, Math.ceil(hints[i].length / 16) * 25, 0];
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(cx + r, cy);
@@ -43,7 +43,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
             ctx.lineTo(cx, cy + r);
             ctx.quadraticCurveTo(cx, cy, cx + r, cy);
             ctx.closePath();
-            ctx.fillStyle = "white";
+            ctx.fillStyle = "#00eeffff";
             ctx.strokeStyle = "black";
             ctx.lineWidth = 2;
             ctx.fill();
@@ -62,7 +62,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                 if (metrics.width > cw - 10 && line) {
                     ctx.fillText(line, 5, curY);
                     line = words[n];
-                    curY += 20;
+                    curY += 22;
                 } else {
                     line = testLine;
                 }
@@ -83,11 +83,13 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                     //dangerouslySetInnerHTML={{ __html:{mondai[n]}}}
                     style={{
                         fontSize: "1.2rem",
-                        color: "#34495e",
+                        color: "#ffffffff",
                         marginBottom: 12,
-                        background: "#f5f7fa",
+                        background: "#1f1f1fff",
                         padding: "8px 16px",
                         borderRadius: "8px",
+                        fontWeight:400,
+                        
                     }}
                 >{bun.split('\n').map((line, index) => (
                     <span key={index}>
@@ -115,7 +117,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                         padding: "10px",
                         fontSize: "1rem",
                         borderRadius: "6px",
-                        border: "1px solid #d1d5db",
+                        //border: "1px solid #00eeffff",
                         marginBottom: "4px",
                     }}
                     onChange={(e) => {
@@ -129,11 +131,11 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                 />
                 {(hintti && numhint < hints.length) &&
                     <button
-                        onClick={() => { sessionStorage.sawhint=parseInt( sessionStorage.sawhint)+1;alert(sessionStorage.sawhint);setNumhint((prev) => (prev + 1)) }}
+                        onClick={() => { sessionStorage.sawhint=parseInt( sessionStorage.sawhint)+1;setNumhint((prev) => (prev + 1)) }}
                         style={{
                             padding: "10px 20px",
-                            background: "#0984e3",
-                            color: "#fff",
+                            background: "#00eeffff",
+                            color: "#000",
                             border: "none",
                             borderRadius: "6px",
                             fontWeight: 600,
@@ -143,7 +145,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
             </div>
             <div style={{ width: 300, flex: "0 0 auto" }}>
                 {[...Array(numhint)].map((_, idx) => (
-                    <canvas width={300} height={Math.ceil(hints[idx].length / 16) * 20} key={idx} ref={canvasRef[idx]} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hints[idx].length / 16) * 20}px`, width: 300 }}></canvas>
+                    <canvas width={300} height={Math.ceil(hints[idx].length / 16) * 25} key={idx} ref={canvasRef[idx]} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hints[idx].length / 16) * 25}px`, width: 300 }}></canvas>
                 ))}
             </div>
         </div>)
