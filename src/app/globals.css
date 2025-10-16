@@ -132,3 +132,22 @@ h2 {
 .batu:hover{
   background: rgba(255, 255, 255, 0.5);
 }
+
+.botan{
+  display: block;
+  margin: 32px auto 0 auto;
+  padding: 14px 40px;
+  background-color: #0984e3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.botan:hover{
+  background-color: #74b9ff;
+}
