@@ -35,11 +35,12 @@ export default function Home() {
   };
 
   useEffect(()=>{
-    if (!Number.isNaN(Number(localStorage.pagen)) && localStorage.pagen!==0)
+    if (!Number.isNaN(Number(localStorage.pagen)) && localStorage.pagen!==0){
       sessionStorage.zikan=localStorage.zikan;
       sessionStorage.sawhint=localStorage.sawhint;
       router.push(`/riddles/${localStorage.pagen}`)
-  })
+    }
+  },[])
 
   return (
     <div>
@@ -70,22 +71,7 @@ export default function Home() {
         </ol>
         <button
           onClick={handleStartClick}
-          style={{
-            display: "block",
-            margin: "32px auto 0 auto",
-            padding: "14px 40px",
-            background: "#0984e3",
-            color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            fontWeight: 700,
-            fontSize: "1.1rem",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
-            cursor: "pointer",
-            transition: "background 0.2s",
-          }}
-          onMouseOver={e => (e.currentTarget.style.background = "#74b9ff")}
-          onMouseOut={e => (e.currentTarget.style.background = "#0984e3")}
+          className="botan"
         >
           謎解きを始める
         </button>
@@ -96,17 +82,17 @@ export default function Home() {
             top: 0, left: 0, right: 0, bottom: 0,
             width:window.innerWidth,
             height:window.innerHeight,
-            background: "rgba(0,0,0,0.4)",
+            background: "rgba(255, 255, 255, 0.4)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1000
           }}>
             <div style={{
-              background: "#fff",
+              background: "#000000ff",
               padding: "32px",
               borderRadius: "12px",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
+              boxShadow: "0 4px 24px rgba(102, 102, 102, 0.18)",
               maxWidth: "90vw",
               textAlign: "center"
             }}>
@@ -115,9 +101,9 @@ export default function Home() {
                 onClick={() => setShowModal(false)}
                 style={{
                   padding: "10px 32px",
-                  background: "#fff",
-                  color: "#0984e3",
-                  border: "2px solid #0984e3",
+                  background: "#000",
+                  color: "#48daff",
+                  border: "2px solid #48daff",
                   borderRadius: "6px",
                   fontWeight: 600,
                   cursor: "pointer",
@@ -132,8 +118,8 @@ export default function Home() {
                 onClick={handleModalOk}
                 style={{
                   padding: "10px 32px",
-                  background: "#0984e3",
-                  color: "#fff",
+                  background: "#48daff",
+                  color: "#000",
                   border: "none",
                   borderRadius: "6px",
                   fontWeight: 600,

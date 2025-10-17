@@ -29,7 +29,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
 
             const ctx = canvas.getContext("2d");
             if (!ctx) return;
-            const [cx, cy, cw, ch, r] = [0, 0, 250, Math.ceil(hints[i].length / 16) * 25, 0];
+            const [cx, cy, cw, ch, r] = [0, 0, 220, Math.ceil(hints[i].length / 16) * 25, 0];
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(cx + r, cy);
@@ -85,7 +85,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                         fontSize: "1.2rem",
                         color: "#ffffffff",
                         marginBottom: 12,
-                        background: "#1f1f1fff",
+                        background: "#303030ff",
                         padding: "8px 16px",
                         borderRadius: "8px",
                         fontWeight:400,
@@ -103,7 +103,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                         alt={`image-${n}`}
                         width={imgWidth}
                         height={imgHeight}
-                        style={{ objectFit: "contain" }}
+                        style={{ objectFit: "contain" ,marginBottom:10}}
                         onClick={()=>{setGazo(imgg)}}
                     />
                 )}
@@ -133,6 +133,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                     <button
                         onClick={() => { sessionStorage.sawhint=parseInt( sessionStorage.sawhint)+1;setNumhint((prev) => (prev + 1)) }}
                         style={{
+                            marginTop:10,
                             padding: "10px 20px",
                             background: "#00eeffff",
                             color: "#000",
@@ -143,9 +144,9 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                             transition: "background 0.2s",
                         }}>ヒントを表示</button>}
             </div>
-            <div style={{ width: 300, flex: "0 0 auto" }}>
+            <div style={{ width: 220, flex: "0 0 auto" }}>
                 {[...Array(numhint)].map((_, idx) => (
-                    <canvas width={300} height={Math.ceil(hints[idx].length / 16) * 25} key={idx} ref={canvasRef[idx]} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hints[idx].length / 16) * 25}px`, width: 300 }}></canvas>
+                    <canvas width={240} height={Math.ceil(hints[idx].length / 16) * 25} key={idx} ref={canvasRef[idx]} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hints[idx].length / 16) * 25}px`, width: 240 }}></canvas>
                 ))}
             </div>
         </div>)

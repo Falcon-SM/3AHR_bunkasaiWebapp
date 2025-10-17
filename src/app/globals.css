@@ -72,7 +72,7 @@ h2 {
   border-radius: 8px;
   border: none;
   font-size: 1.1rem;
-  background: #1f1f1f;
+  background: #303030;
   color: #fff;
   outline: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -151,5 +151,20 @@ h2 {
 }
 
 .botan:hover{
+  background-color: #74b9ff;
+}
+
+.botanin{
+  padding: 10px 20px;
+  background: #48daff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.2s;
+}
+
+.botanin:hover{
   background-color: #74b9ff;
 }

@@ -33,6 +33,22 @@ export default function Home() {
   const handleVideoEnded = () => {
     setVideoEnded(true);
   };
+  useEffect(() => {
+      const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+          localStorage.pagen=2;
+          localStorage.zikan=sessionStorage.zikan;
+          localStorage.sawhint=sessionStorage.sawhint;
+          event.preventDefault();
+          // Chromeなどでは returnValue の設定が必要
+          event.returnValue = "";
+      };
+  
+      window.addEventListener("beforeunload", handleBeforeUnload);
+  
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }, []);
 
   return (
     <div className="container">
@@ -64,22 +80,7 @@ export default function Home() {
       {videoEnded && (
         <button
           onClick={handleModalOk}
-          style={{
-            display: "block",
-            margin: "32px auto 0 auto",
-            padding: "14px 40px",
-            background: "#0984e3",
-            color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            fontWeight: 700,
-            fontSize: "1.1rem",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
-            cursor: "pointer",
-            transition: "background 0.2s",
-          }}
-          onMouseOver={e => (e.currentTarget.style.background = "#74b9ff")}
-          onMouseOut={e => (e.currentTarget.style.background = "#0984e3")}
+          className="botan"
         >
           次のページに進む
         </button>

@@ -39,12 +39,12 @@ export default function Diamond({typp,mozi,x,y,sub}:diamhiki){
             ctx.lineTo(0,10);
             ctx.closePath();
         }
-        ctx.fillStyle = ["white","black"][cl];
-        ctx.strokeStyle = "black";
+        ctx.fillStyle = ["white","#303030"][1-cl];
+        ctx.strokeStyle = ["white","black"][cl];
         ctx.lineWidth = 2;
         ctx.fill();
         ctx.stroke();
-        ctx.fillStyle = ["white","black"][1-cl];
+        ctx.fillStyle = ["white","black"][cl];
          ctx.font = '15px Roboto medium';
         ctx.textBaseline="middle";
         ctx.textAlign="center";

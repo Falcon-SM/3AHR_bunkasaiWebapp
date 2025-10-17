@@ -1,21 +1,11 @@
 "use client";
 import React, { useEffect, useMemo, useState, useRef } from "react";
-import { useRiddles } from "@/app/context/riddleContext";
-import { write } from "fs";
 import Diamond from "../../../../components/diamondd";
+import Toko from "../../../../components/toko";
 import Script from "next/script";
+import { useRouter } from "next/navigation";
 
-type HintPost = {
-    icon?: string;
-    name?: string;
-    content: string; // 表示用のテキスト（暗号化された画面: ... も含む）
-    img?:string;
-    time?:string;
-    // 以下は暗号化投稿専用のメタ情報
-    riddleNumber?: number; // 1..4 のどの謎の投稿か
-    base64?: string; // 暗号化文字列
-    isDecrypted?: boolean; // 復号済みか
-};
+
 
 export default function Home() {
     const [isCorrect, setIsCorrect] = useState(false);
@@ -23,45 +13,11 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(false);
     const [anses,setAnses]=useState([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     const kazumozi=["A","S","T","M","C","I","B","U","P","O","G","R","M","R","K","F","V","E","W","A","I"]
-    const [nokori,setnokori]=useState(1200);
-    useEffect(()=>{
-        setnokori(parseInt(sessionStorage.zikan))
-    },[])
-    useEffect(() => {
-    const timerId = setInterval(() => {
-        setnokori((prev)=>(prev-1));
-        sessionStorage.zikan=nokori;
-    }
-    , 1000);
-    return () => clearInterval(timerId)
-    }, [nokori])
 
     const getAns=(bango:number)=>(
         ()=>{setAnses((prev)=>(prev.slice(0,bango).concat([1-prev[bango]]).concat(prev.slice(bango+1))))}
     )
-
-    const [posts, setPosts] = useState<HintPost[]>([]);
-            useEffect(()=>{
-                const h=parseInt(sessionStorage.h);
-                const m=parseInt(sessionStorage.m);
-                setPosts([{
-                content:"今日はこまば遺跡に行ってきた！これがあの有名な「かがやきの石板」か、、、",
-                time:(h+Math.floor((m-53)/60))+":"+("0"+(m+7)%60).slice(-2),
-                img:"/論理クイズ.png"
-                },
-                {content:"💩",time:(h+Math.floor((m-37)/60))+":"+("0"+(m+23)%60).slice(-2)},
-                {content:"シタっていう男はひどいうそつきだ。あいつの言うことは信じない方がいい。",time:(h+Math.floor((m-20)/60))+":"+("0"+(m+40)%60).slice(-2)},
-                {content:"ケルネル高校の文化祭言ってきた!なぞに落書きして妨害してやったわw",time:(h+Math.floor((m-10)/60))+":"+("0"+(m+50)%60).slice(-2)},
-                {content:"おこめ公園のトイレの入り口からこんな紙見えてビビったwこれは何？謎解き...？",time:h+":"+("0"+m).slice(-2)},
-                {
-                    time:sessionStorage.timm,
-                    content: `俺のアカウント名、俺の本名から来てるんだよね。12個あるうちの10個目っていうことでさ。もし名前がトラだったら3/12なんだなw`,
-                },
-        
-                ])
-            },[])
-    
-
+    const router=useRouter()
     const handleCheckAnswer = async () => {
         setIsLoading(true);
         setShowError(false);
@@ -81,91 +37,37 @@ export default function Home() {
             setIsLoading(false);
         }
     };
+    useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            console.log(isCorrect)
+            if(!isCorrect){
+                localStorage.pagen=3;
+                localStorage.zikan=sessionStorage.zikan;
+                localStorage.sawhint=sessionStorage.sawhint;
+                event.preventDefault();
+                // Chromeなどでは returnValue の設定が必要
+                event.returnValue = "";
+            }
+        };
+    
+        window.addEventListener("beforeunload", handleBeforeUnload);
+    
+        return () => {
+          window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+      }, []);
 
-    return (
-        <div style={{width: 1100, margin: "40px auto", padding: "32px", display: "flex", gap: "32px" }}>
-            {/* Google tag (gtag.js) */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
-          strategy="afterInteractive"
-        />
-        <Script
-          id="gtag-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
-        />
-            {/* 左：SNS風ヒント */}
-            <div
-                style={{
-                    width: 320,
-                    background: "#f6f8fb",
-                    borderRadius: "16px",
-                    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-                    padding: "20px 14px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                }}
-            >
-                {posts.map((post, idx) => (
-                    <div
-                        key={`post-${idx}`} // ← keyをユニークに
-                        style={{
-                            width: "100%",
-                            marginBottom: "24px",
-                            background: "#fff",
-                            borderRadius: "12px",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                            padding: "16px 12px",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                        }}
-                    >
-                        <img
-                            src={post.icon ?? "/sampleicon.png"}
-                            alt="アカウントアイコン"
-                            style={{
-                                width: 48,
-                                height: 48,
-                                borderRadius: "50%",
-                                objectFit: "cover",
-                                marginBottom: "8px",
-                                border: "2px solid #0984e3",
-                            }}
-                        />
-                        <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>
-                            {post.name ?? "Bird41"}<span style={{fontSize:"0.9rem",fontWeight:200,color:"#868686ff"}}>　{post.time}</span>
-                        </div>
-                        <div style={{ color: "#4b5563", fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6, wordBreak: "break-all", overflowWrap: "anywhere" }}>
-                            {post.content}
-                        </div>
-                        {post.img!==undefined &&
-                        <img
-                            src={post.img}
-                            onClick={()=>{window.open(post.img)}}
-                            style={{
-                                width: 250,
-                                borderRadius: "5%",
-                                marginTop: "8px",
-                            }}
-                        />}
-                        
-                    </div>
-                ))}
-            </div>
-            <div className="container" style={{width : 1100, textAlign: 'right'}}>
+    return (<Toko saigo={true}>
                 <h2
                     style={{
                         fontSize: "1.2rem",
-                        color: "#34495e",
                         marginBottom: 12,
-                        background: "#f5f7fa",
+                        background: "#303030ff",
                         padding: "8px 16px",
                         borderRadius: "8px",
                     }}
                 >「SNSの使い方」を読み、「なくすべきもの」を押せ</h2>
-                <div style={{background: "#f9fafb",border:"2px solid black",borderRadius: "8px"}}>
+                <div style={{background: "#303030ff",border:"2px solid black",borderRadius: "8px"}}>
                 <p　style={{marginBottom:"10px",textAlign: 'left'}}>　箱のパスワードは、、、</p>
                 <div style={{width:330,height:200,position:"relative",margin:"0 auto"}}>
                 {[...Array(3)].map((_,idx)=>(
@@ -184,43 +86,26 @@ export default function Home() {
                 <button
                         onClick={handleCheckAnswer}
                         disabled={isLoading}
-                        style={{
-                            marginTop:"10px",
-                            padding: "10px 20px",
-                            background: "#2563eb",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "6px",
-                            fontWeight: 600,
-                            cursor: isLoading ? "not-allowed" : "pointer",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                            transition: "background 0.2s",
-                            opacity: isLoading ? 0.6 : 1,
-                        }}
+                        className="botanin"
+                        style={{marginTop:10}}
                     >
-                        {isLoading ? "判定中..." : "Hello, world!"}
-                    </button>
+                        {isLoading ? "判定中..." : "回答する"}
+                </button>
                 
                 
                 {showError && <div style={{ color: "#d63031", marginBottom: 12 }}>答えが違います。もう一度挑戦してください。</div>}
                 {isCorrect && (
-                    <a href="/riddles/4" style={{ display: "block", textAlign: "center", marginTop: "24px", padding: "12px 0", background: "#00b894", color: "#fff", borderRadius: "8px", fontWeight: 600, textDecoration: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", transition: "background 0.2s" }}
-                        onMouseOver={e => (e.currentTarget.style.background = "#55efc4")}
-                        onMouseOut={e => (e.currentTarget.style.background = "#00b894")}>
-                        箱が開いた！
-                    </a>
+                <button
+                    onClick={()=>{router.push("/riddles/4")}}
+                    className="botan"
+                    style={{
+                        width:"95%",
+                    }}
+                >
+                    箱が開いた！
+                </button>
                 )}
-            </div>
-            <p style={{
-                background:"#fff",
-                borderRadius: "8px",
-                border:"10px solid #0ea5e9",
-                fontSize:"50px",
-                padding:"5px",
-                margin:"0px auto",
-                height:60
-
-            }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p>
-        </div>
+        </Toko>
+        
     );
 }

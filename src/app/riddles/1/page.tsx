@@ -1,21 +1,11 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import Ques from "../../../../components/shomon";
+import Toko from "../../../../components/toko";
 import { useRiddles } from "@/app/context/riddleContext";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 
-type HintPost = {
-    icon?: string;
-    name?: string;
-    content: string; // 表示用のテキスト（暗号化された画面: ... も含む）
-    img?:string;
-    time?:string;
-    // 以下は暗号化投稿専用のメタ情報
-    riddleNumber?: number; // 1..4 のどの謎の投稿か
-    base64?: string; // 暗号化文字列
-    isDecrypted?: boolean; // 復号済みか
-};
 const crossd = [
     [0,0,0,1,0,0,0],
     [0,1,0,1,0,0,1],
@@ -42,7 +32,6 @@ export default function Home() {
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [posts, setPosts] = useState<HintPost[]>([]);
     const router=useRouter();
 
   useEffect(() => {
@@ -64,44 +53,10 @@ export default function Home() {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
-    useEffect(()=>{
-        const h=new Date().getHours();
-        const m=new Date().getMinutes();
-        sessionStorage.h=h;
-        sessionStorage.m=m;
-        setPosts([{
-            content:"今日はこまば遺跡に行ってきた！これがあの有名な「かがやきの石板」か、、、",
-            time:(h+Math.floor((m-53)/60))+":"+("0"+(m+7)%60).slice(-2),
-            img:"/論理クイズ.png"
-        },
-        {content:"💩",time:(h+Math.floor((m-37)/60))+":"+("0"+(m+23)%60).slice(-2)},
-        {content:"シタっていう男はひどいうそつきだ。あいつの言うことは信じない方がいい。",time:(h+Math.floor((m-20)/60))+":"+("0"+(m+40)%60).slice(-2)},
-        {content:"ケルネル高校の文化祭言ってきた!なぞに落書きして妨害してやったわw",time:(h+Math.floor((m-10)/60))+":"+("0"+(m+50)%60).slice(-2)},
-        {content:"おこめ公園のトイレの入り口からこんな紙見えてビビったwこれは何？謎解き...？",time:h+":"+("0"+m).slice(-2)}
 
-        ])
-    },[])
-    const [nokori,setnokori]=useState(1200);
 
     const hints=[["徳川家の人だよ！","たい焼きを食べて死んだという噂があるよ！","家康だよ！"],["この人が登場する有名な戦国ゲームがあるよ！","〇〇の野望","織田信長っていう人だよ！"],["a","b","c"],["a","b","d"],["廻天","結","Reboot"]]
     // Base64暗号テキスト（第1問用）
-
-    const base64Hint3 = useMemo(() => {
-        const hint = "第3問のヒント: 2019年から始まった新しい元号。";
-        if (typeof window === "undefined") return "";
-        try { return window.btoa(unescape(encodeURIComponent(hint))); } catch { return ""; }
-    }, []);
-    useEffect(()=>{
-            console.log(Number.isNaN(Number(sessionStorage.zikan)));
-            console.log(sessionStorage.zikan);
-            if(!Number.isNaN(Number(sessionStorage.zikan))){
-                setnokori(parseInt(sessionStorage.zikan));
-            }
-            if(Number.isNaN(Number(sessionStorage.zikan))){
-                sessionStorage.sawhint=0;
-            }
-        },[])
-
 
     const handleCheckAnswer = async () => {
         setIsLoading(true);
@@ -127,287 +82,124 @@ export default function Home() {
         }
     };
 
-    // 謎3に文字が入ったら暗号化投稿を一度だけ表示
-    useEffect(() => {
-        const alreadyPosted = posts.some(p => p.base64 === base64Hint3 && p.riddleNumber === 3);
-        if (threeIsAnswered && !alreadyPosted && base64Hint3) {
-            setPosts((prev) => ([
-                ...prev,
-                {
-                    time:new Date().getHours()+":"+("0"+new Date().getMinutes()).slice(-2),
-                    content: `俺のアカウント名、俺の本名から来てるんだよね。12個あるうちの10個目っていうことでさ。もし名前がトラだったら3/12なんだなw`,
-                },
-            ]));
-            sessionStorage.timm=new Date().getHours()+":"+("0"+new Date().getMinutes()).slice(-2);
-        }
-    }, [threeIsAnswered]);
-
-
-   
-    useEffect(() => {
-    const timerId = setInterval(() => {
-      setnokori((prev)=>(prev-1));
-      sessionStorage.zikan=nokori;
-    }
-    , 1000);
-    return () => clearInterval(timerId)
-  }, [nokori]) 
-
-    return (
-        <div>
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
-          strategy="afterInteractive"
-        />
-        <Script
-          id="gtag-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
-        />
-        <div
-            style={{
-                display: "flex",
-                width: 1100,
-                margin: "40px auto",
-                gap: "32px",
-            }}
-        >
-            {/* 左側：SNS風ヒントカード */}
-            <div
-                className="container"
-                style={{
-                    padding:"0 0 0 0",
-                    width: 320,
-                    borderRadius: "16px",
-                    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-                    border:"none",
-                    
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                }}
-            >
-                {posts.map((post, idx) => (
-                    <div
-                        key={`post-${idx}`} // ← keyをユニークに
-                        style={{
-                            width: "100%",
-                            marginBottom: "24px",
-                            background: "#000000ff",
-                            border:"1px solid #747474ff",
-                            borderBottom:"none",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                            padding: "16px 12px",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            margin:0
-                        }}
-                    >
-                        <img
-                            src={post.icon ?? "/sampleicon.png"}
-                            alt="アカウントアイコン"
-                            style={{
-                                width: 48,
-                                height: 48,
-                                borderRadius: "50%",
-                                objectFit: "cover",
-                                marginBottom: "8px",
-                                border: "2px solid #0984e3",
-                            }}
-                        />
-                        <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>
-                            {post.name ?? "Bird41"}<span style={{fontSize:"0.9rem",fontWeight:200,color:"gray"}}>　{post.time}</span>
-                        </div>
-                        <div style={{fontSize: "0.95rem", textAlign: "center", whiteSpace: "pre-line", lineHeight: 1.6, wordBreak: "break-all", overflowWrap: "anywhere" }}>
-                            {post.content}
-                        </div>
-                        {post.img!==undefined &&
-                        <img
-                            src={post.img}
-                            onClick={()=>{setGazo((post.img ?? "a"))}}
-                            style={{
-                                width: 250,
-                                borderRadius: "5%",
-                                marginTop: "8px",
-                            }}
-                        />}
-                        
-                    </div>
-                ))}
-                <div style={{borderTop:"1px solid #747474ff",width:"100%"}}></div>
+    return(<Toko saigo={false}>
+            {[...Array(5)].map((_, idx) => (
+                <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} imgg={monim[idx]} imgWidth={400} imgHeight={250}/>
+            ))}
+            <div style={{ margin: "28px 0 20px 0", clear:"both"}}>
+                <h2 style={{marginBottom: 12, fontWeight: 400 }}>クロスワード</h2>
+                <table cellSpacing="0" style={{borderCollapse: "collapse", margin: "0 auto" }}>
+                    <tbody>
+                        {[...Array(5)].map((_, rowIdx) => (
+                            <tr key={rowIdx} style={{margin:0}}>
+                                {[...Array(7)].map((_, colIdx) => {
+                                    if (crossd[rowIdx][colIdx] === 1) {
+                                        return (
+                                            <td
+                                                key={colIdx}
+                                                style={{
+                                                    border: `${["1px","3px"][+(crosshuto.indexOf(rowIdx*7+colIdx)!==-1)]} solid black`,
+                                                    width: 40,
+                                                    height: 40,
+                                                    textAlign: "center",
+                                                    background: "#f9fafb",
+                                                }}
+                                            >
+                                                {crosshuto.indexOf(rowIdx*7+colIdx)!==-1 && <p style={{margin:0,fontSize:"10px",textAlign:"left"}}>{crosshuto.indexOf(rowIdx*7+colIdx)+1}</p>}
+                                                <input
+                                                    type="text"
+                                                    maxLength={1}
+                                                    style={{
+                                                        width: "92%",
+                                                        height: "92%",
+                                                        textAlign: "center",
+                                                        background: "transparent",
+                                                        fontSize: "1.2rem",
+                                                        border:"none"
+                                                    }}
+                                                />
+                                            </td>
+                                        );
+                                    } else {
+                                        return (
+                                            <td
+                                                key={colIdx}
+                                                style={{
+                                                    border: "none",
+                                                    width: 40,
+                                                    height: 40,
+                                                    textAlign: "center",
+                                                    background: "#303030",
+                                                }}
+                                            ></td>
+                                        );
+                                    }
+                                })}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
 
-            {/* 右側：謎解き本体 */}
-            <div
-                className="container"
-                style={{
-                    flex: 1
-                }}
-            >
-                <h1 style={{ textAlign: "center", marginBottom: 24, fontWeight: 400,color:"white", letterSpacing: 0.3 }}>
-                    謎解きチャレンジ
-                </h1>
-                {[...Array(5)].map((_, idx) => (
-                    <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} imgg={monim[idx]} imgWidth={400} imgHeight={250}/>
+            {/* クロスワード回答欄＋ボタン */}
+            <p style={{marginTop:40,marginBottom:10}}>クロスワードの太線の中の文字を以下の対応する四角に入力せよ</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 ,height:50,background: "#303030ff",borderRadius: "4px",border:"1px solid black",padding:8}}>
+                
+                {[...Array(7)].map((_,idx)=>(
+                <input
+                    key={idx}
+                    maxLength={1}
+                    type="text"
+                    placeholder={String(idx+1)}
+                    style={{
+                        
+                        width:20,
+                        flex: 1,
+                        padding: "10px",
+                        fontSize: "1rem",
+                        borderRadius: "6px",
+                        border: "1px solid #d1d5db",
+                    }}
+                />
                 ))}
-
-
-                <div style={{ margin: "28px 0 20px 0", clear:"both"}}>
-                    <h2 style={{marginBottom: 12, fontWeight: 400 }}>クロスワード</h2>
-                    <table cellSpacing="0" style={{borderCollapse: "collapse", margin: "0 auto" }}>
-                        <tbody>
-                            {[...Array(5)].map((_, rowIdx) => (
-                                <tr key={rowIdx} style={{margin:0}}>
-                                    {[...Array(7)].map((_, colIdx) => {
-                                        if (crossd[rowIdx][colIdx] === 1) {
-                                            return (
-                                                <td
-                                                    key={colIdx}
-                                                    style={{
-                                                        border: `${["1px","3px"][+(crosshuto.indexOf(rowIdx*7+colIdx)!==-1)]} solid black`,
-                                                        width: 40,
-                                                        height: 40,
-                                                        textAlign: "center",
-                                                        background: "#f9fafb",
-                                                    }}
-                                                >
-                                                    {crosshuto.indexOf(rowIdx*7+colIdx)!==-1 && <p style={{margin:0,fontSize:"10px",textAlign:"left"}}>{crosshuto.indexOf(rowIdx*7+colIdx)+1}</p>}
-                                                    <input
-                                                        type="text"
-                                                        maxLength={1}
-                                                        style={{
-                                                            width: "92%",
-                                                            height: "92%",
-                                                            textAlign: "center",
-                                                            background: "transparent",
-                                                            fontSize: "1.2rem",
-                                                            border:"none"
-                                                        }}
-                                                    />
-                                                </td>
-                                            );
-                                        } else {
-                                            return (
-                                                <td
-                                                    key={colIdx}
-                                                    style={{
-                                                        border: "none",
-                                                        width: 40,
-                                                        height: 40,
-                                                        textAlign: "center",
-                                                        background: "#f9fafb",
-                                                    }}
-                                                ></td>
-                                            );
-                                        }
-                                    })}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* クロスワード回答欄＋ボタン */}
-                <p style={{marginTop:40,marginBottom:10}}>クロスワードの太線の中の文字を以下の対応する四角に入力せよ</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 ,height:50,background: "#ffffffff",borderRadius: "4px",border:"1px solid black",padding:8}}>
-                    
-                    {[...Array(7)].map((_,idx)=>(
-                    <input
-                        key={idx}
-                        maxLength={1}
-                        type="text"
-                        placeholder={String(idx+1)}
-                        style={{
-                            
-                            width:20,
-                            flex: 1,
-                            padding: "10px",
-                            fontSize: "1rem",
-                            borderRadius: "6px",
-                            border: "1px solid #d1d5db",
-                        }}
-                    />
-                    ))}
-                    <p style={{flexGrow:1}}>星の間を読め</p>
-                </div>
-                <div style={{display:"flex",marginTop:40}}>
-                    <input 
-                        onChange={e => setCrosswordAnswer(e.target.value)}
-                        placeholder={"答えを入力"}
-                        style={{
-                            marginRight:10,
-                            flex: 1,
-                            padding: "10px",
-                            fontSize: "1rem",
-                            borderRadius: "6px",
-                            border: "1px solid #d1d5db",
-                        }}
-                    />
-                    {crosswordAnswer.trim() !== "" && (
-                        <button
-                            onClick={handleCheckAnswer}
-                            disabled={isLoading}
-                            style={{
-                                padding: "10px 20px",
-                                background: "#2563eb",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "6px",
-                                fontWeight: 600,
-                                cursor: isLoading ? "not-allowed" : "pointer",
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                                transition: "background 0.2s",
-                                opacity: isLoading ? 0.6 : 1,
-                            }}
-                        >
-                            {isLoading ? "判定中..." : "回答する"}
-                        </button>
-                    )}
-                </div>
-                {showError && (
-                    <div style={{ color: "#d63031", marginBottom: 12 }}>
-                        答えが違います。もう一度挑戦してください。
-                    </div>
-                )}
-                {isCorrect && (
+                <p style={{flexGrow:1}}>星の間を読め</p>
+            </div>
+            <div style={{display:"flex",marginTop:40}}>
+                <input 
+                    onChange={e => setCrosswordAnswer(e.target.value)}
+                    placeholder={"答えを入力"}
+                    className="riddle-input"
+                    style={{flexGrow:1,marginRight:5}}
+                />
+                {crosswordAnswer.trim() !== "" && (
                     <button
-                        onClick={()=>{router.push("/riddles/2")}}
+                        onClick={handleCheckAnswer}
+                        disabled={isLoading}
+                        className="botanin"
                         style={{
-                            width:"95%",
-                            display: "block",
-                            textAlign: "center",
-                            marginTop: "24px",
-                            padding: "12px 0",
-                            background: "#059669",
-                            color: "#fff",
-                            borderRadius: "8px",
-                            fontWeight: 600,
-                            textDecoration: "none",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                            transition: "background 0.2s",
+                            cursor: isLoading ? "not-allowed" : "pointer",
+                            opacity: isLoading ? 0.6 : 1,
                         }}
-                        onMouseOver={e => (e.currentTarget.style.background = "#10b981")}
-                        onMouseOut={e => (e.currentTarget.style.background = "#059669")}
                     >
-                        次の謎へ進む
+                        {isLoading ? "判定中..." : "回答する"}
                     </button>
                 )}
             </div>
-            <p style={{
-                background:"#000000ff",
-                borderRadius: "8px",
-                border:"2px solid #00eeffff",
-                fontSize:"50px",
-                padding:"5px",
-                margin:"0px auto",
-                height:60
-
-            }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p>
-        </div>
-        {!(gazo==="n") && <div style={{position:"fixed",backgroundColor:"black",opacity:0.5,left:"0px",top:"0px",width:window.innerWidth,height:window.innerHeight}}></div>}
-        {!(gazo==="n") && <button onClick={()=>{setGazo("n")}} className="batu">✖</button>}
-        {!(gazo==="n") && <img src={gazo} style={{position:"fixed",width:(window.innerWidth-100),height:(window.innerHeight-100),top:"50px",left:"50px",objectFit: "contain"}}></img>}
-        </div>
-    );
+            {showError && (
+                <div style={{ color: "#d63031", marginBottom: 12 }}>
+                    答えが違います。もう一度挑戦してください。
+                </div>
+            )}
+            {isCorrect && (
+                <button
+                    onClick={()=>{router.push("/riddles/2")}}
+                    className="botan"
+                    style={{
+                        width:"95%",
+                    }}
+                >
+                    次の謎へ進む
+                </button>
+            )}
+    </Toko>);
 }
