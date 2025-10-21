@@ -27,8 +27,16 @@ export default function Toko({children,saigo}:Props) {
     const router=useRouter();
 
     useEffect(()=>{
-        const h=parseInt(sessionStorage.h);
-        const m=parseInt(sessionStorage.m);
+        let h=0
+        let m =0
+        if(Number.isNaN(Number(sessionStorage.h))){
+            h=new Date().getHours();
+            m=new Date().getMinutes()
+
+        }else{
+            h=parseInt(sessionStorage.h);
+            m=parseInt(sessionStorage.m);
+        }
         setPosts([{
             content:"今日はこまば遺跡に行ってきた！これがあの有名な「かがやきの石板」か、、、",
             time:(h+Math.floor((m-53)/60))+":"+("0"+(m+7)%60).slice(-2),
@@ -148,7 +156,7 @@ export default function Toko({children,saigo}:Props) {
                                 borderRadius: "50%",
                                 objectFit: "cover",
                                 marginBottom: "8px",
-                                border: "2px solid #0984e3",
+                                border: "2px solid #48daff",
                             }}
                         />
                         <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "6px" }}>

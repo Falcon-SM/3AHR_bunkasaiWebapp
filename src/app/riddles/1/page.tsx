@@ -88,6 +88,7 @@ export default function Home() {
             ))}
             <div style={{ margin: "28px 0 20px 0", clear:"both"}}>
                 <h2 style={{marginBottom: 12, fontWeight: 400 }}>クロスワード</h2>
+                <div style={{background:"#303030",width:"100%",padding:20,borderRadius:8,boxSizing:"border-box",textAlign:"center"}}>
                 <table cellSpacing="0" style={{borderCollapse: "collapse", margin: "0 auto" }}>
                     <tbody>
                         {[...Array(5)].map((_, rowIdx) => (
@@ -105,7 +106,7 @@ export default function Home() {
                                                     background: "#f9fafb",
                                                 }}
                                             >
-                                                {crosshuto.indexOf(rowIdx*7+colIdx)!==-1 && <p style={{margin:0,fontSize:"10px",textAlign:"left"}}>{crosshuto.indexOf(rowIdx*7+colIdx)+1}</p>}
+                                                {crosshuto.indexOf(rowIdx*7+colIdx)!==-1 && <p style={{margin:0,fontSize:"10px",textAlign:"left",color:"black",paddingTop:5}}>{crosshuto.indexOf(rowIdx*7+colIdx)+1}</p>}
                                                 <input
                                                     type="text"
                                                     maxLength={1}
@@ -115,7 +116,8 @@ export default function Home() {
                                                         textAlign: "center",
                                                         background: "transparent",
                                                         fontSize: "1.2rem",
-                                                        border:"none"
+                                                        border:"none",
+                                                        color: "#000"
                                                     }}
                                                 />
                                             </td>
@@ -139,6 +141,7 @@ export default function Home() {
                         ))}
                     </tbody>
                 </table>
+                </div>
             </div>
 
             {/* クロスワード回答欄＋ボタン */}
@@ -159,6 +162,7 @@ export default function Home() {
                         fontSize: "1rem",
                         borderRadius: "6px",
                         border: "1px solid #d1d5db",
+                        color: "#000",
                     }}
                 />
                 ))}

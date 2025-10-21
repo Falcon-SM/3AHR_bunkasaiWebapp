@@ -116,7 +116,8 @@ export default function Home() {
                                                         textAlign: "center",
                                                         background: "transparent",
                                                         fontSize: "1.2rem",
-                                                        border:"none"
+                                                        border:"none",
+                                                        color: "#000"
                                                     }}
                                                 />
                                             </td>
@@ -153,7 +154,6 @@ export default function Home() {
                     type="text"
                     placeholder={String(idx+1)}
                     style={{
-                        
                         width:20,
                         flex: 1,
                         padding: "10px",
