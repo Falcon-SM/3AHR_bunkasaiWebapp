@@ -77,6 +77,7 @@ h2 {
   outline: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: background 0.2s;
+  flex-grow: 1;
 }
 
 .riddle-input:focus {
@@ -167,4 +168,16 @@ h2 {
 
 .botanin:hover{
   background-color: #74b9ff;
+}
+.crossin{  
+  text-align: center;
+  font-size: 1.2rem;
+  color: #000;
+  border:none;
+  background-color: #ffffff00;
+  outline: none;
+}
+.siroin:focus{
+  border:none;
+  background-color: #bdbdbd;
 }

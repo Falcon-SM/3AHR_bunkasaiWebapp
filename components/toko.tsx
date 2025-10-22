@@ -31,8 +31,9 @@ export default function Toko({children,saigo}:Props) {
         let m =0
         if(Number.isNaN(Number(sessionStorage.h))){
             h=new Date().getHours();
-            m=new Date().getMinutes()
-
+            m=new Date().getMinutes();
+            sessionStorage.h=h;
+            sessionStorage.m=m;
         }else{
             h=parseInt(sessionStorage.h);
             m=parseInt(sessionStorage.m);
@@ -117,7 +118,6 @@ export default function Toko({children,saigo}:Props) {
         >
             {/* 左側：SNS風ヒントカード */}
             <div
-                className="container"
                 style={{
                     padding:"0 0 0 0",
                     width: 320,
@@ -178,7 +178,7 @@ export default function Toko({children,saigo}:Props) {
                         
                     </div>
                 ))}
-                <div style={{borderTop:"1px solid #747474ff",width:"100%"}}></div>
+                <div style={{borderTop:"1px solid #747474ff",width:"340px"}}></div>
             </div>
 
             {/* 右側：謎解き本体 */}
@@ -206,7 +206,7 @@ export default function Toko({children,saigo}:Props) {
 
             }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p>
         </div>
-        {!(gazo==="n") && <div style={{position:"fixed",backgroundColor:"black",opacity:0.5,left:"0px",top:"0px",width:window.innerWidth,height:window.innerHeight}}></div>}
+        {!(gazo==="n") && <div style={{position:"fixed",backgroundColor:"rgba(153, 153, 153, 0.4)",left:"0px",top:"0px",width:window.innerWidth,height:window.innerHeight}}></div>}
         {!(gazo==="n") && <button onClick={()=>{setGazo("n")}} className="batu">✖</button>}
         {!(gazo==="n") && <img src={gazo} style={{position:"fixed",width:(window.innerWidth-100),height:(window.innerHeight-100),top:"50px",left:"50px",objectFit: "contain"}}></img>}
       </div>
