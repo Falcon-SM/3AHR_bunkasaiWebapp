@@ -96,7 +96,7 @@ export default function Toko({children,saigo}:Props) {
     return () => clearInterval(timerId)
   }, [nokori]) 
 
-    return (
+    return (  
         <div>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
