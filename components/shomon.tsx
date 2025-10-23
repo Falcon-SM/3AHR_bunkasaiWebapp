@@ -12,16 +12,44 @@ type props = {
 };
 
 export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, imgHeight = 200 }: props) {
-    const {setGazo}=useRiddles()
+    const { setGazo } = useRiddles()
     const {
         setOneIsAnswered,
         setTwoIsAnswered,
         setThreeIsAnswered,
         setFourIsAnswered,
     } = useRiddles();
-    const [hintti,setHintti]=useState(false)
+    const [hintti, setHintti] = useState(false)
     const [numhint, setNumhint] = useState(0);
+    const [answer, setAnswer] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [isCorrect, setIsCorrect] = useState(false);
+    const [showError, setShowError] = useState(false)
     const canvasRef = [useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null)]
+    const handleCheckAnswer = async () => {
+        setIsLoading(true);
+        setShowError(false);
+        setIsCorrect(false);
+
+        try {
+            const res = await fetch("/api/riddle/sho", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ answer: answer, num: n }),
+            });
+            const result = await res.json();
+            if (result.correct) {
+                setIsCorrect(true);
+            } else {
+                setShowError(true);
+            }
+        } catch {
+            setShowError(true);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
         for (let i = 0; i < hints.length; i++) {
             const canvas = canvasRef[i].current;
@@ -75,7 +103,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
 
         }
     }, [numhint]);
-    useEffect(()=>{setTimeout(()=>{setHintti(true)},30000*(n+1))},[])
+    useEffect(() => { setTimeout(() => { setHintti(true) }, 30000 * (n + 1)) }, [])
     return (
         <div style={{ marginBottom: 28, width: 500, display: "flex", overflow: "visible" }} key={n}>
             <div style={{ width: 500, flex: "0 0 auto" }}>
@@ -88,8 +116,8 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                         background: "#303030ff",
                         padding: "8px 16px",
                         borderRadius: "8px",
-                        fontWeight:400,
-                        
+                        fontWeight: 400,
+
                     }}
                 >{bun.split('\n').map((line, index) => (
                     <span key={index}>
@@ -103,48 +131,64 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                         alt={`image-${n}`}
                         width={imgWidth}
                         height={imgHeight}
-                        style={{ objectFit: "contain" ,marginBottom:10}}
-                        onClick={()=>{setGazo(imgg)}}
+                        style={{ objectFit: "contain", marginBottom: 10 }}
+                        onClick={() => { setGazo(imgg) }}
                     />
                 )}
-
-                <input
-                    type="text"
-                    className="riddle-input"
-                    placeholder={`謎${n + 1}の答えを入力`}
-                    style={{
-                        width: "calc(100% - 16px)",
-                        padding: "10px",
-                        fontSize: "1rem",
-                        borderRadius: "6px",
-                        //border: "1px solid #00eeffff",
-                        marginBottom: "4px",
-                    }}
-                    onChange={(e) => {
-                        if(e.target.value.length > 0){
-                            if (n === 0) setOneIsAnswered(true);
-                            if (n === 1) setTwoIsAnswered(true);
-                            if (n === 2) setThreeIsAnswered(true);
-                            if (n === 3) setFourIsAnswered(true);
-                        }
-                    }}
-                />
-                {(hintti && numhint < hints.length) &&
-                    <button
-                        onClick={() => { sessionStorage.sawhint=parseInt( sessionStorage.sawhint)+1;setNumhint((prev) => (prev + 1)) }}
+                <div style={{ display: "flex" }}>
+                    <input
+                        type="text"
+                        className="riddle-input"
+                        placeholder={`謎${n + 1}の答えを入力`}
                         style={{
-                            marginTop:10,
-                            padding: "10px 20px",
-                            background: "#00eeffff",
-                            color: "#000",
-                            border: "none",
+                            padding: "10px",
+                            fontSize: "1rem",
                             borderRadius: "6px",
-                            fontWeight: 600,
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                            transition: "background 0.2s",
-                        }}>ヒントを表示</button>}
-            </div>
-            <div style={{ width: 220, flex: "0 0 auto" }}>
+                            //border: "1px solid #00eeffff",
+                            marginBottom: "4px"
+                        }}
+                        onChange={(e) => {
+                            setAnswer(e.target.value);
+                            if (e.target.value.length > 0) {
+                                if (n === 0) setOneIsAnswered(true);
+                                if (n === 1) setTwoIsAnswered(true);
+                                if (n === 2) setThreeIsAnswered(true);
+                                if (n === 3) setFourIsAnswered(true);
+                            }
+                        }}
+                    />
+                    {answer.trim() !== "" && (
+                        <button
+                            onClick={handleCheckAnswer}
+                            disabled={isLoading}
+                            className="botanin"
+                            style={{
+                                cursor: isLoading ? "not-allowed" : "pointer",
+                                opacity: isLoading ? 0.6 : 1,
+                            }}
+                        >
+                            {isLoading ? "判定中..." : "チェック"}
+                        </button>
+                    )}
+                </div>
+                {showError && (<p style={{ color: "#d63031",margin:5 }}>残念、はずれ!</p>)}
+                {isCorrect && (<p style={{ margin:5}}>正解!</p>)}
+                <div style={{ width: 220, flex: "0 0 auto" }}>
+                    {(hintti && numhint < hints.length) &&
+                        <button
+                            onClick={() => { sessionStorage.sawhint = parseInt(sessionStorage.sawhint) + 1; setNumhint((prev) => (prev + 1)) }}
+                            style={{
+                                marginTop: 10,
+                                padding: "10px 20px",
+                                background: "#00eeffff",
+                                color: "#000",
+                                border: "none",
+                                borderRadius: "6px",
+                                fontWeight: 600,
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                transition: "background 0.2s",
+                            }}>ヒントを表示</button>}
+                </div>
                 {[...Array(numhint)].map((_, idx) => (
                     <canvas width={240} height={Math.ceil(hints[idx].length / 16) * 25} key={idx} ref={canvasRef[idx]} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hints[idx].length / 16) * 25}px`, width: 240 }}></canvas>
                 ))}

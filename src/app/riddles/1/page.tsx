@@ -32,6 +32,7 @@ export default function Home() {
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [crosssen,setCrosssen]=useState(Array(35).fill(0))
     const router=useRouter();
 
   useEffect(() => {
@@ -103,22 +104,18 @@ export default function Home() {
                                                     width: 40,
                                                     height: 40,
                                                     textAlign: "center",
-                                                    background: "#f9fafb",
+                                                    background: ["#f9fafb","#d1d1d1ff"][crosssen[7*rowIdx+colIdx]],
                                                 }}
                                             >
                                                 {crosshuto.indexOf(rowIdx*7+colIdx)!==-1 && <p style={{margin:0,fontSize:"10px",textAlign:"left",color:"black",paddingTop:5}}>{crosshuto.indexOf(rowIdx*7+colIdx)+1}</p>}
                                                 <input
+                                                    className="crossin"
                                                     type="text"
                                                     maxLength={1}
-                                                    style={{
-                                                        width: "92%",
-                                                        height: "92%",
-                                                        textAlign: "center",
-                                                        background: "transparent",
-                                                        fontSize: "1.2rem",
-                                                        border:"none",
-                                                        color: "#000"
-                                                    }}
+                                                    style={{width: "92%",
+                                                            height: "92%"}}
+                                                    onFocus={()=>{setCrosssen((prev)=>{return prev.slice(0,7*rowIdx+colIdx).concat([1]).concat(prev.slice(7*rowIdx+colIdx+1))});}}
+                                                    onBlur={()=>{setCrosssen((prev)=>{prev[7*rowIdx+colIdx]=0;return prev});}}
                                                 />
                                             </td>
                                         );
@@ -150,12 +147,13 @@ export default function Home() {
                 
                 {[...Array(7)].map((_,idx)=>(
                 <input
+                    className="siroin"
                     key={idx}
                     maxLength={1}
                     type="text"
                     placeholder={String(idx+1)}
                     style={{
-                        
+                        outline:"none",
                         width:20,
                         flex: 1,
                         padding: "10px",

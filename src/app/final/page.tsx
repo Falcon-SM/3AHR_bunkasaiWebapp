@@ -38,6 +38,7 @@ export default function Home() {
     setShowModal(false);
     sessionStorage.zikan = 1200;
     sessionStorage.sawhint = 0;
+    sessionStorage.clear();
     localStorage.clear();
     router.push("/");
   };
@@ -234,7 +235,7 @@ export default function Home() {
           top: 0, left: 0, right: 0, bottom: 0,
           width: window.innerWidth,
           height: window.innerHeight,
-          background: "rgba(255, 254, 254, 0.4)",
+          background: "rgba(153, 153, 153, 0.4)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
