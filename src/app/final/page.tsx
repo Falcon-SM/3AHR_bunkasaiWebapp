@@ -28,6 +28,7 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [showRankModal, setShowRankModal] = useState(false);
+  const [toroku,setToroku]=useState(false);
 
   const handleStartClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -144,6 +145,7 @@ export default function Home() {
       setSubmitted(true);
       setIsSubmitting(false);
       setSame(false);
+      setToroku(true);
     }
   };
 
@@ -166,11 +168,14 @@ export default function Home() {
         <h1 style={{ textAlign: "center", marginBottom: "24px" ,fontSize:50,color:"#48daff"}}>{sessionStorage.zikan>0 ? ("脱出成功!"):("時間切れ!")}</h1>
 
         {sessionStorage.zikan>0 ? (
-        <p style={{ textAlign: "center" }}>クリアおめでとうございます！
-          <br />あなたがクリアにかかった時間:{`${Math.floor(tscore / 60)}分${tscore % 60}秒`}
-          <br />ヒントを見た回数:{hscore} 回
-          <br />あなたのスコア:{playerScore} ポイント
-        </p>
+          <div style = {{textAlign: "center"}}>
+            <p style={{ textAlign: "center" }}>クリアおめでとうございます！
+              <br />あなたがクリアにかかった時間:{`${Math.floor(tscore / 60)}分${tscore % 60}秒`}
+              <br />ヒントを見た回数:{hscore} 回
+              <br />あなたのスコア:{playerScore} ポイント
+            </p>
+            {toroku && <p><img src="frame.png"></img><br/><br/>上のQRコードをスキャンするか、<br/>https://3-ahr-bunkasai-webapp.vercel.app/final<br/>にアクセスすれば、後から自分の<br/>スコアと最終順位を確認できます</p>}         
+         </div>
         ):(
           <p style={{ textAlign: "center" }}>お疲れさまでした!</p>
         )  
@@ -181,7 +186,7 @@ export default function Home() {
               スコアボード
             </h2>
             <div style={{ margin: "0 auto 0 auto", marginBottom: 10 }}>
-              {scores.map((s, index) => (
+              {scores.slice(0,20).map((s, index) => (
                 <p key={s.id}>
                   <span className="text-gray-800">{index + 1}位 {s.user_name || "匿名"}　{s.score}点</span>
                 </p>

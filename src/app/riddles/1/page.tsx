@@ -17,7 +17,7 @@ const crossd = [
 const crosshuto=[8,34,25,10,20,14]
 
 const mondai = [
-    "左下の⬛️から右上の⬛️へ向かえ。\n壁にぶつかるまで曲がれない。\nまた、右にしか曲がることができない。\n通った文字を順に読め。",
+    "左下の四角から右上の四角へ向かえ。\n壁にぶつかるまで曲がれない。\nまた、右にしか曲がることができない。\n通った文字を順に読め。",
     "室町幕府の将軍を追放した戦国武将は？",
     "嘘をついているB組生徒の名を出席番号順に読め。\n下の5人は全員同じB組である。",
     "投稿者が文化祭で撮った写真に写っている謎を解け。",
@@ -145,10 +145,10 @@ export default function Home() {
             <p style={{marginTop:40,marginBottom:10}}>クロスワードの太線の中の文字を以下の対応する四角に入力せよ</p>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 ,height:50,background: "#303030ff",borderRadius: "4px",border:"1px solid black",padding:8}}>
                 
-                {[...Array(7)].map((_,idx)=>(
+                {[0,1,2,3,4,5,2].map((idx,idd)=>(
                 <input
                     className="siroin"
-                    key={idx}
+                    key={idd}
                     maxLength={1}
                     type="text"
                     placeholder={String(idx+1)}

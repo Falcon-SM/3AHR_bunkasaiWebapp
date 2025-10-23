@@ -139,7 +139,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                     <input
                         type="text"
                         className="riddle-input"
-                        placeholder={`謎${n + 1}の答えを入力`}
+                        placeholder={`謎${(n + 1)%5}の答えを入力`}
                         style={{
                             padding: "10px",
                             fontSize: "1rem",
@@ -189,9 +189,11 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                                 transition: "background 0.2s",
                             }}>ヒントを表示</button>}
                 </div>
-                {[...Array(numhint)].map((_, idx) => (
-                    <canvas width={240} height={Math.ceil(hints[idx].length / 16) * 25} key={idx} ref={canvasRef[idx]} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hints[idx].length / 16) * 25}px`, width: 240 }}></canvas>
-                ))}
             </div>
-        </div>)
+            {[...Array(numhint)].map((_, idx) => (
+                <canvas width={240} height={Math.ceil(hints[idx].length / 16) * 25} key={idx} ref={canvasRef[idx]} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hints[idx].length / 16) * 25}px`, width: 240 }}></canvas>
+            ))}
+            
+        </div>
+    )
 };
