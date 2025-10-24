@@ -24,7 +24,7 @@ const mondai = [
     "トイレの紙の赤い矢印が通る文字を順に読め。"
 ]
 
-const monim=['naan','naan', '/論理クイズ.png','naan','naan']
+const monim=['naan','/仮.jpg', '/論理クイズ.png','naan','naan']
 
 export default function Home() {
     const { threeIsAnswered,gazo,setGazo} = useRiddles();
