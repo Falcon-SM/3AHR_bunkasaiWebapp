@@ -169,7 +169,7 @@ export default function Home() {
 
         {sessionStorage.zikan>0 ? (
           <div style = {{textAlign: "center"}}>
-            <p style={{ textAlign: "center" }}>クリアおめでとうございます！
+            <p style={{ textAlign: "center" }}>クリアおめでとうございます！！
               <br />あなたがクリアにかかった時間:{`${Math.floor(tscore / 60)}分${tscore % 60}秒`}
               <br />ヒントを見た回数:{hscore} 回
               <br />あなたのスコア:{playerScore} ポイント
