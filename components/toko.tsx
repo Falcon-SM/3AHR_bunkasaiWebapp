@@ -41,11 +41,14 @@ export default function Toko({children,saigo}:Props) {
         setPosts([{
             content:"今日はこまば遺跡に行ってきた！これがあの有名な「かがやきの石板」か、、、",
             time:(h+Math.floor((m-53)/60))+":"+("0"+(m+7)%60).slice(-2),
-            img:"/論理クイズ.png"
+            img:"/石板.png"
         },
-        {content:"💩",time:(h+Math.floor((m-37)/60))+":"+("0"+(m+23)%60).slice(-2)},
+        {content:"ひらがなって平安時代に漢字を簡略化して生まれたらしいぜ",time:(h+Math.floor((m-37)/60))+":"+("0"+(m+23)%60).slice(-2)},
         {content:"シタっていう男はひどいうそつきだ。あいつの言うことは信じない方がいい。",time:(h+Math.floor((m-20)/60))+":"+("0"+(m+40)%60).slice(-2)},
-        {content:"ケルネル高校の文化祭言ってきた!なぞに落書きして妨害してやったわw",time:(h+Math.floor((m-10)/60))+":"+("0"+(m+50)%60).slice(-2)},
+        {content:"ケルネル高校の文化祭言ってきた!なぞに落書きして妨害してやったわw",
+            time:(h+Math.floor((m-10)/60))+":"+("0"+(m+50)%60).slice(-2),
+            img:"/落書き.jpg"
+        },
         {content:"おこめ公園のトイレの入り口からこんな紙見えてビビったwこれは何？謎解き...？",time:h+":"+("0"+m).slice(-2)}
         ])
         if(saigo){
@@ -67,6 +70,10 @@ export default function Toko({children,saigo}:Props) {
                 sessionStorage.sawhint=0;
             }
         },[])
+    
+    const full=()=>{
+        document.documentElement.requestFullscreen();
+    }
 
     // 謎3に文字が入ったら暗号化投稿を一度だけ表示
     useEffect(() => {
@@ -115,6 +122,7 @@ export default function Toko({children,saigo}:Props) {
                 margin: "40px auto",
                 gap: "32px",
             }}
+            onClick={full}
         >
             {/* 左側：SNS風ヒントカード */}
             <div

@@ -103,7 +103,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
 
         }
     }, [numhint]);
-    useEffect(() => { setTimeout(() => { setHintti(true) }, 30000 * (n + 1)) }, [])
+    useEffect(() => { setTimeout(() => { setHintti(true) }, 30000 * (n%5 + 1)) }, [])
     return (
         <div style={{ marginBottom: 28, width: 500, display: "flex", overflow: "visible" }} key={n}>
             <div style={{ width: 500, flex: "0 0 auto" }}>
@@ -157,19 +157,17 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                             }
                         }}
                     />
-                    {answer.trim() !== "" && (
                         <button
                             onClick={handleCheckAnswer}
                             disabled={isLoading}
                             className="botanin"
                             style={{
-                                cursor: isLoading ? "not-allowed" : "pointer",
-                                opacity: isLoading ? 0.6 : 1,
+                                cursor: isLoading || answer.trim()=="" ? "not-allowed" : "pointer",
+                                opacity: isLoading || answer.trim()=="" ? 0.6 : 1,
                             }}
                         >
                             {isLoading ? "判定中..." : "チェック"}
                         </button>
-                    )}
                 </div>
                 {showError && (<p style={{ color: "#d63031",margin:5 }}>残念、はずれ!</p>)}
                 {isCorrect && (<p style={{ margin:5}}>正解!</p>)}

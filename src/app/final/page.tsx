@@ -94,7 +94,7 @@ export default function Home() {
     }
     setts(1200 - sessionStorage.zikan);
     seths(sessionStorage.sawhint);
-    setPlayerScore(sessionStorage.zikan - 300 * sessionStorage.sawhint);
+    setPlayerScore(Math.max(sessionStorage.zikan - 120 * sessionStorage.sawhint,0));
   }, []); // 初回レンダリング時に一度だけ実行
   useEffect(() => {
     if (playerScore != null && scores.length > 0) {
