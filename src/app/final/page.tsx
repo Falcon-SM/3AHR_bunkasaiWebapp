@@ -37,7 +37,7 @@ export default function Home() {
 
   const handleModalOk = () => {
     setShowModal(false);
-    sessionStorage.zikan = 1200;
+    sessionStorage.zikan = 1800;
     sessionStorage.sawhint = 0;
     sessionStorage.clear();
     localStorage.clear();
@@ -60,7 +60,7 @@ export default function Home() {
       setKirikae(15);
     }
     if (kirikae === 0) {
-      sessionStorage.zikan = 1200;
+      sessionStorage.zikan = 1800;
       sessionStorage.sawhint = 0;
       localStorage.clear();
       router.push("/")
@@ -92,7 +92,7 @@ export default function Home() {
     if (sessionStorage.zikan<1){
       setSubmitted(true);
     }
-    setts(1200 - sessionStorage.zikan);
+    setts(1800 - sessionStorage.zikan);
     seths(sessionStorage.sawhint);
     setPlayerScore(Math.max(sessionStorage.zikan - 120 * sessionStorage.sawhint,0));
   }, []); // 初回レンダリング時に一度だけ実行

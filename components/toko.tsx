@@ -55,7 +55,7 @@ export default function Toko({children,saigo}:Props) {
           setPosts((prev)=>([...prev,{content: `俺のアカウント名、俺の本名から来てるんだよね。12個あるうちの10個目っていうことでさ。もし名前がトラだったら3/12なんだなw`,time:sessionStorage.timm}]))
         }
         },[])
-    const [nokori,setnokori]=useState(1200);
+    const [nokori,setnokori]=useState(1800);
 
     const base64Hint3 = useMemo(() => {
         const hint = "第3問のヒント: 2019年から始まった新しい元号。";
