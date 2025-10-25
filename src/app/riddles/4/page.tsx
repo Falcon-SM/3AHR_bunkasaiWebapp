@@ -75,6 +75,7 @@ export default function Home() {
             const result = await res.json();
             if (result.correct) {
                 setIsCorrect(true);
+                router.push("/final");
             }else if(result.osii){
                 setOsii(true);
             } else {
