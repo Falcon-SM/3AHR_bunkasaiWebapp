@@ -100,6 +100,7 @@ export default function Home() {
           dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
         />
                 <h2 style={{marginBottom: 12, fontWeight: 400 }}>クロスワード</h2>
+                <p>上の謎の答えを参考に、クロスワードを埋めよ</p>
                 <div style={{background:"#303030",width:"100%",padding:20,borderRadius:8,boxSizing:"border-box",textAlign:"center"}}>
                 <table cellSpacing="0" style={{borderCollapse: "collapse", margin: "0 auto" }}>
                     <tbody>
