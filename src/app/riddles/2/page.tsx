@@ -82,7 +82,7 @@ export default function Home() {
           onClick={handleModalOk}
           className="botan"
         >
-          次のページに進む
+          次へ
         </button>
           )}
     </div>

@@ -206,7 +206,7 @@ export default function Home() {
                      答えが違います。もう一度挑戦してください。
                  </div>
              )}
-             {osii && <p style={{color:"#48daff", marginBottom: 12}}>おしい！　嘘を見抜け！</p>}
+             {osii && <p style={{color:"#48daff", marginBottom: 12}}>まだ1つやるべきことが...!?</p>}
              {isCorrect && (
                  <button
                      onClick={()=>{router.push("/final")}}
@@ -215,7 +215,7 @@ export default function Home() {
                          width:"95%",
                      }}
                  >
-                     次へ進む
+                     次へ
                  </button>
              )}
     </Toko>);

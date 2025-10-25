@@ -67,6 +67,7 @@ export default function Home() {
                         borderRadius: "8px",
                     }}
                 >「SNSの使い方」を読み、「なくすべきもの」を押せ</h2>
+                <h3>現れた3桁の数字で箱の鍵を開けろ</h3>
                 <div style={{background: "#303030ff",border:"2px solid black",borderRadius: "8px"}}>
                     {/* Google tag (gtag.js) */}
                     <Script
@@ -112,7 +113,7 @@ export default function Home() {
                         width:"95%",
                     }}
                 >
-                    箱が開いた！
+                    中の冊子を取り出し、次へ
                 </button>
                 )}
         </Toko>

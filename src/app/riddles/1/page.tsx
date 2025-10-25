@@ -154,7 +154,7 @@ export default function Home() {
             </div>
 
             {/* クロスワード回答欄＋ボタン */}
-            <p style={{marginTop:40,marginBottom:10}}>クロスワードの太線の中の文字を以下の対応する四角に入力せよ</p>
+            <p style={{marginTop:40,marginBottom:10}}>クロスワードの太線の中の文字を以下の対応する四角に入力し、現れた指示に従え</p>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 ,height:50,background: "#303030ff",borderRadius: "4px",border:"1px solid black",padding:8}}>
                 
                 {[0,1,2,3,4,5,2].map((idx,idd)=>(
@@ -212,7 +212,7 @@ export default function Home() {
                         width:"95%",
                     }}
                 >
-                    次の謎へ進む
+                    次へ
                 </button>
             )}
     </Toko>);
