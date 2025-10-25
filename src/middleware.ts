@@ -1,55 +1,48 @@
-// src/middleware.ts
 
-import { NextRequest, NextResponse } from 'next/server'; 
+// middleware.ts
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
+// 認証情報 (環境変数から取得)
+const USERNAME = process.env.ADMIN_USERNAME;
+const PASSWORD = process.env.ADMIN_PASSWORD;
+
+/**
+ * Basic認証ロジック
+ */
 export function middleware(request: NextRequest) {
-  // Middleware のロジック本体を記述する
-  console.log('Middlewareが実行されました:', request.nextUrl.pathname);
-  return NextResponse.next(); // 以降の処理を継続する
+  // 1. 認証情報をリクエストヘッダーから取得
+  const basicAuth = request.headers.get('authorization');
+
+  if (basicAuth) {
+    // 2. Base64デコードとパース
+    const authValue = basicAuth.split(' ')[1]; // "username:password" のBase64部分
+    const [user, pass] = Buffer.from(authValue, 'base64').toString().split(':');
+
+    // 3. 環境変数と認証情報を比較
+    if (user === USERNAME && pass === PASSWORD) {
+      // 認証成功: ページへのアクセスを許可
+      const response = NextResponse.next();
+      response.cookies.set({
+        name: 'session',
+        value: 'セッショントークン',
+        maxAge: 60 * 60 * 24 * 30,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
+      });
+      return response;
+    }
+  }
+
+  return new NextResponse('認証が必要です', {
+    status: 401,
+    headers: {
+      'WWW-Authenticate': `Basic realm="Private Area"`,
+    },
+  });
 }
 
-// Middlewareを実行するパスを指定
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/riddles/:path*', '/admin/:path*'], 
 };
-
-{/*
-
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-import { verifyToken } from "./lib/auth"
-
-export async function middleware(request: NextRequest) {
-  // Skip middleware for API routes, static files, and auth pages
-  if (
-    request.nextUrl.pathname.startsWith("/api/") ||
-    request.nextUrl.pathname.startsWith("/_next/") ||
-    request.nextUrl.pathname.startsWith("/auth/") ||
-    request.nextUrl.pathname.startsWith("/favicon.ico")
-  ) {
-    return NextResponse.next()
-  }
-
-  // セッション認証チェック
-  const token = request.cookies.get("auth-token")?.value
-
-  if (!token) {
-    return NextResponse.next() // クライアントサイドで認証処理
-  }
-
-  const payload = await verifyToken(token)
-  if (!payload || payload.type !== "session") {
-    const response = NextResponse.next()
-    response.cookies.delete("auth-token")
-    return response
-  }
-
-  return NextResponse.next()
-}
-
-export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
-}
-*/}
