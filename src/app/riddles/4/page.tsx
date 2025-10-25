@@ -160,7 +160,7 @@ export default function Home() {
              <p style={{marginTop:40,marginBottom:10}}>クロスワードの太線の中の文字を以下の対応する四角に入力せよ</p>
              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 ,height:50,background: "#303030ff",borderRadius: "4px",border:"1px solid black",padding:8}}>
                  
-                 {[...Array(7)].map((_,idx)=>(
+                 {[0,1,2,3,4,5,2].map((_,idx)=>(
                  <input
                      className="siroin"
                      key={idx}
