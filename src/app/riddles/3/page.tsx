@@ -68,6 +68,16 @@ export default function Home() {
                     }}
                 >「SNSの使い方」を読み、「なくすべきもの」を押せ</h2>
                 <div style={{background: "#303030ff",border:"2px solid black",borderRadius: "8px"}}>
+                    {/* Google tag (gtag.js) */}
+                    <Script
+                    src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
+                    strategy="afterInteractive"
+                    />
+                    <Script
+                    id="gtag-init"
+                    strategy="afterInteractive"
+                    dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
+                    />
                 <p　style={{marginBottom:"10px",textAlign: 'left'}}>　箱のパスワードは、、、</p>
                 <div style={{width:330,height:200,position:"relative",margin:"0 auto"}}>
                 {[...Array(3)].map((_,idx)=>(

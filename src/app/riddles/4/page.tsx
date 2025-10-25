@@ -92,6 +92,16 @@ export default function Home() {
                  <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={5+idx} imgg={monim[idx]} imgWidth={400} imgHeight={250}/>
              ))}
              <div style={{ margin: "28px 0 20px 0", clear:"both"}}>
+                {/* Google tag (gtag.js) */}
+                    <Script
+                    src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
+                    strategy="afterInteractive"
+                    />
+                    <Script
+                    id="gtag-init"
+                    strategy="afterInteractive"
+                    dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
+                    />
                  <h2 style={{marginBottom: 12, fontWeight: 400 }}>クロスワード</h2>
                  <div style={{background:"#303030",width:"100%",padding:20,borderRadius:8,boxSizing:"border-box",textAlign:"center"}}>
                  <table cellSpacing="0" style={{borderCollapse: "collapse", margin: "0 auto" }}>
