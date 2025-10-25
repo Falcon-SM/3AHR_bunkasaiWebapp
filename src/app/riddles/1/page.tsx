@@ -15,6 +15,7 @@ const crossd = [
 
 ];
 const crosshuto=[8,34,25,10,20,14]
+const defaul="じ"
 
 const mondai = [
     "左下の水色の四角から右上の水色の四角へ向かえ。\n壁にぶつかるまで曲がれない。\nまた、右にしか曲がることができない。\n通った文字を順に読め。",
@@ -121,6 +122,8 @@ export default function Home() {
                                             >
                                                 {crosshuto.indexOf(rowIdx*7+colIdx)!==-1 && <p style={{margin:0,fontSize:"10px",textAlign:"left",color:"black",paddingTop:5}}>{crosshuto.indexOf(rowIdx*7+colIdx)+1}</p>}
                                                 <input
+                                                    defaultValue={rowIdx*7+colIdx===3?defaul:""}
+                                                    disabled={rowIdx*7+colIdx===3}
                                                     className="crossin"
                                                     type="text"
                                                     maxLength={1}
@@ -176,7 +179,7 @@ export default function Home() {
                     }}
                 />
                 ))}
-                <p style={{flexGrow:1}}>星の間を読め</p>
+                <p style={{flexGrow:1}}>星を結び、間を読め</p>
             </div>
             <div style={{display:"flex",marginTop:40}}>
                 <input 

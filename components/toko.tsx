@@ -214,9 +214,10 @@ export default function Toko({children,saigo}:Props) {
 
             }}>{`${nokori/60|0}:${("0"+nokori%60).slice(-2)}`}</p>
         </div>
-        {!(gazo==="n") && <div onClick={()=>{setGazo("n")}} style={{position:"fixed",backgroundColor:"rgba(153, 153, 153, 0.4)",left:"0px",top:"0px",width:window.innerWidth,height:window.innerHeight}}></div>}
-        {!(gazo==="n") && <button onClick={()=>{setGazo("n")}} className="batu">x</button>}
-        {!(gazo==="n") && <img src={gazo} style={{position:"fixed",width:(window.innerWidth-100),height:(window.innerHeight-100),top:"50px",left:"50px",objectFit: "contain"}}></img>}
+        {!(gazo==="n") && 
+        <div onClick={()=>{setGazo("n")}} style={{position:"fixed",backgroundColor:"rgba(153, 153, 153, 0.4)",left:"0px",top:"0px",width:window.innerWidth,height:window.innerHeight}}> 
+        <button style={{position:"fixed" ,top:0,right:0}} onClick={()=>{setGazo("n")}} className="batu">x</button>
+        <img src={gazo} style={{position:"fixed",width:(window.innerWidth-100),height:(window.innerHeight-100),top:"50px",left:"50px",objectFit: "contain"}}></img></div>}
       </div>
     );
 }
