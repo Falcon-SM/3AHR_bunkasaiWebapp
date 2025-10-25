@@ -74,7 +74,7 @@ export default function Home() {
           onEnded={handleVideoEnded}
         >
           <source src="/BunkasaiVideo1.mp4" type="video/mp4" />
-          お使いのブラウザは動画再生に対応していません。
+          お使いのブラウザは動画再生に対応していません。別のブラウザをお試しください。
         </video>
       </div>
       {videoEnded && (
