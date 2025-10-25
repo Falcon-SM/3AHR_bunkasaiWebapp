@@ -58,7 +58,6 @@ export default function Home() {
 
 
     const hints=[["徳川家の人だよ！","たい焼きを食べて死んだという噂があるよ！","家康だよ！"],["この人が登場する有名な戦国ゲームがあるよ！","〇〇の野望","織田信長っていう人だよ！"],["a","b","c"],["a","b","d"],["廻天","結","Reboot"]]
-    // Base64暗号テキスト（第1問用）
 
     const handleCheckAnswer = async () => {
         setIsLoading(true);
