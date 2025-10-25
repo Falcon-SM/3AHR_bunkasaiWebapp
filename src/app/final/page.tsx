@@ -174,7 +174,7 @@ export default function Home() {
               <br />ヒントを見た回数:{hscore} 回
               <br />あなたのスコア:{playerScore} ポイント
             </p>
-            {toroku && <p><img src="frame.png"></img><br/><br/>上のQRコードをスキャンするか、<br/>https://3-ahr-bunkasai-webapp.vercel.app/final<br/>にアクセスすれば、後から自分の<br/>スコアと最終順位を確認できます</p>}         
+            {toroku && <p><img src="frame.png"></img><br/><br/>上のQRコードをスキャンするか、<br/>https://3-ahr-bunkasai-webapp.vercel.app/check<br/>にアクセスすれば、後から自分の<br/>スコアと最終順位を確認できます</p>}         
          </div>
         ):(
           <p style={{ textAlign: "center" }}>お疲れさまでした!</p>
