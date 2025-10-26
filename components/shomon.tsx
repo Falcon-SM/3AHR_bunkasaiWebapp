@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useEffect, useRef, RefObject } from "react";
+import React, { useState, useEffect, useRef, RefObject, ReactNode } from "react";
 import { useRiddles } from "@/app/context/riddleContext";
+import { useRouter } from "next/navigation";
 
 type props = {
     bun: string;
@@ -9,9 +10,11 @@ type props = {
     imgg?: string;
     imgWidth?: number;
     imgHeight?: number;
+    children?:ReactNode;
 };
 
-export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, imgHeight = 200 }: props) {
+export default function Ques({children, hints, bun, n, imgg = 'naan', imgWidth = 300, imgHeight = 200 }: props) {
+    const router = useRouter();
     const { setGazo } = useRiddles()
     const {
         setOneIsAnswered,
@@ -30,9 +33,19 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
         setIsLoading(true);
         setShowError(false);
         setIsCorrect(false);
-
         try {
-            const res = await fetch("/api/riddle/sho", {
+            let link="";
+            let saki="";
+            if(n<10){
+                link="sho";
+            }else if(n==10){
+                link="1";
+                saki="riddles/2"
+            }else{
+                link="4";
+                saki="final"
+            }
+            const res = await fetch("/api/riddle/"+link, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ answer: answer, num: n }),
@@ -40,6 +53,9 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
             const result = await res.json();
             if (result.correct) {
                 setIsCorrect(true);
+                if(n>=10){
+                    router.push("/"+saki)
+                }
             } else {
                 setShowError(true);
             }
@@ -48,6 +64,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
         } finally {
             setIsLoading(false);
         }
+
     };
 
     useEffect(() => {
@@ -103,7 +120,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
 
         }
     }, [numhint]);
-    useEffect(() => { setTimeout(() => { setHintti(true) }, 30000 * (n%5 + 1)) }, [])
+    useEffect(() => { setTimeout(() => { setHintti(true) }, 30000 * Math.max(n%5 + 1,n-4)) }, [])
     return (
         <div style={{ marginBottom: 28, width: 500, display: "flex", overflow: "visible" }} key={n}>
             <div style={{ width: 500, flex: "0 0 auto" }}>
@@ -119,12 +136,15 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                         fontWeight: 400,
 
                     }}
-                >{bun.split('\n').map((line, index) => (
+                >
+                    {children}
+                    {n<10&&
+                    bun.split('\n').map((line, index) => (
                     <span key={index}>
                         {line}
                         <br />
-                    </span>
-                ))}</h2>
+                    </span>))}
+                </h2>
                 {imgg !== "naan" && (
                     <img
                         src={imgg}
@@ -135,12 +155,14 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                         onClick={() => { setGazo(imgg) }}
                     />
                 )}
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex",marginTop:(n>=10?40:0),}}>
                     <input
                         type="text"
                         className="riddle-input"
-                        placeholder={`謎${(n + 1)%5}の答えを入力`}
+                        placeholder={n<10?`謎${(n + 1)%5}の答えを入力`:"答えを入力"}
                         style={{
+                            height:25,
+                            marginRight:5,
                             padding: "10px",
                             fontSize: "1rem",
                             borderRadius: "6px",
@@ -166,7 +188,7 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                                 opacity: isLoading || answer.trim()=="" ? 0.6 : 1,
                             }}
                         >
-                            {isLoading ? "判定中..." : "チェック"}
+                            {isLoading ? "判定中..." : (n!<10?"チェック":"回答する")}
                         </button>
                 </div>
                 {showError && (<p style={{ color: "#d63031",margin:5 }}>残念、はずれ!</p>)}
@@ -188,10 +210,11 @@ export default function Ques({ hints, bun, n, imgg = 'naan', imgWidth = 300, img
                             }}>ヒントを表示</button>}
                 </div>
             </div>
-            {[...Array(numhint)].map((_, idx) => (
-                <canvas width={240} height={Math.ceil(hints[idx].length / 16) * 25} key={idx} ref={canvasRef[idx]} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hints[idx].length / 16) * 25}px`, width: 240 }}></canvas>
-            ))}
-            
+            <div>
+                {[...Array(numhint)].map((_, idx) => (
+                    <canvas width={240} height={Math.ceil(hints[idx].length / 16) * 25} key={idx} ref={canvasRef[idx]} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hints[idx].length / 16) * 25}px`, width: 240 }}></canvas>
+                ))}
+            </div>
         </div>
     )
 };

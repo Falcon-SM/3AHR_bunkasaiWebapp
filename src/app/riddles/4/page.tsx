@@ -59,7 +59,7 @@ export default function Home() {
   }, []);
 
 
-    const hints=[["徳川家の人だよ！","たい焼きを食べて死んだという噂があるよ！","家康だよ！"],["この人が登場する有名な戦国ゲームがあるよ！","〇〇の野望","織田信長っていう人だよ！"],["a","b","c"],["a","b","d"],["廻天","結","Reboot"]]
+    const hints=[["徳川家の人だよ！","たい焼きを食べて死んだという噂があるよ！","家康だよ！"],["この人が登場する有名な戦国ゲームがあるよ！","〇〇の野望","織田信長っていう人だよ！"],["a","b","c"],["a","b","d"],["廻天","結","Reboot"],["u","n","k"]]
 
     const handleCheckAnswer = async () => {
         setIsLoading(true);
@@ -161,68 +161,30 @@ export default function Home() {
              </div>
  
              {/* クロスワード回答欄＋ボタン */}
-             <p style={{marginTop:40,marginBottom:10}}>クロスワードの太線の中の文字を以下の対応する四角に入力せよ</p>
-             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 ,height:50,background: "#303030ff",borderRadius: "4px",border:"1px solid black",padding:8}}>
-                 
-                 {[0,1,2,3,4,5,2].map((_,idx)=>(
-                 <input
-                     className="siroin"
-                     key={idx}
-                     maxLength={1}
-                     type="text"
-                     placeholder={String(idx+1)}
-                     style={{
-                         outline:"none",
-                         width:20,
-                         flex: 1,
-                         padding: "10px",
-                         fontSize: "1rem",
-                         borderRadius: "6px",
-                         border: "1px solid #d1d5db",
-                         color: "#000",
-                     }}
-                 />
-                 ))}
-                 <p style={{flexGrow:1}}>星を結び、間を読め</p>
-             </div>
-             <p　style={{display:"flex",marginTop:40}}>上の指示に従え</p>
-             <div style={{display:"flex",marginTop:5}}>
-                 <input 
-                     onChange={e => setCrosswordAnswer(e.target.value)}
-                     placeholder={"答えを入力"}
-                     className="riddle-input"
-                     style={{flexGrow:1,marginRight:5}}
-                 />
-                 {crosswordAnswer.trim() !== "" && (
-                     <button
-                         onClick={handleCheckAnswer}
-                         disabled={isLoading}
-                         className="botanin"
-                         style={{
-                             cursor: isLoading ? "not-allowed" : "pointer",
-                             opacity: isLoading ? 0.6 : 1,
-                         }}
-                     >
-                         {isLoading ? "判定中..." : "回答する"}
-                     </button>
-                 )}
-             </div>
-             {showError && (
-                 <div style={{ color: "#d63031", marginBottom: 12 }}>
-                     答えが違います。もう一度挑戦してください。
-                 </div>
-             )}
-             {osii && <p style={{color:"#48daff", marginBottom: 12}}>まだ1つやるべきことが...!?</p>}
-             {isCorrect && (
-                 <button
-                     onClick={()=>{router.push("/final")}}
-                     className="botan"
-                     style={{
-                         width:"95%",
-                     }}
-                 >
-                     次へ
-                 </button>
-             )}
+             <p style={{marginTop:40,marginBottom:10}}>クロスワードの太枠の中の文字を以下の対応する番号の四角に入力し、現れる指示に従え</p>
+            <Ques bun="" hints={hints[5]} n={11}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, height: 48,padding:"6px 0px 0px 0px"}}>
+                {[0, 1, 2, 3, 4, 5, 2].map((idx, idd) => (
+                    <input
+                        className="siroin"
+                        key={idd}
+                        maxLength={1}
+                        type="text"
+                        placeholder={String(idx + 1)}
+                        style={{
+                            outline: "none",
+                            width: 20,
+                            flex: 1,
+                            padding: "10px",
+                            fontSize: "1rem",
+                            borderRadius: "6px",
+                            border: "1px solid #d1d5db",
+                            color: "#000",
+                        }}
+                    />   
+                ))}
+                <p style={{ flexGrow: 1 ,fontSize:15,margin:0}}>星を結び、間の文字を読め</p>
+            </div>
+            </Ques>
     </Toko>);
 }

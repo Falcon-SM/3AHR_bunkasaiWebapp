@@ -51,11 +51,8 @@ export default function Toko({children,saigo}:Props) {
         },
         {content:"おこめ公園のトイレの入り口からこんな紙見えてビビったwこれは何？謎解き...？",time:h+":"+("0"+m).slice(-2)}
         ])
-        if(saigo){
-          setPosts((prev)=>([...prev,{content: `俺のアカウント名、俺の本名から来てるんだよね。12個あるうちの10個目っていうことでさ。もし名前がトラだったら3/12なんだなw`,time:sessionStorage.timm}]))
-        }
         },[])
-    const [nokori,setnokori]=useState(1800);
+    const [nokori,setnokori]=useState(10);
 
     const base64Hint3 = useMemo(() => {
         const hint = "第3問のヒント: 2019年から始まった新しい元号。";

@@ -7,15 +7,15 @@ import Script from "next/script";
 import { useRouter } from "next/navigation";
 
 const crossd = [
-    [0,0,0,1,0,0,0],
-    [0,1,0,1,0,0,1],
-    [1,1,1,1,0,0,1],
-    [0,1,0,1,1,1,1],
-    [0,1,0,0,0,0,1]
+    [0, 0, 0, 1, 0, 0, 0],
+    [0, 1, 0, 1, 0, 0, 1],
+    [1, 1, 1, 1, 0, 0, 1],
+    [0, 1, 0, 1, 1, 1, 1],
+    [0, 1, 0, 0, 0, 0, 1]
 
 ];
-const crosshuto=[8,34,25,10,20,14]
-const defaul="じ"
+const crosshuto = [8, 34, 25, 10, 20, 14]
+const defaul = "じ"
 
 const mondai = [
     "左下の水色の四角から右上の水色の四角へ向かえ。\n壁にぶつかるまで曲がれない。\nまた、右にしか曲がることができない。\n通った文字を順に読め。",
@@ -25,46 +25,45 @@ const mondai = [
     "トイレの紙の赤い矢印が通る文字を順に読め。"
 ]
 
-const monim=['naan','/nimon.png', '/論理クイズ.png','naan','naan']
+const monim = ['naan', '/nimon.png', '/論理クイズ.png', 'naan', 'naan']
 
 export default function Home() {
-    const { threeIsAnswered,gazo,setGazo} = useRiddles();
+    const { threeIsAnswered, gazo, setGazo } = useRiddles();
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [crosssen,setCrosssen]=useState(Array(35).fill(0))
-    const router=useRouter();
+    const [crosssen, setCrosssen] = useState(Array(35).fill(0))
+    const router = useRouter();
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-        console.log(isCorrect)
-        if(!isCorrect){
-            localStorage.pagen=1;
-            localStorage.zikan=sessionStorage.zikan;
-            localStorage.sawhint=sessionStorage.sawhint;
-            event.preventDefault();
-            // Chromeなどでは returnValue の設定が必要
-            event.returnValue = "";
-        }
-    };
+    useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            console.log(isCorrect)
+            if (!isCorrect) {
+                localStorage.pagen = 1;
+                localStorage.zikan = sessionStorage.zikan;
+                localStorage.sawhint = sessionStorage.sawhint;
+                event.preventDefault();
+                // Chromeなどでは returnValue の設定が必要
+                event.returnValue = "";
+            }
+        };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+        window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, []);
 
 
-    const hints=[["徳川家の人だよ！","たい焼きを食べて死んだという噂があるよ！","家康だよ！"],["この人が登場する有名な戦国ゲームがあるよ！","〇〇の野望","織田信長っていう人だよ！"],["a","b","c"],["a","b","d"],["廻天","結","Reboot"]]
+    const hints = [["徳川家の人だよ！", "たい焼きを食べて死んだという噂があるよ！", "家康だよ！"], ["この人が登場する有名な戦国ゲームがあるよ！", "〇〇の野望", "織田信長っていう人だよ！"], ["a", "b", "c"], ["a", "b", "d"], ["廻天", "結", "Reboot"], ["z", "b", "c"]]
     // Base64暗号テキスト（第1問用）
 
     const handleCheckAnswer = async () => {
         setIsLoading(true);
         setShowError(false);
         setIsCorrect(false);
-
         try {
             const res = await fetch("/api/riddle/1", {
                 method: "POST",
@@ -84,139 +83,105 @@ export default function Home() {
         }
     };
 
-    return(
-    <Toko saigo={false}>
+    return (
+        <Toko saigo={false}>
             {[...Array(5)].map((_, idx) => (
-                <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} imgg={monim[idx]} imgWidth={400} imgHeight={250}/>
+                <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={idx} imgg={monim[idx]} imgWidth={400} imgHeight={250} />
             ))}
-            <div style={{ margin: "28px 0 20px 0", clear:"both"}}>
+            <div style={{ margin: "28px 0 20px 0", clear: "both" }}>
                 {/* Google tag (gtag.js) */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
-          strategy="afterInteractive"
-        />
-        <Script
-          id="gtag-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
-        />
-                <h2 style={{marginBottom: 12, fontWeight: 400 }}>クロスワード</h2>
+                <Script
+                    src="https://www.googletagmanager.com/gtag/js?id=G-8SS8YBH1B6"
+                    strategy="afterInteractive"
+                />
+                <Script
+                    id="gtag-init"
+                    strategy="afterInteractive"
+                    dangerouslySetInnerHTML={{ __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-8SS8YBH1B6');` }}
+                />
+                <h2 style={{ marginBottom: 12, fontWeight: 400 }}>クロスワード</h2>
                 <p>上の謎の答えで、クロスワードを埋めよ</p>
-                <div style={{background:"#303030",width:"100%",padding:20,borderRadius:8,boxSizing:"border-box",textAlign:"center"}}>
-                <table cellSpacing="0" style={{borderCollapse: "collapse", margin: "0 auto" }}>
-                    <tbody>
-                        {[...Array(5)].map((_, rowIdx) => (
-                            <tr key={rowIdx} style={{margin:0}}>
-                                {[...Array(7)].map((_, colIdx) => {
-                                    if (crossd[rowIdx][colIdx] === 1) {
-                                        return (
-                                            <td
-                                                key={colIdx}
-                                                style={{
-                                                    border: `${["1px","3px"][+(crosshuto.indexOf(rowIdx*7+colIdx)!==-1)]} solid black`,
-                                                    width: 40,
-                                                    height: 40,
-                                                    textAlign: "center",
-                                                    background: ["#f9fafb","#d1d1d1ff"][crosssen[7*rowIdx+colIdx]],
-                                                }}
-                                            >
-                                                {crosshuto.indexOf(rowIdx*7+colIdx)!==-1 && <p style={{margin:0,fontSize:"10px",textAlign:"left",color:"black",paddingTop:5}}>{crosshuto.indexOf(rowIdx*7+colIdx)+1}</p>}
-                                                <input
-                                                    defaultValue={rowIdx*7+colIdx===3?defaul:""}
-                                                    disabled={rowIdx*7+colIdx===3}
-                                                    className="crossin"
-                                                    type="text"
-                                                    maxLength={1}
-                                                    style={{width: "92%",
-                                                            height: "92%"}}
-                                                    onFocus={()=>{setCrosssen((prev)=>{return prev.slice(0,7*rowIdx+colIdx).concat([1]).concat(prev.slice(7*rowIdx+colIdx+1))});}}
-                                                    onBlur={()=>{setCrosssen((prev)=>{prev[7*rowIdx+colIdx]=0;return prev});}}
-                                                />
-                                            </td>
-                                        );
-                                    } else {
-                                        return (
-                                            <td
-                                                key={colIdx}
-                                                style={{
-                                                    border: "none",
-                                                    width: 40,
-                                                    height: 40,
-                                                    textAlign: "center",
-                                                    background: "#303030",
-                                                }}
-                                            ></td>
-                                        );
-                                    }
-                                })}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <div style={{ background: "#303030", width: "100%", padding: 20, borderRadius: 8, boxSizing: "border-box", textAlign: "center" }}>
+                    <table cellSpacing="0" style={{ borderCollapse: "collapse", margin: "0 auto" }}>
+                        <tbody>
+                            {[...Array(5)].map((_, rowIdx) => (
+                                <tr key={rowIdx} style={{ margin: 0 }}>
+                                    {[...Array(7)].map((_, colIdx) => {
+                                        if (crossd[rowIdx][colIdx] === 1) {
+                                            return (
+                                                <td
+                                                    key={colIdx}
+                                                    style={{
+                                                        border: `${["1px", "3px"][+(crosshuto.indexOf(rowIdx * 7 + colIdx) !== -1)]} solid black`,
+                                                        width: 40,
+                                                        height: 40,
+                                                        textAlign: "center",
+                                                        background: ["#f9fafb", "#d1d1d1ff"][crosssen[7 * rowIdx + colIdx]],
+                                                    }}
+                                                >
+                                                    {crosshuto.indexOf(rowIdx * 7 + colIdx) !== -1 && <p style={{ margin: 0, fontSize: "10px", textAlign: "left", color: "black", paddingTop: 5 }}>{crosshuto.indexOf(rowIdx * 7 + colIdx) + 1}</p>}
+                                                    <input
+                                                        defaultValue={rowIdx * 7 + colIdx === 3 ? defaul : ""}
+                                                        disabled={rowIdx * 7 + colIdx === 3}
+                                                        className="crossin"
+                                                        type="text"
+                                                        maxLength={1}
+                                                        style={{
+                                                            width: "92%",
+                                                            height: "92%"
+                                                        }}
+                                                        onFocus={() => { setCrosssen((prev) => { return prev.slice(0, 7 * rowIdx + colIdx).concat([1]).concat(prev.slice(7 * rowIdx + colIdx + 1)) }); }}
+                                                        onBlur={() => { setCrosssen((prev) => { prev[7 * rowIdx + colIdx] = 0; return prev }); }}
+                                                    />
+                                                </td>
+                                            );
+                                        } else {
+                                            return (
+                                                <td
+                                                    key={colIdx}
+                                                    style={{
+                                                        border: "none",
+                                                        width: 40,
+                                                        height: 40,
+                                                        textAlign: "center",
+                                                        background: "#303030",
+                                                    }}
+                                                ></td>
+                                            );
+                                        }
+                                    })}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             {/* クロスワード回答欄＋ボタン */}
-            <p style={{marginTop:40,marginBottom:10}}>クロスワードの太線の中の文字を以下の対応する四角に入力し、現れた指示に従え</p>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 ,height:50,background: "#303030ff",borderRadius: "4px",border:"1px solid black",padding:8}}>
-                
-                {[0,1,2,3,4,5,2].map((idx,idd)=>(
-                <input
-                    className="siroin"
-                    key={idd}
-                    maxLength={1}
-                    type="text"
-                    placeholder={String(idx+1)}
-                    style={{
-                        outline:"none",
-                        width:20,
-                        flex: 1,
-                        padding: "10px",
-                        fontSize: "1rem",
-                        borderRadius: "6px",
-                        border: "1px solid #d1d5db",
-                        color: "#000",
-                    }}
-                />
-                ))}
-                <p style={{flexGrow:1}}>星を結び、間を読め</p>
-            </div>
-            <div style={{display:"flex",marginTop:40}}>
-                <input 
-                    onChange={e => setCrosswordAnswer(e.target.value)}
-                    placeholder={"答えを入力"}
-                    className="riddle-input"
-                    style={{flexGrow:1,marginRight:5}}
-                />
-                {crosswordAnswer.trim() !== "" && (
-                    <button
-                        onClick={handleCheckAnswer}
-                        disabled={isLoading}
-                        className="botanin"
+            <p style={{ marginTop: 40, marginBottom: 10 }}>クロスワードの太線の中の文字を以下の対応する番号の四角に入力し、現れた指示に従え</p>
+            <Ques bun="" hints={hints[5]} n={10}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, height: 48,padding:"6px 0px 0px 0px"}}>
+                {[0, 1, 2, 3, 4, 5, 2].map((idx, idd) => (
+                    <input
+                        className="siroin"
+                        key={idd}
+                        maxLength={1}
+                        type="text"
+                        placeholder={String(idx + 1)}
                         style={{
-                            cursor: isLoading ? "not-allowed" : "pointer",
-                            opacity: isLoading ? 0.6 : 1,
+                            outline: "none",
+                            width: 20,
+                            flex: 1,
+                            padding: "10px",
+                            fontSize: "1rem",
+                            borderRadius: "6px",
+                            border: "1px solid #d1d5db",
+                            color: "#000",
                         }}
-                    >
-                        {isLoading ? "判定中..." : "回答する"}
-                    </button>
-                )}
+                    />   
+                ))}
+                <p style={{ flexGrow: 1 ,fontSize:15,margin:0}}>星を結び、間の文字を読め</p>
             </div>
-            {showError && (
-                <div style={{ color: "#d63031", marginBottom: 12 }}>
-                    答えが違います。もう一度挑戦してください。
-                </div>
-            )}
-            {isCorrect && (
-                <button
-                    onClick={()=>{router.push("/riddles/2")}}
-                    className="botan"
-                    style={{
-                        width:"95%",
-                    }}
-                >
-                    次へ
-                </button>
-            )}
-    </Toko>);
+            </Ques>
+        </Toko>);
 }

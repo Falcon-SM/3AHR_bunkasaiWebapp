@@ -87,7 +87,7 @@ export default function Home() {
               スコアボード
             </h2>
             <div style={{ margin: "0 auto 0 auto", marginBottom: 10 }}>
-              {scores.map((s, index) => (
+              {scores.slice(0,20).map((s, index) => (
                 <p key={s.id}>
                   <span className="text-gray-800">{index + 1}位 {s.user_name || "匿名"}　{s.score}点</span>
                 </p>
