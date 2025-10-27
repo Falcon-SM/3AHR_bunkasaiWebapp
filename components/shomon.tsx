@@ -22,13 +22,15 @@ export default function Ques({children, hints, bun, n, imgg = 'naan', imgWidth =
         setThreeIsAnswered,
         setFourIsAnswered,
     } = useRiddles();
+    const [numhint,setNumhint]=useState(0);
     const [hintti, setHintti] = useState(false)
-    const [numhint, setNumhint] = useState(0);
+    const [hintbun, setHintbun] = useState("");
     const [answer, setAnswer] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isCorrect, setIsCorrect] = useState(false);
-    const [showError, setShowError] = useState(false)
-    const canvasRef = [useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null), useRef<(HTMLCanvasElement) | null>(null)]
+    const [showError, setShowError] = useState(false);
+    const [isHintLoading, setIsHintLoading] = useState(false);
+    const canvasRef = useRef<(HTMLCanvasElement) | null>(null)
     const handleCheckAnswer = async () => {
         setIsLoading(true);
         setShowError(false);
@@ -66,15 +68,44 @@ export default function Ques({children, hints, bun, n, imgg = 'naan', imgWidth =
         }
 
     };
+const handlehint= async () => {
+        setIsHintLoading(true);
+        setShowError(false);
+        try {
+            let link="";
+            let saki="";
+            let aa=n
+            if(5<=n && n<10){
+                aa=n+2;
+            }else if(10<=n && n<12){
+                aa=7*(n-9)-1
+            }else if(12<=n){
+                aa=7*(n-11)-2
+            }
+            const res = await fetch("/api/riddle/hint", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ numquiz: aa, numhints: numhint }),
+            });
+            const result = await res.json();
+            setHintbun(result.hint);
+            setNumhint((prev)=>(prev+1))
+        } catch {
+            setShowError(true);
+        } finally {
+            setIsHintLoading(false);
+        }
+
+    };
 
     useEffect(() => {
-        for (let i = 0; i < hints.length; i++) {
-            const canvas = canvasRef[i].current;
+
+            const canvas = canvasRef.current;
             if (!canvas) return;
 
             const ctx = canvas.getContext("2d");
             if (!ctx) return;
-            const [cx, cy, cw, ch, r] = [0, 0, 220, Math.ceil(hints[i].length / 16) * 25, 0];
+            const [cx, cy, cw, ch, r] = [0, 0, 220, Math.ceil(hintbun.length / 16) * 25, 0];
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(cx + r, cy);
@@ -98,7 +129,7 @@ export default function Ques({children, hints, bun, n, imgg = 'naan', imgWidth =
             ctx.font = '15px Roboto medium';
             ctx.fillStyle = "black";
 
-            const words = hints[i];
+            const words = hintbun;
             let line = "";
             let curY = cy + 5;
             for (let n = 0; n < words.length; n++) {
@@ -118,8 +149,7 @@ export default function Ques({children, hints, bun, n, imgg = 'naan', imgWidth =
             }
             ctx.restore();
 
-        }
-    }, [numhint]);
+    }, [hintbun]);
     useEffect(() => { setTimeout(() => { setHintti(true) }, 30000 * Math.max(n%5 + 1,n-4)) }, [])
     return (
         <div style={{ marginBottom: 28, width: 500, display: "flex", overflow: "visible" }} key={n}>
@@ -207,13 +237,14 @@ export default function Ques({children, hints, bun, n, imgg = 'naan', imgWidth =
                                 fontWeight: 600,
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                                 transition: "background 0.2s",
-                            }}>ヒントを表示</button>}
+                            }}>{numhint===0? "ヒントを表示":"次へ"}</button>
+                            }
                 </div>
             </div>
             <div>
-                {[...Array(numhint)].map((_, idx) => (
-                    <canvas width={240} height={Math.ceil(hints[idx].length / 16) * 25} key={idx} ref={canvasRef[idx]} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hints[idx].length / 16) * 25}px`, width: 240 }}></canvas>
-                ))}
+                {numhint !== 0&&
+                    <canvas width={240} height={Math.ceil(hintbun.length / 16) * 25} ref={canvasRef} style={{ margin: "0 0 10px 80px", height: `${Math.ceil(hintbun.length / 16) * 25}px`, width: 240 }}></canvas>
+                }
             </div>
         </div>
     )

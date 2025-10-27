@@ -52,7 +52,7 @@ export default function Toko({children,saigo}:Props) {
         {content:"おこめ公園のトイレの入り口からこんな紙見えてビビったwこれは何？謎解き...？",time:h+":"+("0"+m).slice(-2)}
         ])
         },[])
-    const [nokori,setnokori]=useState(10);
+    const [nokori,setnokori]=useState(1200);
 
     const base64Hint3 = useMemo(() => {
         const hint = "第3問のヒント: 2019年から始まった新しい元号。";
