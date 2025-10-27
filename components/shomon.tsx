@@ -193,7 +193,7 @@ const handlehint= async (inde:number) => {
                     <input
                         type="text"
                         className="riddle-input"
-                        placeholder={n<10?`謎${(n + 1)%5}の答えを入力`:"答えを入力"}
+                        placeholder={n<10?`謎${n%5 + 1}の答えを入力`:"答えを入力"}
                         style={{
                             height:25,
                             marginRight:5,
