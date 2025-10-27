@@ -30,6 +30,7 @@ export default function Ques({children, hints, bun, n, imgg = 'naan', imgWidth =
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isHintLoading, setIsHintLoading] = useState(false);
+    const [saidai,setSaidai]=useState(2);
     const canvasRef = useRef<(HTMLCanvasElement) | null>(null)
     const handleCheckAnswer = async () => {
         setIsLoading(true);
@@ -68,7 +69,8 @@ export default function Ques({children, hints, bun, n, imgg = 'naan', imgWidth =
         }
 
     };
-const handlehint= async () => {
+
+const handlehint= async (inde:number) => {
         setIsHintLoading(true);
         setShowError(false);
         try {
@@ -82,14 +84,16 @@ const handlehint= async () => {
             }else if(12<=n){
                 aa=7*(n-11)-2
             }
-            const res = await fetch("/api/riddle/hint", {
+            const res = await fetch("/api/hint", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ numquiz: aa, numhints: numhint }),
+                body: JSON.stringify({ numquiz: aa, numhints: numhint+inde }),
             });
             const result = await res.json();
+            console.log(result.hint);
             setHintbun(result.hint);
-            setNumhint((prev)=>(prev+1))
+            setNumhint((prev)=>(prev+1+inde));
+            setSaidai(result.saidai);
         } catch {
             setShowError(true);
         } finally {
@@ -224,9 +228,24 @@ const handlehint= async () => {
                 {showError && (<p style={{ color: "#d63031",margin:5 }}>残念、はずれ!</p>)}
                 {isCorrect && (<p style={{ margin:5}}>正解!</p>)}
                 <div style={{ width: 220, flex: "0 0 auto" }}>
-                    {(hintti && numhint < hints.length) &&
+                    {(numhint>0) &&
                         <button
-                            onClick={() => { sessionStorage.sawhint = parseInt(sessionStorage.sawhint) + 1; setNumhint((prev) => (prev + 1)) }}
+                            onClick={() => { handlehint(-2)}}
+                            style={{
+                                marginTop: 10,
+                                padding: "10px 20px",
+                                background: "#00eeffff",
+                                color: "#000",
+                                border: "none",
+                                borderRadius: "6px",
+                                fontWeight: 600,
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                transition: "background 0.2s",
+                            }}>前へ</button>
+                    }
+                    {(hintti && numhint < saidai) &&
+                        <button
+                            onClick={() => {handlehint(0)}}
                             style={{
                                 marginTop: 10,
                                 padding: "10px 20px",
@@ -238,7 +257,7 @@ const handlehint= async () => {
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                                 transition: "background 0.2s",
                             }}>{numhint===0? "ヒントを表示":"次へ"}</button>
-                            }
+                    }
                 </div>
             </div>
             <div>

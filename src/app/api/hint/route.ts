@@ -7,6 +7,6 @@ export async function POST(request: Request) {
     if (!process.env.HINTS) {
         return NextResponse.json({ hint: "" });
     }else{
-        return NextResponse.json({ hint: process.env.HINTS.split("/")[numquiz].split(".")[numhints] });
+        return NextResponse.json({ hint: process.env.HINTS.split("/")[numquiz].split(".")[numhints] ,saidai:process.env.HINTS.split("/")[numquiz].split(".").length});
     }
 }
