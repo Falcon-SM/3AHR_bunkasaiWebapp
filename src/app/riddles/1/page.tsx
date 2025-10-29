@@ -161,7 +161,7 @@ export default function Home() {
             {/* クロスワード回答欄＋ボタン */}
             <p style={{ marginTop: 40, marginBottom: 10 }}>クロスワードの太線の中の文字を以下の対応する番号の四角に入力し、現れた指示に従え</p>
             <Ques bun="" hints={hints[5]} n={10} imgg="naan">
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, height: 48,padding:"6px 0px 0px 0px"}}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12,padding:"5px 0px 5px 0px"}}>
                 {[0, 1, 2, 3, 4, 5, 2].map((idx, idd) => (
                     <input
                         className="siroin"
@@ -172,7 +172,6 @@ export default function Home() {
                         style={{
                             outline: "none",
                             width: 20,
-                            flex: 1,
                             padding: "10px",
                             fontSize: "1rem",
                             borderRadius: "6px",
