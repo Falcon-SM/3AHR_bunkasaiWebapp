@@ -107,7 +107,7 @@ const handlehint= async (inde:number) => {
 
             const ctx = canvas.getContext("2d");
             if (!ctx) return;
-            const [cx, cy, cw, ch, r] = [0, 0, 220, Math.ceil(hintbun.length / 16) * 25, 0];
+            const [cx, cy, cw, ch, r] = [0, 0, 220, Math.ceil(hintbun.length / 14) * 25, 0];
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(cx + r, cy);
@@ -152,11 +152,11 @@ const handlehint= async (inde:number) => {
             ctx.restore();
 
     }, [hintbun]);
-    useEffect(() => { setTimeout(() => { setHintti(true) }, 30000 * Math.max(n%5 + 1,n-4)) }, [])
+    useEffect(() => { setTimeout(() => { setHintti(true) }, 3000 * Math.max(n%5 + 1,Math.floor(n/2)+2*(n==10 || n==11))) }, [])
     return (
         <div style={{ marginBottom: 28, width: 500, display: "flex", overflow: "visible" }} key={n}>
             <div style={{ width: 500, flex: "0 0 auto" }}>
-                <h2
+                {n>=10&&<div
                     //dangerouslySetInnerHTML={{ __html:{mondai[n]}}}
                     style={{
                         fontSize: "1.2rem",
@@ -170,13 +170,26 @@ const handlehint= async (inde:number) => {
                     }}
                 >
                     {children}
-                    {n<10&&
-                    bun.split('\n').map((line, index) => (
+                </div>}
+                {n<10&&
+                    <h2
+                    style={{
+                        fontSize: "1.2rem",
+                        color: "#ffffffff",
+                        marginBottom: 12,
+                        background: "#303030ff",
+                        padding: "8px 16px",
+                        borderRadius: "8px",
+                        fontWeight: 400,
+
+                    }}>
+                    {bun.split('\n').map((line, index) => (
                     <span key={index}>
                         {line}
                         <br />
                     </span>))}
-                </h2>
+                    </h2>
+                }
                 {imgg !== "naan" && (
                     <img
                         src={imgg}
@@ -187,6 +200,7 @@ const handlehint= async (inde:number) => {
                         onClick={() => { setGazo(imgg) }}
                     />
                 )}
+                {(n<12)&&
                 <div style={{ display: "flex",marginTop:(n>=10?40:0),}}>
                     <input
                         type="text"
@@ -223,6 +237,7 @@ const handlehint= async (inde:number) => {
                             {isLoading ? "判定中..." : (n!<10?"チェック":"回答する")}
                         </button>
                 </div>
+                }
                 {showError && (<p style={{ color: "#d63031",margin:5 }}>残念、はずれ!</p>)}
                 {isCorrect && (<p style={{ margin:5}}>正解!</p>)}
                 <div style={{ width: 220, flex: "0 0 auto" }}>
@@ -231,6 +246,7 @@ const handlehint= async (inde:number) => {
                             onClick={() => { handlehint(-2)}}
                             style={{
                                 marginTop: 10,
+                                marginRight:5,
                                 padding: "10px 20px",
                                 background: "#00eeffff",
                                 color: "#000",

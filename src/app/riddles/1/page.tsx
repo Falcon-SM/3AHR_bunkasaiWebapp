@@ -101,8 +101,8 @@ export default function Home() {
                 />
                 <h2 style={{ marginBottom: 12, fontWeight: 400 }}>クロスワード</h2>
                 <p>上の謎の答えで、クロスワードを埋めよ</p>
-                <div style={{ background: "#303030", width: "100%", padding: 20, borderRadius: 8, boxSizing: "border-box", textAlign: "center" }}>
-                    <table cellSpacing="0" style={{ borderCollapse: "collapse", margin: "0 auto" }}>
+                    <Ques bun="" hints={[""]} n={12}>
+                    <table cellSpacing="0" style={{ borderCollapse: "collapse", margin: "10px auto 10px auto" }}>
                         <tbody>
                             {[...Array(5)].map((_, rowIdx) => (
                                 <tr key={rowIdx} style={{ margin: 0 }}>
@@ -154,12 +154,13 @@ export default function Home() {
                             ))}
                         </tbody>
                     </table>
-                </div>
+                    </Ques>
+                
             </div>
 
             {/* クロスワード回答欄＋ボタン */}
             <p style={{ marginTop: 40, marginBottom: 10 }}>クロスワードの太線の中の文字を以下の対応する番号の四角に入力し、現れた指示に従え</p>
-            <Ques bun="" hints={hints[5]} n={10}>
+            <Ques bun="" hints={hints[5]} n={10} imgg="naan">
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, height: 48,padding:"6px 0px 0px 0px"}}>
                 {[0, 1, 2, 3, 4, 5, 2].map((idx, idd) => (
                     <input
