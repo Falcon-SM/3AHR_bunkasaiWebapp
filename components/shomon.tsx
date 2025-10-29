@@ -74,8 +74,6 @@ const handlehint= async (inde:number) => {
         setIsHintLoading(true);
         setShowError(false);
         try {
-            let link="";
-            let saki="";
             let aa=n
             if(5<=n && n<10){
                 aa=n+2;
