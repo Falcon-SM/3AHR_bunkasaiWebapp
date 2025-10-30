@@ -23,7 +23,7 @@ type Props = {
 }
 
 export default function Toko({ children, saigo }: Props) {
-    const { threeIsAnswered, gazo, setGazo } = useRiddles();
+    const { threeIsAnswered, gazo, setGazo, kakunin, setKakunin, ok, setOk } = useRiddles();
     const [posts, setPosts] = useState<HintPost[]>([]);
     const router = useRouter();
 
@@ -54,7 +54,7 @@ export default function Toko({ children, saigo }: Props) {
         { content: "おこめ公園のトイレの入り口からこんな紙見えてビビったwこれは何？謎解き...？", img: "/トイレ.png", img2: "/トイレ のコピー.png", time: h + ":" + ("0" + m).slice(-2) }
         ])
     }, [])
-    const [nokori, setnokori] = useState(1200);
+    const [nokori, setnokori] = useState(1800);
 
     const base64Hint3 = useMemo(() => {
         const hint = "第3問のヒント: 2019年から始まった新しい元号。";
@@ -228,6 +228,63 @@ export default function Toko({ children, saigo }: Props) {
                 <div onClick={() => { setGazo("n") }} style={{ position: "fixed", backgroundColor: "rgba(153, 153, 153, 0.4)", left: "0px", top: "0px", width: window.innerWidth, height: window.innerHeight }}>
                     <button style={{ position: "fixed", top: 0, right: 0 }} onClick={() => { setGazo("n") }} className="batu">x</button>
                     <img src={gazo} style={{ position: "fixed", width: (window.innerWidth - 100), height: (window.innerHeight - 100), top: "50px", left: "50px", objectFit: "contain" }}></img></div>}
+            {kakunin &&
+                <div style={{
+                    position: "fixed",
+                    top: 0, left: 0, right: 0, bottom: 0,
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    background: "rgba(153, 153, 153, 0.4)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        background: "#000000ff",
+                        padding: "32px",
+                        borderRadius: "12px",
+                        boxShadow: "0 4px 24px rgba(102, 102, 102, 0.18)",
+                        maxWidth: "90vw",
+                        textAlign: "center"
+                    }}>
+                        <h3 style={{ marginBottom: "16px" }}>次は答えが表示されます。<br/>本当にヒントを見ますか？</h3>
+                        <button
+                            onClick={() => {setKakunin(false);setOk(false)}}
+                            style={{
+                                padding: "10px 32px",
+                                background: "#000",
+                                color: "#48daff",
+                                border: "2px solid #48daff",
+                                borderRadius: "6px",
+                                fontWeight: 600,
+                                cursor: "pointer",
+                                fontSize: "1rem",
+                                marginRight: "16px"
+                            }}
+                        >
+                            いいえ
+                        </button>
+
+                        <button
+                            onClick={()=>{setKakunin(false);setOk(true)}}
+                            style={{
+                                padding: "10px 32px",
+                                background: "#48daff",
+                                color: "#000",
+                                border: "none",
+                                borderRadius: "6px",
+                                fontWeight: 600,
+                                cursor: "pointer",
+                                fontSize: "1rem"
+                            }}
+                        >
+                            はい
+                        </button>
+
+                    </div>
+                </div>
+            }
         </div>
     );
 }

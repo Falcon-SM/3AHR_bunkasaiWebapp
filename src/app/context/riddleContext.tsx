@@ -15,6 +15,12 @@ type RiddlesContextValue = {
   incrementDecryptCount: (riddleNumber: number) => void;
   gazo:string;
   setGazo:(value:string)=>void;
+  kakunin:boolean;
+  setKakunin:(value:boolean)=>void;
+  ok:boolean|null;
+  setOk:(value:boolean|null)=>void;
+  stage:number;
+  setStage:(value:number)=>void;
 };
 
 const RiddlesContext = createContext<RiddlesContextValue | null>(null);
@@ -27,6 +33,9 @@ export const RiddlesProvider = ({ children }: { children: React.ReactNode }) => 
 
   const [decryptCounts, setDecryptCounts] = useState<Record<number, number>>({1:0,2:0,3:0,4:0});
   const [gazo,setGazo]=useState("n");
+  const [kakunin,setKakunin]=useState(false);
+  const [ok,setOk]=useState<boolean|null>(null);
+  const [stage,setStage]=useState(0);
 
   const incrementDecryptCount = (riddleNumber: number) => {
     setDecryptCounts((prev) => {
@@ -49,7 +58,13 @@ export const RiddlesProvider = ({ children }: { children: React.ReactNode }) => 
         decryptCounts,
         incrementDecryptCount,
         gazo,
-        setGazo
+        setGazo,
+        kakunin,
+        setKakunin,
+        ok,
+        setOk,
+        stage,
+        setStage
       }}
     >
       {children}
