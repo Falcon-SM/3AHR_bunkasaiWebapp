@@ -15,7 +15,7 @@ type props = {
 
 export default function Ques({ children, hints, bun, n, imgg = 'naan', imgWidth = 300, imgHeight = 200 }: props) {
     const router = useRouter();
-    const { setGazo ,setKakunin,ok,setOk,stage,setStage} = useRiddles()
+    const { setGazo, setKakunin, ok, setOk, stage, setStage } = useRiddles()
     const {
         setOneIsAnswered,
         setTwoIsAnswered,
@@ -23,7 +23,7 @@ export default function Ques({ children, hints, bun, n, imgg = 'naan', imgWidth 
         setFourIsAnswered,
     } = useRiddles();
     const [numhint, setNumhint] = useState(0);
-    const[saidainum,setSaidainum]=useState(0);
+    const [saidainum, setSaidainum] = useState(0);
     const [hintti, setHintti] = useState(false)
     const [hintbun, setHintbun] = useState("");
     const [answer, setAnswer] = useState("");
@@ -32,7 +32,7 @@ export default function Ques({ children, hints, bun, n, imgg = 'naan', imgWidth 
     const [showError, setShowError] = useState(false);
     const [isHintLoading, setIsHintLoading] = useState(false);
     const [saidai, setSaidai] = useState(2);
-    const [hintbuf,setHintbuf]=useState<string|null>(null);
+    const [hintbuf, setHintbuf] = useState<string | null>(null);
     const canvasRef = useRef<(HTMLCanvasElement) | null>(null)
     const handleCheckAnswer = async () => {
         setIsLoading(true);
@@ -48,7 +48,7 @@ export default function Ques({ children, hints, bun, n, imgg = 'naan', imgWidth 
                 saki = "riddles/2"
             } else {
                 link = "4";
-                saki = "final"
+                saki = "riddles/5"
             }
             const res = await fetch("/api/riddle/" + link, {
                 method: "POST",
@@ -90,14 +90,14 @@ export default function Ques({ children, hints, bun, n, imgg = 'naan', imgWidth 
                 body: JSON.stringify({ numquiz: aa, numhints: numhint + inde }),
             });
             const result = await res.json();
-            if(numhint + 1 + inde==result.saidai){
+            if (numhint + 1 + inde == result.saidai) {
                 setStage(n);
                 setHintbuf(result.hint);
                 setKakunin(true);
-            }else{
-                const sh=sessionStorage.sawhint;
-                sessionStorage.sawhint=parseInt(sh)+Math.max(numhint+ 1 + inde,saidainum)-saidainum;
-                setSaidainum((prev)=>Math.max(prev,numhint+ 1 + inde));
+            } else {
+                const sh = sessionStorage.sawhint;
+                sessionStorage.sawhint = parseInt(sh) + Math.max(numhint + 1 + inde, saidainum) - saidainum;
+                setSaidainum((prev) => Math.max(prev, numhint + 1 + inde));
                 setHintbun(result.hint);
                 setNumhint((prev) => (prev + 1 + inde));
                 setSaidai(result.saidai);
@@ -109,17 +109,17 @@ export default function Ques({ children, hints, bun, n, imgg = 'naan', imgWidth 
         }
 
     };
-    useEffect(()=>{
-        if(stage==n && ok){
+    useEffect(() => {
+        if (stage == n && ok) {
             setHintbun(hintbuf ?? "a");
             setNumhint((prev) => (prev + 1));
             setOk(null);
-            if(saidainum<saidai){
-                sessionStorage.sawhint=parseInt(sessionStorage.sawhint)+1;
+            if (saidainum < saidai) {
+                sessionStorage.sawhint = parseInt(sessionStorage.sawhint) + 1;
                 setSaidainum(saidai);
             }
         }
-    },[ok])
+    }, [ok])
     useEffect(() => {
 
         const canvas = canvasRef.current;
@@ -172,10 +172,14 @@ export default function Ques({ children, hints, bun, n, imgg = 'naan', imgWidth 
         ctx.restore();
 
     }, [hintbun]);
-    useEffect(() => { setTimeout(() => { setHintti(true) }, 100 * Math.max(n % 5 + 1, Math.floor(n / 2) + 2 * Math.floor((13 - n) / 2) - Math.floor((13 - n) / 4) * 10)) }, [])
+    if (n == 13) {
+        useEffect(() => { setTimeout(() => { setHintti(true) }, 30000) });
+    } else {
+        useEffect(() => { setTimeout(() => { setHintti(true) }, 30000 * Math.max(n % 5 + 1, Math.floor(n / 2) + 2 * Math.floor((13 - n) / 2) - Math.floor((13 - n) / 4) * 10)) }, [])
+    }
     return (
         <div style={{ marginBottom: 28, width: 500, display: "flex", overflow: "visible" }} key={n}>
-            <div style={{ width: 500, flexShrink:0 }}>
+            <div style={{ width: 500, flexShrink: 0 }}>
                 {n >= 10 && <div
                     //dangerouslySetInnerHTML={{ __html:{mondai[n]}}}
                     style={{
@@ -260,7 +264,7 @@ export default function Ques({ children, hints, bun, n, imgg = 'naan', imgWidth 
                 }
                 {showError && (<p style={{ color: "#d63031", margin: 5 }}>答えが違います。もう一度挑戦してください。</p>)}
                 {isCorrect && (<p style={{ margin: 5 }}>正解!</p>)}
-                <div style={{ width: 220, flexShrink:0 }}>
+                <div style={{ width: 220, flexShrink: 0 }}>
                     {(numhint > 0) &&
                         <button
                             onClick={() => { handlehint(-2) }}

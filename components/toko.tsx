@@ -98,7 +98,7 @@ export default function Toko({ children, saigo }: Props) {
         }
             , 1000);
         if (nokori < 0) {
-            router.push("/final")
+            router.push("/fail")
         }
         return () => clearInterval(timerId)
     }, [nokori])
@@ -207,7 +207,7 @@ export default function Toko({ children, saigo }: Props) {
                     }}
                 >
                     <h1 style={{ textAlign: "center", marginBottom: 24, fontWeight: 400, color: "white", letterSpacing: 0.3, fontSize: 35 }}>
-                        謎解きチャレンジ</h1>
+                        問題</h1>
                     {children}
                 </div>
 
