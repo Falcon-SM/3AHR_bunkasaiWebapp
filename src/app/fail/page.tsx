@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 //import { microcms } from "@/lib/microcms";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
+import { useRiddles } from "../context/riddleContext";
 
 type PageContent = {
   title: string;
@@ -19,6 +20,7 @@ export default function Home() {
   const [videoEnded, setVideoEnded] = useState(false);
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { setStartTime, setPaused } = useRiddles();
 
   const handleStartClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -27,12 +29,28 @@ export default function Home() {
 
   const handleModalOk = () => {
     setShowModal(false);
+    try {
+      // stop client-side updater immediately when moving on
+      setStartTime(null);
+      setPaused(true);
+    } catch (e) {
+      console.warn("could not set pause/startTime from fail page", e);
+    }
     router.push("/final");
   };
 
   const handleVideoEnded = () => {
     setVideoEnded(true);
   };
+  // ensure the timer/updater is paused as soon as this page mounts
+  useEffect(() => {
+    try {
+      setStartTime(null);
+      setPaused(true);
+    } catch (e) {
+      console.warn('could not set pause/startTime on fail mount', e);
+    }
+  }, [setStartTime, setPaused]);
   useEffect(() => {
       const handleBeforeUnload = (event: BeforeUnloadEvent) => {
           localStorage.pagen=4;
