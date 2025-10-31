@@ -22,7 +22,7 @@ export default function Home() {
   const [same,setSame]=useState(false);
 
   //以下はデータベース用です
-  const [scores, setScores] = useState<Score[]>([]);
+  const [scores, setScores] = useState<Score[] | null>(null);
   const [nickname, setNickname] = useState("");
   const [playerScore, setPlayerScore] = useState<number | null>(null);
   const [rank, setRank] = useState<number | null>(null);
@@ -53,6 +53,7 @@ export default function Home() {
   };
 
   const canRankIn = () => {
+    if(scores!==null){
     // スコアボードに20人もいない場合は無条件でランクイン
     if (scores.length < 20) {
       return true;
@@ -61,6 +62,9 @@ export default function Home() {
     const twentiethScore = scores[19].score;
     // 自分のスコアが20位のスコアより高ければランクイン
     return playerScore != null && playerScore > twentiethScore;
+  }else{
+    return false;
+  }
   };
 
   useEffect(() => {
@@ -97,12 +101,11 @@ export default function Home() {
         .from("ScoreBoard")
         .select("*")
         .order("score", { ascending: false });
-
       if (error) console.error(error);
       else setScores(initialScores || []);
     };
     fetchScores();
-    if (sessionStorage.zikan<1){
+    if (parseInt(sessionStorage.zikan)<1){
       setSubmitted(true);
     }
     setts(1800 - sessionStorage.zikan);
@@ -110,14 +113,14 @@ export default function Home() {
     setPlayerScore(Math.max(sessionStorage.zikan - 120 * sessionStorage.sawhint,0));
   }, []); // 初回レンダリング時に一度だけ実行
   useEffect(() => {
-    if (playerScore != null && scores.length > 0 && !submitted) {
-      console.log(scores)
+    if (playerScore != null && scores!==null && !submitted) {
+      console.log(scores);
       const higherScores = scores.filter((s) => s.score > playerScore).length;
       setRank(higherScores + 1);
     }
   }, [scores, playerScore])
   useEffect(() => {
-    if (rank !== null && sessionStorage.zikan>0) {
+    if (rank !== null && parseInt(sessionStorage.zikan)>0) {
       setShowRankModal(true);
     }
   }, [rank])
@@ -126,7 +129,7 @@ export default function Home() {
   const handleSubmit = async () => {
     if (!nickname || playerScore == null) return;
     setIsSubmitting(true);
-    if(scores.filter((s) => s.user_name === nickname).length>0){
+    if((scores ?? []).filter((s) => s.user_name === nickname).length>0){
       setIsSubmitting(false);
       setSame(true);
       return(0);
@@ -199,7 +202,7 @@ export default function Home() {
               スコアボード
             </h2>
             <div style={{ margin: "0 auto 0 auto", marginBottom: 10 }}>
-              {scores.slice(0,20).map((s, index) => (
+              {(scores ?? []).slice(0,20).map((s, index) => (
                 <p key={s.id}>
                   <span className="text-gray-800">{index + 1}位 {s.user_name || "匿名"}　{s.score}点</span>
                 </p>

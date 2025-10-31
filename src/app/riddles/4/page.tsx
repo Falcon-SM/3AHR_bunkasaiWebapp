@@ -89,7 +89,7 @@ export default function Home() {
     };
 
     return(<Toko saigo={true}>
-            <p>箱に入っていた資料の内容を踏まえて以下の問いにもう一度答えよ</p>
+            <p>箱に入っていた資料の内容を踏まえて以下の問いにもう一度答えよ。ただし最初と答えが同じ問題も存在する。</p>
              {[...Array(5)].map((_, idx) => (
                  <Ques key={idx} hints={hints[idx]} bun={mondai[idx]} n={5+idx} imgg={monim[idx]} imgWidth={400} imgHeight={250}/>
              ))}
