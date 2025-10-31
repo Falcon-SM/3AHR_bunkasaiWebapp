@@ -227,15 +227,15 @@ export default function Toko({ children, saigo }: Props) {
                 }}>{`${nokori / 60 | 0}:${("0" + nokori % 60).slice(-2)}`}</p>
             </div>
             {!(gazo === "n") &&
-                <div onClick={() => { setGazo("n") }} style={{ position: "fixed", backgroundColor: "rgba(153, 153, 153, 0.4)", left: "0px", top: "0px", width: window.innerWidth, height: window.innerHeight }}>
+                <div onClick={() => { setGazo("n") }} style={{ position: "fixed", backgroundColor: "rgba(153, 153, 153, 0.4)", left: "0px", top: "0px", width: "100vw", height: "100vh" }}>
                     <button style={{ position: "fixed", top: 0, right: 0 }} onClick={() => { setGazo("n") }} className="batu">x</button>
-                    <img src={gazo} style={{ position: "fixed", width: (window.innerWidth - 100), height: (window.innerHeight - 100), top: "50px", left: "50px", objectFit: "contain" }}></img></div>}
+                    <img src={gazo} style={{ position: "fixed", width: "calc(100vw - 100px)", height: "calc(100vh - 100px)", top: "50px", left: "50px", objectFit: "contain" }}></img></div>}
             {kakunin &&
                 <div style={{
                     position: "fixed",
                     top: 0, left: 0, right: 0, bottom: 0,
-                    width: window.innerWidth,
-                    height: window.innerHeight,
+                    width: "100vw",
+                    height: "100vh",
                     background: "rgba(153, 153, 153, 0.4)",
                     display: "flex",
                     alignItems: "center",

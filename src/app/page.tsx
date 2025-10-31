@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useRiddles } from "@/app/context/riddleContext";
 //import { microcms } from "@/lib/microcms";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
@@ -25,8 +26,31 @@ export default function Home() {
     setShowModal(true);
   };
 
-  const handleModalOk = () => {
+  const { roomnum, setStartTime, paused, setPaused } = useRiddles();
+
+  const handleModalOk = async () => {
     setShowModal(false);
+    // If we are paused (returning to home), then reset the room time to 0 and resume
+    try {
+      if (paused && roomnum) {
+        const resp = await fetch("/api/update-room-time", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ roomId: Number(roomnum), elapsedTime: 0 }),
+        });
+        if (!resp.ok) console.warn("reset API returned non-ok", resp.status);
+        // resume timer from now
+        setStartTime(Date.now());
+        setPaused(false);
+        router.push("/riddles/1");
+        return;
+      }
+    } catch (e) {
+      console.error("Error resetting room time:", e);
+    }
+
+    // default: start normally
+    setStartTime(Date.now());
     router.push("/riddles/1");
   };
 
@@ -41,6 +65,12 @@ export default function Home() {
       router.push(`/riddles/${localStorage.pagen}`)
     }
   },[])
+
+  // When the home page mounts, pause the running timer instead of resetting it.
+  useEffect(() => {
+    setPaused(true);
+    // leave startTime untouched so TimeUpdater stops sending updates while paused
+  }, [setPaused]);
 
   return (
     <div>
@@ -59,8 +89,7 @@ export default function Home() {
       </header>
         <h1 style={{ textAlign: "center", marginBottom: "24px" }}>注意事項</h1>
         <h2 />
-        <ol type="1">
-        <p style={{ marginBottom: "24px" }}>
+        <ol type="1" style={{ marginBottom: "24px" }}>
           <li>謎解きの答えは他の人に教えないでください。</li>
           <li>ドメインを手動で変更するのはご遠慮ください。</li>
           <li>インスペクタを開かれてもヒントや答えは見えないようにしていますので、謎解きに集中しましょう。</li>
@@ -70,7 +99,6 @@ export default function Home() {
           <li>画像はタップすれば拡大され、画面上のどこかをタップすれば元に戻ります。</li>
           <li>左側のSNSの画面は重要なヒントになっています。</li>
           <li>制限時間やルールを守って、楽しく謎解きをしましょう！</li>
-        </p>
         </ol>
         <button
           onClick={handleStartClick}
@@ -83,8 +111,8 @@ export default function Home() {
           <div style={{
             position: "fixed",
             top: 0, left: 0, right: 0, bottom: 0,
-            width:window.innerWidth,
-            height:window.innerHeight,
+            width: "100vw",
+            height: "100vh",
             background: "rgba(153, 153, 153, 0.4)",
             display: "flex",
             alignItems: "center",

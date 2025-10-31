@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../../lib/supabaseClient";
+import { useRiddles } from "../context/riddleContext";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
 
@@ -35,28 +36,20 @@ export default function Home() {
     setShowModal(true);
   };
 
+  const { setStartTime, setRoomnum, setPaused } = useRiddles();
+
   const handleModalOk = () => {
-    (async () => {
-      setShowModal(false);
-      // try reset RoomNum.time to 0 for current room if available
-      try {
-        const room = sessionStorage.getItem("roomnum") || localStorage.getItem("roomnum");
-        const roomId = room ? Number(room) : null;
-        if (roomId && roomId >= 1 && roomId <= 6) {
-          await fetch("/api/update-room-time", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ roomId, elapsedTime: 0 }),
-          });
-        }
-      } catch (e) {
-        console.error("failed to reset RoomNum time:", e);
-      } finally {
-        sessionStorage.clear();
-        localStorage.clear();
-        router.push("/");
-      }
-    })();
+    // Instead of resetting DB here, just pause the timer and navigate to home.
+    setShowModal(false);
+    try {
+      // stop client-side updater but keep roomnum so user can reset when they press 'はい' on home
+      setStartTime(null);
+      setPaused(true);
+    } catch (e) {
+      console.warn("could not set pause/startTime", e);
+    }
+    // keep session/local storage for roomnum so home can detect and reset when user confirms
+    router.push("/");
   };
 
   const canRankIn = () => {
@@ -74,26 +67,16 @@ export default function Home() {
     if (showModal && kirikae > 15) {
       setKirikae(15);
     }
-    if (kirikae === 0) {
-      (async () => {
-        try {
-          const room = sessionStorage.getItem("roomnum") || localStorage.getItem("roomnum");
-          const roomId = room ? Number(room) : null;
-          if (roomId && roomId >= 1 && roomId <= 6) {
-            await fetch("/api/update-room-time", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ roomId, elapsedTime: 0 }),
-            });
-          }
-        } catch (e) {
-          console.error("failed to reset RoomNum time on timeout:", e);
-        } finally {
-          sessionStorage.clear();
-          localStorage.clear();
-          router.push("/");
-        }
-      })();
+        if (kirikae === 0) {
+      // timeout reached: pause and return to home without resetting DB. Keep roomnum such that
+      // home can perform reset when the user confirms.
+      try {
+        setStartTime(null);
+        setPaused(true);
+      } catch (e) {
+        console.warn('could not set pause/startTime on timeout', e);
+      }
+      router.push("/");
     }
     if (!showRankModal) {
       const timerId = setInterval(() => {
@@ -236,15 +219,15 @@ export default function Home() {
         <div style={{
           position: "fixed",
           top: 0, left: 0, right: 0, bottom: 0,
-          width: window.innerWidth,
-          height: window.innerHeight,
+          width: "100vw",
+          height: "100vh",
           background: "rgba(255, 255, 255, 0.4)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           zIndex: 1000
         }}>
-          <div style={{
+                <div style={{
             background: "#303030",
             padding: "32px",
             borderRadius: "12px",
@@ -264,12 +247,12 @@ export default function Home() {
           </div>
         </div>
       )}
-      {showRankModal && (
+        {showRankModal && (
         <div style={{
           position: "fixed",
           top: 0, left: 0, right: 0, bottom: 0,
-          width: window.innerWidth,
-          height: window.innerHeight,
+          width: "100vw",
+          height: "100vh",
           background: "rgba(153, 153, 153, 0.4)",
           display: "flex",
           alignItems: "center",
