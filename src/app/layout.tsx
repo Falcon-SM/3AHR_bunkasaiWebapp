@@ -1,6 +1,7 @@
 // app/layout.tsx
 import './globals.css';
 import { RiddlesProvider } from './context/riddleContext';
+import TimeUpdater from '@/components/TimeUpdater';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -10,6 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <RiddlesProvider>
+          <TimeUpdater />
           <header>
             <h1 style={{fontWeight:450,fontSize:45}}>3AHRの謎解きへようこそ！</h1>
           </header>

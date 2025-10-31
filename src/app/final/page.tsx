@@ -36,10 +36,27 @@ export default function Home() {
   };
 
   const handleModalOk = () => {
-    setShowModal(false);
-    sessionStorage.clear();
-    localStorage.clear();
-    router.push("/");
+    (async () => {
+      setShowModal(false);
+      // try reset RoomNum.time to 0 for current room if available
+      try {
+        const room = sessionStorage.getItem("roomnum") || localStorage.getItem("roomnum");
+        const roomId = room ? Number(room) : null;
+        if (roomId && roomId >= 1 && roomId <= 6) {
+          await fetch("/api/update-room-time", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ roomId, elapsedTime: 0 }),
+          });
+        }
+      } catch (e) {
+        console.error("failed to reset RoomNum time:", e);
+      } finally {
+        sessionStorage.clear();
+        localStorage.clear();
+        router.push("/");
+      }
+    })();
   };
 
   const canRankIn = () => {
@@ -58,9 +75,25 @@ export default function Home() {
       setKirikae(15);
     }
     if (kirikae === 0) {
-      sessionStorage.clear();
-      localStorage.clear();
-      router.push("/")
+      (async () => {
+        try {
+          const room = sessionStorage.getItem("roomnum") || localStorage.getItem("roomnum");
+          const roomId = room ? Number(room) : null;
+          if (roomId && roomId >= 1 && roomId <= 6) {
+            await fetch("/api/update-room-time", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ roomId, elapsedTime: 0 }),
+            });
+          }
+        } catch (e) {
+          console.error("failed to reset RoomNum time on timeout:", e);
+        } finally {
+          sessionStorage.clear();
+          localStorage.clear();
+          router.push("/");
+        }
+      })();
     }
     if (!showRankModal) {
       const timerId = setInterval(() => {

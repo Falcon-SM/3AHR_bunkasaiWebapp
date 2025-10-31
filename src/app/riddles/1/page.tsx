@@ -28,13 +28,19 @@ const mondai = [
 const monim = ['naan', '/nimon.png', '/論理クイズ.png', 'naan', 'naan']
 
 export default function Home() {
-    const { threeIsAnswered, gazo, setGazo } = useRiddles();
+    const { threeIsAnswered, gazo, setGazo, startTime, setStartTime } = useRiddles();
     const [crosswordAnswer, setCrosswordAnswer] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [crosssen, setCrosssen] = useState(Array(35).fill(0))
     const router = useRouter();
+
+    useEffect(() => {
+        if (!startTime) {
+            setStartTime(Date.now());
+        }
+    }, [startTime, setStartTime]);
 
     useEffect(() => {
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {

@@ -103,6 +103,8 @@ export default function Toko({ children, saigo }: Props) {
         return () => clearInterval(timerId)
     }, [nokori])
 
+    
+
     return (
         <div>
             <Script
