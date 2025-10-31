@@ -6,12 +6,22 @@ import { useRiddles } from "@/app/context/riddleContext";
 // We'll call a server API that uses the service_role key instead.
 
 export default function TimeUpdater() {
-  const { startTime, roomnum, setRoomnum } = useRiddles();
+  const { startTime, roomnum, setRoomnum, paused } = useRiddles();
 
   useEffect(() => {
     const roomNumFromStorage = localStorage.getItem("roomnum");
     if (roomNumFromStorage) {
       setRoomnum(roomNumFromStorage);
+      return;
+    }
+
+    // fallback to cookie 'roomnum' if localStorage is missing (persisted for 30 days)
+    try {
+      const match = document.cookie.match(new RegExp('(^| )' + 'roomnum' + '=([^;]+)'));
+      const cookieVal = match ? decodeURIComponent(match[2]) : null;
+      if (cookieVal) setRoomnum(cookieVal);
+    } catch {
+      // ignore cookies if access fails
     }
   }, [setRoomnum]);
 
@@ -21,6 +31,12 @@ export default function TimeUpdater() {
     if (!roomnum) {
       const again = localStorage.getItem("roomnum");
       if (again) setRoomnum(again);
+    }
+
+    // Don't start the updater while paused
+    if (paused) {
+      console.log("TimeUpdater: paused, not starting interval");
+      return;
     }
 
     if (startTime && roomnum && validRooms.includes(roomnum)) {
@@ -40,11 +56,11 @@ export default function TimeUpdater() {
             body: JSON.stringify({ roomId, elapsedTime }),
           });
 
-          let payload: any = null;
+          let payload: unknown = null;
           try {
             payload = await resp.json();
-          } catch (e) {
-            console.warn("update-room-time returned non-json", e);
+          } catch (err) {
+            console.warn("update-room-time returned non-json", err);
           }
 
           console.log("update-room-time response:", { status: resp.status, payload });
@@ -61,7 +77,7 @@ export default function TimeUpdater() {
         clearInterval(interval);
       };
     }
-  }, [startTime, roomnum]);
+  }, [startTime, roomnum, paused, setRoomnum]);
 
   return null;
 }

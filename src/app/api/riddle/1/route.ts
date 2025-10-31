@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
         const re = new RegExp(pattern, flags);
         isCorrect = re.test(userAnswer);
-    } catch (e) {
+    } catch {
         // If regex construction fails, fallback to strict equality
         isCorrect = userAnswer === correct;
     }

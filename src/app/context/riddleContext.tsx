@@ -25,6 +25,8 @@ type RiddlesContextValue = {
   setStartTime: (value: number | null) => void;
   roomnum: string | null;
   setRoomnum: (value: string | null) => void;
+  paused: boolean;
+  setPaused: (value: boolean) => void;
 };
 
 const RiddlesContext = createContext<RiddlesContextValue | null>(null);
@@ -42,6 +44,7 @@ export const RiddlesProvider = ({ children }: { children: React.ReactNode }) => 
   const [stage,setStage]=useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [roomnum, setRoomnum] = useState<string | null>(null);
+  const [paused, setPaused] = useState<boolean>(false);
 
   const incrementDecryptCount = (riddleNumber: number) => {
     setDecryptCounts((prev) => {
@@ -73,8 +76,10 @@ export const RiddlesProvider = ({ children }: { children: React.ReactNode }) => 
         setStage,
         startTime,
         setStartTime,
-        roomnum,
-        setRoomnum,
+  roomnum,
+  setRoomnum,
+  paused,
+  setPaused,
       }}
     >
       {children}
