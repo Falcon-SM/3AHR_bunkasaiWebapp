@@ -172,11 +172,14 @@ export default function Ques({ children, hints, bun, n, imgg = 'naan', imgWidth 
         ctx.restore();
 
     }, [hintbun]);
+    let intt=0;
+
     if (n == 13) {
-        useEffect(() => { setTimeout(() => { setHintti(true) }, 30000) });
+        intt=30000;
     } else {
-        useEffect(() => { setTimeout(() => { setHintti(true) }, 30000 * Math.max(n % 5 + 1, Math.floor(n / 2) + 2 * Math.floor((13 - n) / 2) - Math.floor((13 - n) / 4) * 10)) }, [])
+        intt= 30000 * Math.max(n % 5 + 1, Math.floor(n / 2) + 2 * Math.floor((13 - n) / 2) - Math.floor((13 - n) / 4) * 10);
     }
+    useEffect(() => { setTimeout(() => { setHintti(true) }, intt) });
     return (
         <div style={{ marginBottom: 28, width: 500, display: "flex", overflow: "visible" }} key={n}>
             <div style={{ width: 500, flexShrink: 0 }}>
