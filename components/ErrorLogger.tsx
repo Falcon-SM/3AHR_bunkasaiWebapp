@@ -6,7 +6,6 @@ export default function ErrorLogger() {
   useEffect(() => {
     const onError = (event: ErrorEvent) => {
       // Log detailed info for debugging
-      // eslint-disable-next-line no-console
       console.warn("[ErrorLogger] window.error captured:", {
         message: event.message,
         filename: event.filename,
@@ -21,11 +20,13 @@ export default function ErrorLogger() {
     };
 
     const onResourceError = (e: Event) => {
-      const target = e.target as HTMLElement & { src?: string; href?: string };
+      const target = e.target as Element | null;
       if (!target) return;
-      const info: any = { tag: target.tagName };
-      if ((target as any).src) info.src = (target as any).src;
-      if ((target as any).href) info.href = (target as any).href;
+      const info: Record<string, string | undefined> = { tag: target.tagName };
+      if (target instanceof HTMLScriptElement) info.src = target.src;
+      else if (target instanceof HTMLImageElement) info.src = target.src;
+      else if (target instanceof HTMLLinkElement) info.href = target.href;
+      else if (target instanceof HTMLAnchorElement) info.href = target.href;
       console.warn("[ErrorLogger] resource error:", info);
     };
 

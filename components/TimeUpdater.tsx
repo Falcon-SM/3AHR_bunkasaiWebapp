@@ -20,7 +20,7 @@ export default function TimeUpdater() {
       const match = document.cookie.match(new RegExp('(^| )' + 'roomnum' + '=([^;]+)'));
       const cookieVal = match ? decodeURIComponent(match[2]) : null;
       if (cookieVal) setRoomnum(cookieVal);
-    } catch (e) {
+    } catch {
       // ignore cookies if access fails
     }
   }, [setRoomnum]);
@@ -56,11 +56,11 @@ export default function TimeUpdater() {
             body: JSON.stringify({ roomId, elapsedTime }),
           });
 
-          let payload: any = null;
+          let payload: unknown = null;
           try {
             payload = await resp.json();
-          } catch (e) {
-            console.warn("update-room-time returned non-json", e);
+          } catch (err) {
+            console.warn("update-room-time returned non-json", err);
           }
 
           console.log("update-room-time response:", { status: resp.status, payload });

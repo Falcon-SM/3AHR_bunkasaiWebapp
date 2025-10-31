@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-type Body = {
-  roomId: number;
-  elapsedTime: number;
-};
+// body shape is validated at runtime; keep types minimal to satisfy linter
 
 export async function POST(request: Request) {
   try {
@@ -20,9 +17,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, message: "invalid payload" }, { status: 400 });
     }
 
-    // validate shape
-    const roomId = (body as any).roomId;
-    const elapsedTime = (body as any).elapsedTime;
+  // validate shape
+  const bodyObj = body as Record<string, unknown>;
+  const roomIdRaw = bodyObj["roomId"];
+  const elapsedTimeRaw = bodyObj["elapsedTime"];
+  const roomId = Number(roomIdRaw as unknown);
+  const elapsedTime = Number(elapsedTimeRaw as unknown);
 
     if (typeof roomId !== "number" || typeof elapsedTime !== "number") {
       return NextResponse.json({ ok: false, message: "invalid payload" }, { status: 400 });

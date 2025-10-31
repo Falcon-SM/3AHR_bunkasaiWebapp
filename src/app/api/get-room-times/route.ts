@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function GET() {
   try {
-    const res: any = await supabaseAdmin
+    const res = await supabaseAdmin
       .from("RoomNum")
       .select("id, time")
       .in("id", [1, 2, 3, 4, 5, 6]);
@@ -17,9 +17,12 @@ export async function GET() {
 
     // Normalize into map
     const map: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
-    (data || []).forEach((row: any) => {
-      const id = Number(row.id);
-      const time = Number(row.time) || 0;
+    const rows = (data ?? []) as Array<Record<string, unknown>>;
+    rows.forEach((row) => {
+      const idRaw = row["id"];
+      const timeRaw = row["time"];
+      const id = Number(idRaw as unknown);
+      const time = Number(timeRaw as unknown) || 0;
       if (!Number.isNaN(id) && id >= 1 && id <= 6) map[id] = time;
     });
 
