@@ -48,6 +48,8 @@ export default function Home() {
     } catch (e) {
       console.warn("could not set pause/startTime", e);
     }
+    localStorage.clear();
+    sessionStorage.clear();
     // keep session/local storage for roomnum so home can detect and reset when user confirms
     router.push("/");
   };
@@ -80,6 +82,9 @@ export default function Home() {
       } catch (e) {
         console.warn('could not set pause/startTime on timeout', e);
       }
+      alert("a");
+      localStorage.clear();
+      sessionStorage.clear();
       router.push("/");
     }
     if (!showRankModal) {
