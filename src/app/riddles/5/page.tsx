@@ -49,7 +49,7 @@ export default function Home() {
         window.removeEventListener("beforeunload", handleBeforeUnload);
       };
     }, []);
-
+//uu
   return (
     <div className="container">
       <Script
