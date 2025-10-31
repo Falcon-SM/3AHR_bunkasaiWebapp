@@ -21,7 +21,6 @@ export function middleware(request: NextRequest) {
 
     // 3. 環境変数と認証情報を比較
     if (user === USERNAME && pass === PASSWORD) {
-      // 認証成功: ページへのアクセスを許可
       const response = NextResponse.next();
       response.cookies.set({
         name: 'session',
