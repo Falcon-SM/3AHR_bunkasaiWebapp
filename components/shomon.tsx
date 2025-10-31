@@ -175,9 +175,9 @@ export default function Ques({ children, hints, bun, n, imgg = 'naan', imgWidth 
     let intt=0;
 
     if (n == 13) {
-        intt=30000;
+        intt=300;
     } else {
-        intt= 30000 * Math.max(n % 5 + 1, Math.floor(n / 2) + 2 * Math.floor((13 - n) / 2) - Math.floor((13 - n) / 4) * 10);
+        intt= 300 * Math.max(n % 5 + 1, Math.floor(n / 2) + 2 * Math.floor((13 - n) / 2) - Math.floor((13 - n) / 4) * 10);
     }
     useEffect(() => { setTimeout(() => { setHintti(true) }, intt) });
     return (
