@@ -212,7 +212,8 @@ export default function Toko({ children, saigo }: Props) {
                         問題</h1>
                     {children}
                 </div>
-
+                <div style={{width:150}}>
+                </div>
                 <p style={{
                     background: "#000000ff",
                     borderRadius: "8px",
@@ -222,8 +223,10 @@ export default function Toko({ children, saigo }: Props) {
                     margin: "0px auto",
                     height: 60,
                     width: 140,
-                    textAlign: "center"
-
+                    textAlign: "center",
+                    position:"fixed",
+                    top:50,
+                    right:50
                 }}>{`${nokori / 60 | 0}:${("0" + nokori % 60).slice(-2)}`}</p>
             </div>
             {!(gazo === "n") &&
