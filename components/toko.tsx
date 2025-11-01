@@ -97,8 +97,8 @@ export default function Toko({ children, saigo }: Props) {
             sessionStorage.zikan = nokori;
         }
             , 1000);
-        if (nokori < 0) {
-            router.push("/fail")
+        if (nokori <= 0) {
+            router.push("/fail");
         }
         return () => clearInterval(timerId)
     }, [nokori])
