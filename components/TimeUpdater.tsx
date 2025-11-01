@@ -42,7 +42,7 @@ export default function TimeUpdater() {
     if (startTime && roomnum && validRooms.includes(roomnum)) {
       const roomId = Number(roomnum);
       console.log("TimeUpdater: starting interval", { roomId, startTime });
-      const interval = setInterval(async () => {
+  const interval = setInterval(async () => {
         const now = Date.now();
         const elapsedTime = Math.floor((now - (Number(startTime) || 0)) / 1000);
         console.log("TimeUpdater tick", { roomId, startTime, now, elapsedTime });
@@ -70,7 +70,7 @@ export default function TimeUpdater() {
         } catch (e) {
           console.error("Unexpected error calling update-room-time API:", e);
         }
-      }, 10000);
+  }, 1000);
 
       return () => {
         console.log("TimeUpdater: clearing interval", { roomId });
