@@ -110,7 +110,7 @@ export default function StaffPage() {
         fetchRoomTimes();
 
         // Poll every 5 seconds to keep the display up-to-date
-        const interval = setInterval(fetchRoomTimes, 5000);
+        const interval = setInterval(fetchRoomTimes, 500);
         return () => clearInterval(interval);
     }, []);
 
